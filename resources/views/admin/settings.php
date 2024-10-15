@@ -18,7 +18,10 @@
             <tr>
                 <th><?php echo esc_html__('Authentication', 'sendy'); ?></th>
                 <td>
-                    <p><?php echo esc_html__(sprintf("Authenticated as %s", $name), 'sendy'); ?></p>
+                    <p><?php
+                        // translators: %s will be filled with the e-mail address of the authenticated user
+                        echo esc_html(sprintf(__("Authenticated as %s", 'sendy'), $name));
+                    ?></p>
 
                     <p>
                         <a class="button" href="<?php echo esc_url(admin_url('?sendy_logout')); ?>">

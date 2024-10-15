@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sendy 3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sendy\n"
-"POT-Creation-Date: 2024-10-10T12:32:45+00:00\n"
-"PO-Revision-Date: 2024-10-10 14:34+0200\n"
+"POT-Creation-Date: 2024-10-15T09:19:02+00:00\n"
+"PO-Revision-Date: 2024-10-15 11:20+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -18,7 +18,7 @@ msgstr ""
 #. Plugin Name of the plugin
 #. Author of the plugin
 #: sendy.php src/Modules/Admin/Settings.php:33
-#: src/Modules/Admin/Settings.php:34 src/Modules/Orders/Single.php:49
+#: src/Modules/Admin/Settings.php:34 src/Modules/Orders/Single.php:48
 msgid "Sendy"
 msgstr "Sendy"
 
@@ -38,7 +38,7 @@ msgid "https://sendy.nl/"
 msgstr "https://sendy.nl/"
 
 #: resources/views/admin/meta_box/single.php:10
-#: src/Modules/Orders/BulkActions.php:161
+#: src/Modules/Orders/BulkActions.php:165
 msgid "Shop"
 msgstr "Shop"
 
@@ -63,7 +63,7 @@ msgstr "Print label"
 msgid "Print labels"
 msgstr "Print labels"
 
-#: resources/views/admin/modals/create-shipment.php:6
+#: resources/views/admin/modals/create-shipment.php:8
 msgid "Create shipments"
 msgstr "Zending aanmaken"
 
@@ -81,7 +81,7 @@ msgid ""
 "Click the button to start"
 msgstr ""
 "Om de plug-in the kunnen gebruiken moet je verbinden met Sendy. Klik op de "
-"knop om te verbinden."
+"knop om te verbinden"
 
 #: resources/views/admin/settings.php:11
 msgid "Authenticate"
@@ -89,7 +89,11 @@ msgstr "Verbinden"
 
 #: resources/views/admin/settings.php:19
 msgid "Authentication"
-msgstr "Authenticatie gelukt"
+msgstr "Authenticatie"
+
+#: resources/views/admin/settings.php:21
+msgid "Authenticated as %s"
+msgstr "Ingelogd als %s"
 
 #: resources/views/admin/settings.php:25
 msgid "Log out"
@@ -159,31 +163,31 @@ msgstr "Authenticatie gelukt"
 msgid "Authentication failed. Please try again"
 msgstr "Authenticatie mislukt. Probeer het opnieuw"
 
-#: src/Modules/Orders/BulkActions.php:31
+#: src/Modules/Orders/BulkActions.php:35
 msgid "Sendy - Create shipments"
 msgstr "Sendy - Zendingen aanmaken"
 
-#: src/Modules/Orders/BulkActions.php:32
+#: src/Modules/Orders/BulkActions.php:36
 msgid "Sendy - Print labels"
 msgstr "Sendy - Labels printen"
 
-#: src/Modules/Orders/BulkActions.php:92 src/Modules/Orders/Single.php:162
+#: src/Modules/Orders/BulkActions.php:96 src/Modules/Orders/Single.php:161
 msgid "Sendy: Label printed"
 msgstr "Sendy: Label geprint"
 
-#: src/Modules/Orders/BulkActions.php:99
+#: src/Modules/Orders/BulkActions.php:103
 msgid "Non of the selected orders have any labels"
 msgstr "Voor de geselecteerde zendingen is geen label beschikbaar"
 
-#: src/Modules/Orders/BulkActions.php:162
+#: src/Modules/Orders/BulkActions.php:166
 msgid "The shipments will be created with the selected shop"
 msgstr "De zendingen worden aangemaakt met de geselecteerde shop"
 
-#: src/Modules/Orders/BulkActions.php:170
+#: src/Modules/Orders/BulkActions.php:174
 msgid "Select preference"
 msgstr "Selecteer verzendprofiel"
 
-#: src/Modules/Orders/BulkActions.php:171
+#: src/Modules/Orders/BulkActions.php:175
 msgid "The shipments will be created with the preference you select here"
 msgstr "De zendingen worden aangemaakt met de geselecteerde verzendvoorkeur"
 
@@ -230,22 +234,22 @@ msgstr ""
 #: src/Modules/Orders/OrdersModule.php:120
 msgid "Error while creating shipment for order #%s: Unknown error."
 msgstr ""
-"Er ging iets mis bij het aanmaken van een zending voor order #%s: "
-"Onbekende fout."
+"Er ging iets mis bij het aanmaken van een zending voor order #%s: Onbekende "
+"fout."
 
 #: src/Modules/Orders/OrdersModule.php:159
 msgid "Something went wrong while downloading the labels"
 msgstr "Er ging iets mis bij het downloaden van de labels"
 
-#: src/Modules/Orders/Single.php:143
+#: src/Modules/Orders/Single.php:142
 msgid "Nonce verification failed"
 msgstr "Nonce verificatie mislukt"
 
-#: src/Modules/Orders/Single.php:150
+#: src/Modules/Orders/Single.php:149
 msgid "Order could not be found"
 msgstr "De bestelling kan niet gevonden worden"
 
-#: src/Modules/Orders/Single.php:158
+#: src/Modules/Orders/Single.php:157
 msgid "No shipment created for order"
 msgstr "Geen zending aangemaakt voor de bestelling"
 
