@@ -1,12 +1,12 @@
 (function ($) {
     let sendyOrderBulk = {
         init: function () {
-            let postsFilter = $('#wc-orders-filter');
+            let ordersFilter = $('#wc-orders-filter, #posts-filter');
 
-            $(postsFilter).on('change', '#bulk-action-selector-top', this.toggleCreateShipmentsModal);
-            $(postsFilter).on('change', '#bulk-action-selector-bottom', this.toggleCreateShipmentsModal);
+            $(ordersFilter).on('change', '#bulk-action-selector-top', this.toggleCreateShipmentsModal);
+            $(ordersFilter).on('change', '#bulk-action-selector-bottom', this.toggleCreateShipmentsModal);
 
-            $(postsFilter).on('click', '.button.action', this.disableSubmitButton);
+            $(ordersFilter).on('click', '.button.action', this.disableSubmitButton);
         },
 
         /**
@@ -17,7 +17,7 @@
             event.preventDefault();
 
             let value = $(this).val(),
-                bulkActionsForm = $(this).parents('#wc-orders-filter'),
+                bulkActionsForm = $(this).parents('#wc-orders-filter, #posts-filter'),
                 title = $(':selected', this).text();
 
             if (value === 'sendy_create_shipments') {
@@ -39,6 +39,9 @@
                         let shopId = thickboxWindow.find('#sendy_shop_id').find(':selected').val();
                         $(sendyFieldsContainer).append(`<input type="hidden" name="sendy_shop_id" value="${shopId}">`);
                     }
+
+                    let nonce = thickboxWindow.find('#sendy_bulk_modal_nonce').val();
+                    $(sendyFieldsContainer).append(`<input type="hidden" name="sendy_bulk_modal_nonce" value="${nonce}">`);
 
                     $(this).prop('disabled', true);
 

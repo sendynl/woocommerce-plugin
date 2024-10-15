@@ -15,6 +15,10 @@ class BulkActions extends OrdersModule
         add_filter('handle_bulk_actions-woocommerce_page_wc-orders', [$this, 'handle_bulk_action_create_shipments'], 10, 3);
         add_filter('handle_bulk_actions-woocommerce_page_wc-orders', [$this, 'handle_bulk_action_print_labels'], 10, 3);
 
+        add_filter('bulk_actions-edit-shop_order', [$this, 'add_bulk_actions'], 10, 1);
+        add_filter('handle_bulk_actions-edit-shop_order', [$this, 'handle_bulk_action_create_shipments'], 10, 3);
+        add_filter('handle_bulk_actions-edit-shop_order', [$this, 'handle_bulk_action_print_labels'], 10, 3);
+
         add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
 
         add_action('admin_footer', [$this, 'modal_create_shipments']);
@@ -44,12 +48,12 @@ class BulkActions extends OrdersModule
      */
     public function handle_bulk_action_create_shipments(string $redirect, string $action, array $objectIds): string
     {
-        if (!isset($_REQUEST['_wpnonce']) || ! wp_verify_nonce(sanitize_key($_REQUEST['_wpnonce']), 'bulk-orders')) {
-            wp_die('Nonce verification failed');
-        }
-
         if ($action !== 'sendy_create_shipments') {
             return $redirect;
+        }
+
+        if (!isset($_REQUEST['sendy_bulk_modal_nonce']) || ! wp_verify_nonce(sanitize_key($_REQUEST['sendy_bulk_modal_nonce']), 'sendy_bulk_modal')) {
+            wp_die('Nonce verification failed');
         }
 
         foreach ($objectIds as $id) {
@@ -186,6 +190,8 @@ class BulkActions extends OrdersModule
         $screen = get_current_screen();
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        return $screen->id === 'woocommerce_page_wc-orders' && !isset($_GET['action']);
+        return ($screen->id === 'woocommerce_page_wc-orders' && !isset($_GET['action'])) ||
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            ($screen->id === 'edit-shop_order' && $screen->base === 'edit' && !isset($_GET['action']));
     }
 }

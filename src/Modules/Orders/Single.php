@@ -3,7 +3,6 @@
 namespace Sendy\WooCommerce\Modules\Orders;
 
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
-use Sendy\Api\ApiException;
 use Sendy\WooCommerce\Plugin;
 use Sendy\WooCommerce\Repositories\Preferences;
 use Sendy\WooCommerce\Repositories\Shops;
@@ -176,10 +175,12 @@ class Single extends OrdersModule
     {
         $screen = get_current_screen();
 
-        return $screen->id === 'woocommerce_page_wc-orders' &&
+        return ($screen->id === 'woocommerce_page_wc-orders' &&
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             isset($_GET['action']) &&
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-            sanitize_key($_GET['action']) === 'edit';
+            sanitize_key($_GET['action']) === 'edit') ||
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            ($screen->id === 'shop_order' && $screen->base === 'post' && sanitize_key($_GET['action']) === 'edit');
     }
 }
