@@ -19,6 +19,8 @@ class Single extends OrdersModule
 
         add_action('wp_ajax_sendy_order_single_save_form', [$this, 'handle_create_shipment_from_form']);
 
+        add_action('woocommerce_admin_order_data_after_shipping_address', [$this, 'display_shipping_data'], 10, 1);
+
         add_action('admin_init', [$this, 'download_label'], 10);
     }
 
@@ -120,6 +122,17 @@ class Single extends OrdersModule
         } catch (\Exception $e) {
             wp_send_json_error(['message' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Display the shipping method and chosen pick-up point on the detail page for admins
+     *
+     * @param WC_Order $order
+     * @return void
+     */
+    public function display_shipping_data(WC_Order $order): void
+    {
+        echo View::fromTemplate('admin/single/shipping_data.php')->render(['order' => $order]);
     }
 
     /**

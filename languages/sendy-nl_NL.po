@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sendy 3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sendy\n"
-"POT-Creation-Date: 2024-10-15T09:19:02+00:00\n"
-"PO-Revision-Date: 2024-10-15 11:20+0200\n"
+"POT-Creation-Date: 2024-10-18T06:39:44+00:00\n"
+"PO-Revision-Date: 2024-10-18 08:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -18,7 +18,7 @@ msgstr ""
 #. Plugin Name of the plugin
 #. Author of the plugin
 #: sendy.php src/Modules/Admin/Settings.php:33
-#: src/Modules/Admin/Settings.php:34 src/Modules/Orders/Single.php:48
+#: src/Modules/Admin/Settings.php:34 src/Modules/Orders/Single.php:50
 msgid "Sendy"
 msgstr "Sendy"
 
@@ -91,17 +91,27 @@ msgstr "Verbinden"
 msgid "Authentication"
 msgstr "Authenticatie"
 
-#: resources/views/admin/settings.php:21
+#. translators: %s will be filled with the e-mail address of the authenticated user
+#: resources/views/admin/settings.php:23
 msgid "Authenticated as %s"
 msgstr "Ingelogd als %s"
 
-#: resources/views/admin/settings.php:25
+#: resources/views/admin/settings.php:28
 msgid "Log out"
 msgstr "Uitloggen"
 
-#: resources/views/admin/settings.php:40
+#: resources/views/admin/settings.php:43
 msgid "Save settings"
 msgstr "Instellingen opslaan"
+
+#: resources/views/admin/single/shipping_data.php:3
+#: src/Modules/Orders/OrderList.php:30
+msgid "Shipping method"
+msgstr "Verzendmethode"
+
+#: resources/views/admin/single/shipping_data.php:7
+msgid "Chosen pick-up point"
+msgstr "Gekozen pick-up-punt"
 
 #: resources/views/checkout/order_confirmation.php:3
 msgid "Your order will be delivered at the selected pick-up point:"
@@ -171,7 +181,7 @@ msgstr "Sendy - Zendingen aanmaken"
 msgid "Sendy - Print labels"
 msgstr "Sendy - Labels printen"
 
-#: src/Modules/Orders/BulkActions.php:96 src/Modules/Orders/Single.php:161
+#: src/Modules/Orders/BulkActions.php:96 src/Modules/Orders/Single.php:174
 msgid "Sendy: Label printed"
 msgstr "Sendy: Label geprint"
 
@@ -190,10 +200,6 @@ msgstr "Selecteer verzendprofiel"
 #: src/Modules/Orders/BulkActions.php:175
 msgid "The shipments will be created with the preference you select here"
 msgstr "De zendingen worden aangemaakt met de geselecteerde verzendvoorkeur"
-
-#: src/Modules/Orders/OrderList.php:30
-msgid "Shipping method"
-msgstr "Verzendmethode"
 
 #. translators: %s The ID of the order
 #: src/Modules/Orders/OrdersModule.php:58
@@ -241,15 +247,15 @@ msgstr ""
 msgid "Something went wrong while downloading the labels"
 msgstr "Er ging iets mis bij het downloaden van de labels"
 
-#: src/Modules/Orders/Single.php:142
+#: src/Modules/Orders/Single.php:155
 msgid "Nonce verification failed"
 msgstr "Nonce verificatie mislukt"
 
-#: src/Modules/Orders/Single.php:149
+#: src/Modules/Orders/Single.php:162
 msgid "Order could not be found"
 msgstr "De bestelling kan niet gevonden worden"
 
-#: src/Modules/Orders/Single.php:157
+#: src/Modules/Orders/Single.php:170
 msgid "No shipment created for order"
 msgstr "Geen zending aangemaakt voor de bestelling"
 
