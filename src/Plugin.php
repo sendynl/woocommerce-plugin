@@ -38,6 +38,7 @@ class Plugin
 
     public function initialize_plugin(): void
     {
+        $this->set_default_values_for_settings();
         $this->define_constants();
         $this->init_hooks();
     }
@@ -113,6 +114,21 @@ class Plugin
             }
 
             delete_option('sendy_flash_admin_messages');
+        }
+    }
+
+    public function set_default_values_for_settings(): void
+    {
+        $defaultValues = [
+            'sendy_import_weight' => true,
+            'sendy_import_products' => true,
+            'sendy_mark_order_as_completed' => 'after-shipment-created',
+        ];
+
+        foreach ($defaultValues as $option => $defaultValue) {
+            if (get_option($option) === false) {
+                update_option($option, $defaultValue);
+            }
         }
     }
 }
