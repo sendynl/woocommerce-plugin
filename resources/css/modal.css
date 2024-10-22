@@ -1,0 +1,22 @@
+#sendy-modal {
+    .form-field {
+        label {
+            display: block;
+            margin-bottom: .25em;
+        }
+
+        select {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        input[type=number] {
+            width: 100%;
+        }
+
+        .description {
+            font-size: .8em;
+        }
+    }
+}

@@ -16,6 +16,7 @@
 
             let shopId = $('#sendy-metabox-shop-dropdown').find(':selected').val(),
                 preferenceId = $('#sendy-metabox-preference-dropdown').find(':selected').val(),
+                amount = $('#sendy-metabox-amount').val(),
                 nonce = $('#sendy-create-shipment-nonce').val();
 
             let data = {
@@ -24,6 +25,7 @@
                 order_id: woocommerce_admin_meta_boxes.post_id,
                 shop_id: shopId,
                 preference_id: preferenceId,
+                amount: amount,
             };
 
             $.post(woocommerce_admin_meta_boxes.ajax_url, data, () => {

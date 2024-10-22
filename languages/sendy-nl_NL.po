@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sendy 3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sendy\n"
-"POT-Creation-Date: 2024-10-18T06:39:44+00:00\n"
-"PO-Revision-Date: 2024-10-18 08:40+0200\n"
+"POT-Creation-Date: 2024-10-22T09:44:38+00:00\n"
+"PO-Revision-Date: 2024-10-22 11:45+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -38,7 +38,7 @@ msgid "https://sendy.nl/"
 msgstr "https://sendy.nl/"
 
 #: resources/views/admin/meta_box/single.php:10
-#: src/Modules/Orders/BulkActions.php:165
+#: src/Modules/Orders/BulkActions.php:167
 msgid "Shop"
 msgstr "Shop"
 
@@ -46,20 +46,25 @@ msgstr "Shop"
 msgid "Shipping preference"
 msgstr "Verzendprofiel"
 
-#: resources/views/admin/meta_box/single.php:30
+#: resources/views/admin/meta_box/single.php:28
+#: src/Modules/Orders/BulkActions.php:185
+msgid "Amount of packages"
+msgstr "Aantal pakketten"
+
+#: resources/views/admin/meta_box/single.php:34
 msgid "Create shipment"
 msgstr "Zending aanmaken"
 
-#: resources/views/admin/meta_box/single.php:35
+#: resources/views/admin/meta_box/single.php:39
 #: src/Modules/Orders/OrderList.php:31
 msgid "Track and trace"
 msgstr "Track en trace"
 
-#: resources/views/admin/meta_box/single.php:46
+#: resources/views/admin/meta_box/single.php:50
 msgid "Print label"
 msgstr "Print label"
 
-#: resources/views/admin/meta_box/single.php:48
+#: resources/views/admin/meta_box/single.php:52
 msgid "Print labels"
 msgstr "Print labels"
 
@@ -181,44 +186,44 @@ msgstr "Sendy - Zendingen aanmaken"
 msgid "Sendy - Print labels"
 msgstr "Sendy - Labels printen"
 
-#: src/Modules/Orders/BulkActions.php:96 src/Modules/Orders/Single.php:174
+#: src/Modules/Orders/BulkActions.php:98 src/Modules/Orders/Single.php:175
 msgid "Sendy: Label printed"
 msgstr "Sendy: Label geprint"
 
-#: src/Modules/Orders/BulkActions.php:103
+#: src/Modules/Orders/BulkActions.php:105
 msgid "Non of the selected orders have any labels"
 msgstr "Voor de geselecteerde zendingen is geen label beschikbaar"
 
-#: src/Modules/Orders/BulkActions.php:166
+#: src/Modules/Orders/BulkActions.php:168
 msgid "The shipments will be created with the selected shop"
 msgstr "De zendingen worden aangemaakt met de geselecteerde shop"
 
-#: src/Modules/Orders/BulkActions.php:174
+#: src/Modules/Orders/BulkActions.php:176
 msgid "Select preference"
 msgstr "Selecteer verzendprofiel"
 
-#: src/Modules/Orders/BulkActions.php:175
+#: src/Modules/Orders/BulkActions.php:177
 msgid "The shipments will be created with the preference you select here"
 msgstr "De zendingen worden aangemaakt met de geselecteerde verzendvoorkeur"
 
 #. translators: %s The ID of the order
-#: src/Modules/Orders/OrdersModule.php:58
+#: src/Modules/Orders/OrdersModule.php:60
 msgid "Order #%s already has a shipment created"
 msgstr "Voor order #%s is al een zending aangemaakt"
 
-#: src/Modules/Orders/OrdersModule.php:92
+#: src/Modules/Orders/OrdersModule.php:94
 msgid "Sendy: Shipment created"
 msgstr "Sendy: Zending aangemaakt"
 
 #. translators: %1$s should contain the ID of the order and %2$s the error
-#: src/Modules/Orders/OrdersModule.php:99
-#: src/Modules/Orders/OrdersModule.php:114
+#: src/Modules/Orders/OrdersModule.php:101
+#: src/Modules/Orders/OrdersModule.php:116
 msgid "Error while creating shipment for order #%1$s: %2$s"
 msgstr ""
 "Er ging iets mis bij het aanmaken van een zending voor order #%1$s: %2$s"
 
 #. translators: %s should contain the ID of the order
-#: src/Modules/Orders/OrdersModule.php:105
+#: src/Modules/Orders/OrdersModule.php:107
 msgid ""
 "Error while creating shipment for order #%s: Authentication failed. Check "
 "the settings page to reconnect with Sendy."
@@ -228,7 +233,7 @@ msgstr ""
 "Sendy."
 
 #. translators: %s should contain the ID of the order
-#: src/Modules/Orders/OrdersModule.php:117
+#: src/Modules/Orders/OrdersModule.php:119
 msgid ""
 "Error while creating shipment for order #%s: Too many requests. Please try "
 "again later."
@@ -237,25 +242,25 @@ msgstr ""
 "requests. Probeer het later opnieuw."
 
 #. translators: %s should contain the ID of the order
-#: src/Modules/Orders/OrdersModule.php:120
+#: src/Modules/Orders/OrdersModule.php:122
 msgid "Error while creating shipment for order #%s: Unknown error."
 msgstr ""
 "Er ging iets mis bij het aanmaken van een zending voor order #%s: Onbekende "
 "fout."
 
-#: src/Modules/Orders/OrdersModule.php:159
+#: src/Modules/Orders/OrdersModule.php:161
 msgid "Something went wrong while downloading the labels"
 msgstr "Er ging iets mis bij het downloaden van de labels"
 
-#: src/Modules/Orders/Single.php:155
+#: src/Modules/Orders/Single.php:156
 msgid "Nonce verification failed"
 msgstr "Nonce verificatie mislukt"
 
-#: src/Modules/Orders/Single.php:162
+#: src/Modules/Orders/Single.php:163
 msgid "Order could not be found"
 msgstr "De bestelling kan niet gevonden worden"
 
-#: src/Modules/Orders/Single.php:170
+#: src/Modules/Orders/Single.php:171
 msgid "No shipment created for order"
 msgstr "Geen zending aangemaakt voor de bestelling"
 

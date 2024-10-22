@@ -25,6 +25,10 @@
         <?php endforeach; ?>
     </select>
 
+    <p><b><?php _e('Amount of packages', 'sendy')?> </b></p>
+
+    <input id="sendy-metabox-amount" type="number" step="1" value="<?php echo esc_html(get_option('sendy_previously_used_amount', 1)); ?>" style="width: 100%;">
+
     <p>
         <button class="button button-primary" id="sendy-metabox-create-shipment-button">
             <?php _e('Create shipment', 'sendy'); ?>

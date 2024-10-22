@@ -114,7 +114,8 @@ class Single extends OrdersModule
                 $this->create_shipment_from_order(
                     $order,
                     sanitize_key($_REQUEST['preference_id'] ?? ''),
-                    sanitize_key($_REQUEST['shop_id'] ?? '')
+                    sanitize_key($_REQUEST['shop_id'] ?? ''),
+                    sanitize_key($_REQUEST['amount'] ?? '')
                 );
 
                 wp_send_json_success();

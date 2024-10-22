@@ -2,6 +2,7 @@
 
 namespace Sendy\WooCommerce\Modules\Orders;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Sendy\Api\ApiException;
 use Sendy\Api\Connection;
 use Sendy\WooCommerce\ApiClientFactory;
@@ -46,10 +47,11 @@ abstract class OrdersModule
      * @param \WC_Order $order
      * @param string $preferenceId The UUID of the selected shipping preference
      * @param string $shopId The UUID of the selected shop
+     * @param int $amount The amount of packages the shipment should contain
      * @return void
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
-    protected function create_shipment_from_order(\WC_Order $order, string $preferenceId, string $shopId): void
+    protected function create_shipment_from_order(\WC_Order $order, string $preferenceId, string $shopId, int $amount): void
     {
         $this->apiClient ??= ApiClientFactory::buildConnectionUsingTokens();
 
@@ -62,7 +64,7 @@ abstract class OrdersModule
             'preference_id' => $preferenceId,
             'shop_id' => $shopId,
             'weight' => 1,
-            'amount' => 1,
+            'amount' => $amount,
             'reference' => $order->get_id(),
             'order_date' => $order->get_date_created()->format(\DateTimeInterface::RFC3339),
             'options' => [],

@@ -28,6 +28,11 @@ if (! function_exists('sendy_fields_generator')) {
                 case 'select':
                     woocommerce_wp_select($field);
                     break;
+
+                case 'number':
+                case 'text':
+                    woocommerce_wp_text_input($field);
+                    break;
             }
         }
     }

@@ -60,12 +60,14 @@ class BulkActions extends OrdersModule
             $this->create_shipment_from_order(
                 wc_get_order($id),
                 sanitize_key($_REQUEST['sendy_preference_id'] ?? ''),
-                sanitize_key($_REQUEST['sendy_shop_id'] ?? '')
+                sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
+                sanitize_key($_REQUEST['sendy_amount'] ?? '')
             );
         }
 
         update_option('sendy_previously_used_preference_id', sanitize_key($_REQUEST['sendy_preference_id'] ?? ''));
         update_option('sendy_previously_used_shop_id', sanitize_key($_REQUEST['sendy_shop_id'] ?? ''));
+        update_option('sendy_previously_used_shop_id', sanitize_key($_REQUEST['sendy_amount'] ?? ''));
 
         return $redirect;
     }
@@ -126,6 +128,15 @@ class BulkActions extends OrdersModule
                 Plugin::VERSION,
                 true
             );
+
+            wp_enqueue_style(
+                'sendy-admin-order-bulk',
+                SENDY_WC_PLUGIN_DIR_URL . '/resources/css/modal.css',
+                [],
+                Plugin::VERSION,
+            );
+
+
         }
     }
 
@@ -175,6 +186,13 @@ class BulkActions extends OrdersModule
             'description' => __('The shipments will be created with the preference you select here', 'sendy'),
             'value' => get_option('sendy_previously_used_preference_id'),
             'options' => $preferences,
+        ];
+
+        $fields[] = [
+            'id' => 'sendy_amount',
+            'type' => 'number',
+            'label' => __('Amount of packages', 'sendy'),
+            'value' => get_option('sendy_previously_used_amount', 1),
         ];
 
         return $fields;

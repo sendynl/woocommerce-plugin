@@ -21,7 +21,7 @@
                 title = $(':selected', this).text();
 
             if (value === 'sendy_create_shipments') {
-                tb_show('', '/?TB_inline=true&width=640&height=480&inlineId=sendy-create-shipments-modal');
+                tb_show('', '/?TB_inline=true&width=420&height=320&inlineId=sendy-create-shipments-modal');
 
                 let thickboxWindow = $('#TB_window');
 
@@ -42,6 +42,9 @@
 
                     let nonce = thickboxWindow.find('#sendy_bulk_modal_nonce').val();
                     $(sendyFieldsContainer).append(`<input type="hidden" name="sendy_bulk_modal_nonce" value="${nonce}">`);
+
+                    let amount = thickboxWindow.find('#sendy_amount').val();
+                    $(sendyFieldsContainer).append(`<input type="hidden" name="sendy_amount" value="${amount}">`);
 
                     $(this).prop('disabled', true);
 
