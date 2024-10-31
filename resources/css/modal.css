@@ -20,3 +20,7 @@
         }
     }
 }
+
+#sendy-create-shipments-modal {
+    display: none;
+}

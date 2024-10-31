@@ -70,11 +70,14 @@ class Single extends OrdersModule
         $preferences = (new Preferences())->get();
         $shops = (new Shops())->list();
 
-        echo View::fromTemplate('admin/meta_box/single.php')->render([
-            'order' => $order,
-            'preferences' => $preferences,
-            'shops' => $shops,
-        ]);
+        echo wp_kses(
+            View::fromTemplate('admin/meta_box/single.php')->render([
+                'order' => $order,
+                'preferences' => $preferences,
+                'shops' => $shops,
+            ]),
+            View::ALLOWED_TAGS
+        );
     }
 
     /**
@@ -105,7 +108,7 @@ class Single extends OrdersModule
     {
         try {
             if (!isset($_REQUEST['nonce']) || !check_ajax_referer('sendy_create_shipment', 'nonce')) {
-                throw new \Exception( esc_html__( 'Nonce verification failed', 'postnl-for-woocommerce' ) );
+                throw new \Exception( esc_html__( 'Nonce verification failed', 'sendy' ) );
             }
 
             if (!empty($_REQUEST['order_id'])) {
@@ -133,7 +136,10 @@ class Single extends OrdersModule
      */
     public function display_shipping_data(WC_Order $order): void
     {
-        echo View::fromTemplate('admin/single/shipping_data.php')->render(['order' => $order]);
+        echo wp_kses(
+            View::fromTemplate('admin/single/shipping_data.php')->render(['order' => $order]),
+            View::ALLOWED_TAGS
+        );
     }
 
     /**
@@ -153,22 +159,22 @@ class Single extends OrdersModule
         }
 
         if (!wp_verify_nonce(sanitize_key($_REQUEST['sendy_download_label_nonce'] ?? ''), 'sendy_download_label')) {
-            wp_die(__('Nonce verification failed', 'sendy'));
+            wp_die(esc_html__('Nonce verification failed', 'sendy'));
         }
 
         if (sanitize_key($_REQUEST['sendy_action'] ?? '') === 'download_label') {
             $order = wc_get_order(sanitize_key($_REQUEST['order_id'] ?? ''));
 
             if (!$order) {
-                wp_die(__('Order could not be found', 'sendy'));
+                wp_die(esc_html__('Order could not be found', 'sendy'));
             }
 
             if (!current_user_can('manage_woocommerce') || !current_user_can('view_order', $order->get_id())) {
-                wp_die('You do not have sufficient permissions to access this page.');
+                wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'sendy'));
             }
 
             if (!$order->meta_exists('_sendy_shipment_id')) {
-                wp_die(__('No shipment created for order', 'sendy'));
+                wp_die(esc_html__('No shipment created for order', 'sendy'));
             }
 
             if (get_option('sendy_mark_order_as_completed') === 'after-label-printed') {

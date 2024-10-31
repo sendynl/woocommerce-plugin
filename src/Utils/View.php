@@ -30,6 +30,7 @@ class View
             'class'    => [],
             'id'       => [],
             'disabled' => [],
+            'data-carrier' => [],
         ],
         'cite'       => [
             'title' => [],
@@ -49,6 +50,10 @@ class View
         'dl'         => [],
         'dt'         => [],
         'em'         => [],
+        'form' => [
+            'action' => [],
+            'method' => [],
+        ],
         'h1'         => [],
         'h2'         => [],
         'h3'         => [],
@@ -74,12 +79,23 @@ class View
             'name' => [],
             'value'    => [],
             'type'  => [],
+            'style' => [],
+            'step' => [],
+            'checked' => [],
         ],
         'li'         => [
             'class' => [],
         ],
+        'label' => [],
+        'mark' => [
+            'class' => [],
+        ],
         'ol'         => [
             'class' => [],
+        ],
+        'option' => [
+            'value' => [],
+            'selected' => [],
         ],
         'p'          => [
             'class' => [],
@@ -105,19 +121,14 @@ class View
             'data-tip'    => [],
             'data-target' => [],
         ],
+        'select' => [
+            'id' => [],
+            'class' => [],
+            'name' => [],
+            'style' => [],
+        ],
         'strike'     => [],
         'strong'     => [],
-        'svg'        => [
-            'aria-hidden'     => [],
-            'focusable'       => [],
-            'data-prefix'     => [],
-            'data-icon'       => [],
-            'role'            => [],
-            'xmlns'           => [],
-            'viewbox'         => [],
-            'class'           => [],
-            'data-v-19c3f3ae' => [],
-        ],
         'table'      => [
             'class' => []
         ],
@@ -130,6 +141,10 @@ class View
         'tr'         => [
             'class'     => [],
             'data-name' => [],
+        ],
+        'th' => [
+            'class' => [],
+            'colspan' => [],
         ],
         'td'         => [
             'class'   => [],
@@ -154,7 +169,7 @@ class View
             return new self($file);
         }
 
-        throw new InvalidArgumentException('Cannot find template: ' . $template);
+        throw new InvalidArgumentException('Cannot find template: ' . esc_html($template));
     }
 
     public function render($data = []): string

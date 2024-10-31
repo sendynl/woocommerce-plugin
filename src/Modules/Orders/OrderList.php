@@ -51,11 +51,17 @@ class OrderList
         $order = wc_get_order($order_id);
 
         if ($column === 'sendy_shipping_method') {
-            echo View::fromTemplate('admin/orders/shipping_method.php')->render(['order' => $order]);
+            echo wp_kses(
+                View::fromTemplate('admin/orders/shipping_method.php')->render(['order' => $order]),
+                View::ALLOWED_TAGS
+            );
         }
 
         if ($column === 'sendy_track_trace') {
-            echo View::fromTemplate('admin/orders/track_trace.php')->render(['order' => $order]);
+            echo wp_kses(
+                View::fromTemplate('admin/orders/track_trace.php')->render(['order' => $order]),
+                View::ALLOWED_TAGS
+            );
         }
     }
 }

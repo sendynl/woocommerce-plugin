@@ -61,7 +61,10 @@ class Settings
             }
         }
 
-        echo View::fromTemplate('admin/settings.php')->render(['name' => $name]);
+        echo wp_kses(
+            View::fromTemplate('admin/settings.php')->render(['name' => $name]),
+            View::ALLOWED_TAGS
+        );
     }
 
     public function register_settings(): void

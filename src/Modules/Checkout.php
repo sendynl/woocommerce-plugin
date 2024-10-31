@@ -47,11 +47,14 @@ final class Checkout
 
                 $selectedPickupPoint = WC()->session->get("sendy_selected_parcelshop_{$this->get_shipping_method_instance_id()}");
 
-                echo View::fromTemplate('checkout/pickup_point_selection.php')->render([
-                    'carrier' => $carrier,
-                    'instance_id' => $this->get_shipping_method_instance_id(),
-                    'selected_pickup_point' => $selectedPickupPoint,
-                ]);
+                echo wp_kses(
+                    View::fromTemplate('checkout/pickup_point_selection.php')->render([
+                        'carrier' => $carrier,
+                        'instance_id' => $this->get_shipping_method_instance_id(),
+                        'selected_pickup_point' => $selectedPickupPoint,
+                    ]),
+                    View::ALLOWED_TAGS
+                );
             }
         }
     }
@@ -110,8 +113,12 @@ final class Checkout
     public function show_selected_pickup_point_on_confirmation(string $addressType, \WC_Order $order): void
     {
         if ($addressType === 'shipping' && $order->meta_exists('_sendy_pickup_point_id')) {
-            echo View::fromTemplate('checkout/order_confirmation.php')
-                ->render(['pickup_point' => $order->get_meta('_sendy_pickup_point_data')]);
+            echo wp_kses(
+                View::fromTemplate('checkout/order_confirmation.php')->render([
+                    'pickup_point' => $order->get_meta('_sendy_pickup_point_data')
+                ]),
+                View::ALLOWED_TAGS
+            );
         }
     }
 

@@ -1,14 +1,14 @@
 <?php /** @var string|null $name */ ?>
 
 <div class="wrap">
-    <h1><?php echo get_admin_page_title() ?></h1>
+    <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
     <?php if (!sendy_is_authenticated()) : ?>
-        <p><?php echo esc_html__('In order to start using the plug-in you have to authenticate with Sendy. Click the button to start', 'sendy'); ?></p>
+        <p><?php esc_html_e('In order to start using the plug-in you have to authenticate with Sendy. Click the button to start', 'sendy'); ?></p>
 
         <p>
             <a href="<?php echo esc_url(sendy_initialize_plugin_url()); ?>" class="button button-primary">
-                <?php echo esc_html__('Authenticate', 'sendy'); ?>
+                <?php esc_html_e('Authenticate', 'sendy'); ?>
             </a>
         </p>
     <?php else: ?>
@@ -16,7 +16,7 @@
         <table class="form-table">
             <tbody>
             <tr>
-                <th><?php echo esc_html__('Authentication', 'sendy'); ?></th>
+                <th><?php esc_html_e('Authentication', 'sendy'); ?></th>
                 <td>
                     <p><?php
                         // translators: %s will be filled with the e-mail address of the authenticated user
@@ -25,7 +25,7 @@
 
                     <p>
                         <a class="button" href="<?php echo esc_url(admin_url('?sendy_logout')); ?>">
-                            <?php echo esc_html__('Log out', 'sendy'); ?>
+                            <?php esc_html_e('Log out', 'sendy'); ?>
                         </a>
                     </p>
                 </td>

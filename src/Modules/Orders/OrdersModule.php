@@ -155,10 +155,11 @@ abstract class OrdersModule
             header('Pragma: public');
             header('Content-Length: ' . strlen($labels));
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             echo $labels;
             exit;
         } catch (ApiException $exception) {
-            wp_die(__('Something went wrong while downloading the labels', 'sendy'));
+            wp_die(esc_html__('Something went wrong while downloading the labels', 'sendy'));
         }
     }
 
@@ -227,7 +228,7 @@ abstract class OrdersModule
                 'sku' => $product->get_sku(),
                 'quantity' => $item->get_quantity(),
                 'unit_price' => $item->get_subtotal() / $item->get_quantity(),
-                'unit_weight' => absint($product->get_weight() * 1000),
+                'unit_weight' => absint($product->get_weight()) > 0 ? absint($product->get_weight()) * 1000 : null,
             ];
         }
     }

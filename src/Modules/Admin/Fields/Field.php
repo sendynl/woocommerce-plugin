@@ -34,9 +34,12 @@ abstract class Field
     {
         $this->initializeView();
 
-        echo $this->view->render(array_merge($parameters, [
-            'option_name' => $this->optionName,
-            'extra_description' => $this->extraDescription,
-        ]));
+        echo wp_kses(
+            $this->view->render(array_merge($parameters, [
+                'option_name' => $this->optionName,
+                'extra_description' => $this->extraDescription,
+            ])),
+            View::ALLOWED_TAGS
+        );
     }
 }

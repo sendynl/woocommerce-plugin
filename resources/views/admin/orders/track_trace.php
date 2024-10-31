@@ -1,7 +1,7 @@
 <?php /** @var WC_Order $order */ ?>
 
 <?php if (!$order->meta_exists('_sendy_shipment_id')) : ?>
-    <p><?php echo esc_html__('No shipment created yet', 'sendy'); ?></p>
+    <p><?php esc_html_e('No shipment created yet', 'sendy'); ?></p>
 
 <?php else : ?>
     <?php if ($order->meta_exists('_sendy_packages')) : ?>
@@ -14,7 +14,7 @@
         <?php endforeach; ?>
     <?php else : ?>
         <a href="https://app.sendy.nl/shipment/<?php esc_url($order->get_meta('_sendy_shipment_id')) ?>/edit" target="_blank">
-            <?php _e('Edit shipment', 'sendy'); ?>
+            <?php esc_html_e('Edit shipment', 'sendy'); ?>
         </a>
     <?php endif; ?>
 <?php endif; ?>

@@ -67,7 +67,7 @@ class BulkActions extends OrdersModule
 
         update_option('sendy_previously_used_preference_id', sanitize_key($_REQUEST['sendy_preference_id'] ?? ''));
         update_option('sendy_previously_used_shop_id', sanitize_key($_REQUEST['sendy_shop_id'] ?? ''));
-        update_option('sendy_previously_used_shop_id', sanitize_key($_REQUEST['sendy_amount'] ?? ''));
+        update_option('sendy_previously_used_amount', sanitize_key($_REQUEST['sendy_amount'] ?? ''));
 
         return $redirect;
     }
@@ -135,8 +135,6 @@ class BulkActions extends OrdersModule
                 [],
                 Plugin::VERSION,
             );
-
-
         }
     }
 
@@ -153,9 +151,12 @@ class BulkActions extends OrdersModule
             $preferences = (new Preferences())->get();
             $shops = (new Shops())->list();
 
-            echo View::fromTemplate('admin/modals/create-shipment.php')->render([
-                'fields' => $this->create_shipment_fields($shops, $preferences)
-            ]);
+            echo wp_kses(
+                View::fromTemplate('admin/modals/create-shipment.php')->render([
+                    'fields' => $this->create_shipment_fields($shops, $preferences)
+                ]),
+                View::ALLOWED_TAGS
+            );
         }
     }
 
