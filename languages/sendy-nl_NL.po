@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sendy 3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sendy\n"
-"POT-Creation-Date: 2024-10-22T09:44:38+00:00\n"
-"PO-Revision-Date: 2024-10-22 11:45+0200\n"
+"POT-Creation-Date: 2024-11-01T08:49:36+00:00\n"
+"PO-Revision-Date: 2024-11-01 09:50+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -38,7 +38,7 @@ msgid "https://sendy.nl/"
 msgstr "https://sendy.nl/"
 
 #: resources/views/admin/meta_box/single.php:10
-#: src/Modules/Orders/BulkActions.php:167
+#: src/Modules/Orders/BulkActions.php:177
 msgid "Shop"
 msgstr "Shop"
 
@@ -47,7 +47,7 @@ msgid "Shipping preference"
 msgstr "Verzendprofiel"
 
 #: resources/views/admin/meta_box/single.php:28
-#: src/Modules/Orders/BulkActions.php:185
+#: src/Modules/Orders/BulkActions.php:195
 msgid "Amount of packages"
 msgstr "Aantal pakketten"
 
@@ -68,7 +68,7 @@ msgstr "Print label"
 msgid "Print labels"
 msgstr "Print labels"
 
-#: resources/views/admin/modals/create-shipment.php:8
+#: resources/views/admin/modals/create-shipment.php:9
 msgid "Create shipments"
 msgstr "Zending aanmaken"
 
@@ -138,35 +138,35 @@ msgstr "Pick-up punt wijzigen"
 msgid "Selected pickup point"
 msgstr "Geselecteerd pick-up punt"
 
-#: src/Modules/Admin/Settings.php:79
+#: src/Modules/Admin/Settings.php:82
 msgid "Import weight"
 msgstr "Gewichten importeren"
 
-#: src/Modules/Admin/Settings.php:87
+#: src/Modules/Admin/Settings.php:90
 msgid "Import products"
 msgstr "Importeer producten"
 
-#: src/Modules/Admin/Settings.php:95
+#: src/Modules/Admin/Settings.php:98
 msgid "Mark order as completed"
 msgstr "Wijzig orderstatus naar compleet"
 
-#: src/Modules/Admin/Settings.php:104
+#: src/Modules/Admin/Settings.php:107
 msgid "Import weight when creating a shipment"
 msgstr "Verstuur gewichten naar Sendy bij het aanmaken van een zending"
 
-#: src/Modules/Admin/Settings.php:109
+#: src/Modules/Admin/Settings.php:112
 msgid "Send products to Sendy when creating a shipment"
 msgstr "Verstuur producten naar Sendy bij het aanmaken van een zending"
 
-#: src/Modules/Admin/Settings.php:115
+#: src/Modules/Admin/Settings.php:118
 msgid "Manually"
 msgstr "Handmatig"
 
-#: src/Modules/Admin/Settings.php:116
+#: src/Modules/Admin/Settings.php:119
 msgid "After the shipment is created"
 msgstr "Nadat de zending is aangemaakt"
 
-#: src/Modules/Admin/Settings.php:117
+#: src/Modules/Admin/Settings.php:120
 msgid "After the label is printed"
 msgstr "Nadat het label is geprint"
 
@@ -186,7 +186,7 @@ msgstr "Sendy - Zendingen aanmaken"
 msgid "Sendy - Print labels"
 msgstr "Sendy - Labels printen"
 
-#: src/Modules/Orders/BulkActions.php:98 src/Modules/Orders/Single.php:175
+#: src/Modules/Orders/BulkActions.php:98 src/Modules/Orders/Single.php:181
 msgid "Sendy: Label printed"
 msgstr "Sendy: Label geprint"
 
@@ -194,15 +194,15 @@ msgstr "Sendy: Label geprint"
 msgid "Non of the selected orders have any labels"
 msgstr "Voor de geselecteerde zendingen is geen label beschikbaar"
 
-#: src/Modules/Orders/BulkActions.php:168
+#: src/Modules/Orders/BulkActions.php:178
 msgid "The shipments will be created with the selected shop"
 msgstr "De zendingen worden aangemaakt met de geselecteerde shop"
 
-#: src/Modules/Orders/BulkActions.php:176
+#: src/Modules/Orders/BulkActions.php:186
 msgid "Select preference"
 msgstr "Selecteer verzendprofiel"
 
-#: src/Modules/Orders/BulkActions.php:177
+#: src/Modules/Orders/BulkActions.php:187
 msgid "The shipments will be created with the preference you select here"
 msgstr "De zendingen worden aangemaakt met de geselecteerde verzendvoorkeur"
 
@@ -248,19 +248,23 @@ msgstr ""
 "Er ging iets mis bij het aanmaken van een zending voor order #%s: Onbekende "
 "fout."
 
-#: src/Modules/Orders/OrdersModule.php:161
+#: src/Modules/Orders/OrdersModule.php:162
 msgid "Something went wrong while downloading the labels"
 msgstr "Er ging iets mis bij het downloaden van de labels"
 
-#: src/Modules/Orders/Single.php:156
+#: src/Modules/Orders/Single.php:111 src/Modules/Orders/Single.php:162
 msgid "Nonce verification failed"
 msgstr "Nonce verificatie mislukt"
 
-#: src/Modules/Orders/Single.php:163
+#: src/Modules/Orders/Single.php:169
 msgid "Order could not be found"
 msgstr "De bestelling kan niet gevonden worden"
 
-#: src/Modules/Orders/Single.php:171
+#: src/Modules/Orders/Single.php:173
+msgid "You do not have sufficient permissions to access this page."
+msgstr "Je hebt niet de juiste rechten om de pagina te bekijken."
+
+#: src/Modules/Orders/Single.php:177
 msgid "No shipment created for order"
 msgstr "Geen zending aangemaakt voor de bestelling"
 
