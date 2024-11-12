@@ -1,4 +1,12 @@
-<?php /** @var string|null $name */ ?>
+<?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+/**
+ * @var string|null $name
+ */
+
+?>
 
 <div class="wrap">
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>

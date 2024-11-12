@@ -1,3 +1,14 @@
+<?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+/**
+ * @var string $option_name
+ * @var string $extra_description
+ */
+
+?>
+
 <input type="hidden" value="false" name="<?php echo esc_html($option_name); ?>">
 
 <label>

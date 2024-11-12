@@ -1,4 +1,11 @@
-<?php /** @var WC_Order $order */ ?>
+<?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+/**
+ * @var WC_Order $order
+ */
+?>
 
 <?php if (!$order->meta_exists('_sendy_shipment_id')) : ?>
     <p><?php esc_html_e('No shipment created yet', 'sendy'); ?></p>

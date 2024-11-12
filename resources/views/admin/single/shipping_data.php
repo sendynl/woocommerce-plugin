@@ -1,4 +1,10 @@
-<?php /** @var WC_Order $order */ ?>
+<?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+/** @var WC_Order $order */
+
+?>
 
 <p><strong><?php esc_html_e('Shipping method', 'sendy'); ?>:</strong> <?php echo esc_html($order->get_shipping_method()); ?></p>
 

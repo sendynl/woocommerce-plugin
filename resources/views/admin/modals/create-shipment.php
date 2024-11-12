@@ -1,4 +1,12 @@
-<?php /** @var array $fields */ ?>
+<?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+/**
+ * @var array $fields
+ */
+
+?>
 <div id="sendy-create-shipments-modal">
     <input type="hidden" id="sendy_bulk_modal_nonce" value="<?php echo esc_html(wp_create_nonce('sendy_bulk_modal')); ?>">
 

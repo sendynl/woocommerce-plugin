@@ -1,8 +1,12 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * @var string $option_name
  * @var array<string,string> $options
  */
+
 ?>
 
 <select name="<?php echo esc_html($option_name); ?>">

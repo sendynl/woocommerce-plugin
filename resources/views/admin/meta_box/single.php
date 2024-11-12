@@ -1,9 +1,13 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * @var WC_Order $order
  * @var array<string,string> $shops
  * @var array<string,string> $preferences
  */
+
 ?>
 
 <?php if (!$order->meta_exists('_sendy_shipment_id')): ?>

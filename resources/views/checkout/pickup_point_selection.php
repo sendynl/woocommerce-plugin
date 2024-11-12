@@ -1,9 +1,13 @@
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 /**
  * @var string $carrier
  * @var int $instance_id
  * @var array<string,mixed> $selected_pickup_point
  */
+
 ?>
 <tr>
     <th><?php esc_html_e('Pick-up point', 'sendy'); ?></th>
