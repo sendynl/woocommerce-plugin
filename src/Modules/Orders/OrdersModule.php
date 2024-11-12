@@ -145,7 +145,7 @@ abstract class OrdersModule
                 ob_clean();
             }
 
-            $labels = base64_decode($response['labels']);
+            $labels_safe = base64_decode($response['labels']);
 
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
@@ -153,10 +153,10 @@ abstract class OrdersModule
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
-            header('Content-Length: ' . strlen($labels));
+            header('Content-Length: ' . strlen($labels_safe));
 
             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-            echo $labels;
+            echo $labels_safe;
             exit;
         } catch (ApiException $exception) {
             wp_die(esc_html__('Something went wrong while downloading the labels', 'sendy'));
