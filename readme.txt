@@ -27,3 +27,11 @@ Voordelen van de WooCommerce integratie:
 - Met de parcelshopfinder geef je jouw klant de mogelijkheid om het pakket op te halen bij een parcelshop naar keuze.
 
 Nog geen klant van Sendy? Ga naar www.sendy.nl en maak een gratis online account aan.
+
+== External services ==
+
+Deze plugin verbindt met de Sendy API om zendingen aan te maken.
+
+Hierbij worden de adres- en contactgegevens van de je klnaten en (optioneel) de bestelde producten doorgestuurd naar Sendy zodra je de zending aanmaakt.
+
+Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) en [privacy statement](https://sendy.nl/privacy-statement/) van toepassing.
