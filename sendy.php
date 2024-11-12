@@ -34,10 +34,10 @@ if (! defined('SENDY_WC_PLUGIN_BASENAME')) {
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-function init_sendy() {
+function sendy_init() {
     require_once __DIR__ . '/src/helpers.php';
 
     return Sendy\WooCommerce\Plugin::instance();
 }
 
-add_action('plugins_loaded', 'init_sendy');
+add_action('plugins_loaded', 'sendy_init');
