@@ -6,3 +6,8 @@
 .distignore
 .gitignore
 README.md
+CONTRIBUTING.md
+SECURITY.md
+output.log
+DOCKER_ENV
+docker_tag

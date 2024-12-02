@@ -1,0 +1,41 @@
+name: Check the plugin with the plugin-check-action
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: latest
+          coverage: none
+          tools: wp-cli
+
+      - name: Install latest version of dist-archive-command
+        run: wp package install wp-cli/dist-archive-command:@stable
+
+      - name: Install composer dependencies
+        uses: php-actions/composer@v6
+        with:
+          dev: no
+          args: "--optimize-autoloader"
+
+      - name: Build plugin
+        run: |
+          wp dist-archive . ./sendy.zip --plugin-dirname=sendy
+          mkdir tmp-build
+          unzip sendy.zip -d tmp-build
+
+      - name: Run plugin check
+        uses: wordpress/plugin-check-action@v1
+        with:
+          build-dir: './tmp-build/sendy'
