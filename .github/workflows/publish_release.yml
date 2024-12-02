@@ -1,0 +1,41 @@
+name: Deploy a new release to the WordPress.org Repository
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  deploy_to_wordpress_repository:
+    name: Deploy to WP.org
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+
+      - name: Install Subversion
+        run: |
+          sudo apt update
+          sudo apt install subversion
+
+      - name: Install composer dependencies
+        uses: php-actions/composer@v6
+        with:
+          dev: no
+          args: "--optimize-autoloader"
+
+      - name: Publish the plugin to the WordPress plugin directory
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: 'sendy'
+
+      - name: Attach the zip file to the release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
