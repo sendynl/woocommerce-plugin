@@ -6,6 +6,7 @@
 .distignore
 .gitignore
 README.md
+CONTRIBUTING.md
 output.log
 DOCKER_ENV
 docker_tag
