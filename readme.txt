@@ -2,8 +2,8 @@
 Plugin Name: Sendy
 Plugin URI: https://app.sendy.nl/
 Description: A WooCommerce plugin that connects your site to the Sendy platform
-Version: 3.0.1
-Stable tag: 3.0.1
+Version: 3.0.2
+Stable tag: 3.0.2
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
