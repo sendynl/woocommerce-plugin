@@ -23,14 +23,16 @@ class OrderList
      */
     public function add_sendy_column_headers(array $columns): array
     {
-        $wc_actions = $columns['wc_actions'];
+        $wc_actions = $columns['wc_actions'] ?? null;
 
         unset($columns['wc_actions']);
 
         $columns['sendy_shipping_method'] = esc_html__('Shipping method', 'sendy');
         $columns['sendy_track_trace'] = esc_html__('Track and trace', 'sendy');
 
-        $columns['wc_actions'] = $wc_actions;
+        if ($wc_actions) {
+            $columns['wc_actions'] = $wc_actions;
+        }
 
         return $columns;
     }
