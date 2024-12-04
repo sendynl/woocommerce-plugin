@@ -2,8 +2,8 @@
 Plugin Name: Sendy
 Plugin URI: https://app.sendy.nl/
 Description: A WooCommerce plugin that connects your site to the Sendy platform
-Version: 3.0.2
-Stable tag: 3.0.2
+Version: 3.0.3
+Stable tag: 3.0.3
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
@@ -13,7 +13,7 @@ Requires Plugins: woocommerce
 WC requires at least: 8.2
 WC tested up to: 9.4.2
 
-Een plugin van Sendy voor WooCommerce waarmee op eenvoudige wijze labels aan kunt maken voor uw zendingen.
+Een plugin van Sendy voor WooCommerce waarmee je op eenvoudige wijze labels aan kunt maken voor zendingen.
 
 == Description ==
 
