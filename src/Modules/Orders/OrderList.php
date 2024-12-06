@@ -93,6 +93,9 @@ class OrderList
                 $order->update_meta_data('_sendy_packages', $shipment['packages']);
                 $order->update_meta_data('sendy_shipment_id', null);
             } catch (ApiException $e) {
+                if ($e->getPrevious()->getCode() === 404) {
+                    $order->update_meta_data('sendy_shipment_id', null);
+                }
             }
         }
     }
