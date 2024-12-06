@@ -169,7 +169,7 @@ class Single extends OrdersModule
                 wp_die(esc_html__('Order could not be found', 'sendy'));
             }
 
-            if (current_user_can('manage_woocommerce') || current_user_can('edit_shop_orders')) {
+            if (!current_user_can('manage_woocommerce') || !current_user_can('edit_shop_orders')) {
                 wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'sendy'));
             }
 
