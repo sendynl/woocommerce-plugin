@@ -58,3 +58,19 @@ Deze plugin verbindt met de Sendy API om zendingen aan te maken.
 Hierbij worden de adres- en contactgegevens van de je klanten en (optioneel) de bestelde producten doorgestuurd naar Sendy zodra je de zending aanmaakt.
 
 Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) en [privacy statement](https://sendy.nl/privacy-statement/) van toepassing.
+
+== Changelog ==
+
+= 3.0.3 =
+* Fix an issue where labels could not be downloaded
+* Fix an error in the order overview tables
+* Migrate data to show the shipments created by the legacy plug-in
+
+= 3.0.2 =
+* Fix an issue where labels could not be downloaded
+
+= 3.0.1 =
+* Update the tested-up-to versions for WordPress and WooCommerce
+
+= 3.0 =
+* Initial release of the new Sendy plug-in
