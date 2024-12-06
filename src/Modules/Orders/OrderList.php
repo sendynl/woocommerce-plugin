@@ -2,12 +2,19 @@
 
 namespace Sendy\WooCommerce\Modules\Orders;
 
+use GuzzleHttp\Exception\GuzzleException;
+use Sendy\Api\ApiException;
+use Sendy\WooCommerce\Repositories\Shipments;
 use Sendy\WooCommerce\Utils\View;
 
 class OrderList
 {
+    private Shipments $shipments;
+
     public function __construct()
     {
+        $this->shipments = new Shipments();
+
         add_filter('manage_edit-shop_order_columns', [$this, 'add_sendy_column_headers'], 29);
         add_filter('manage_woocommerce_page_wc-orders_columns', [$this, 'add_sendy_column_headers'], 29);
 
@@ -52,6 +59,8 @@ class OrderList
 
         $order = wc_get_order($order_id);
 
+        $this->migrate_legacy_data($order);
+
         if ($column === 'sendy_shipping_method') {
             echo wp_kses(
                 View::fromTemplate('admin/orders/shipping_method.php')->render(['order' => $order]),
@@ -64,6 +73,27 @@ class OrderList
                 View::fromTemplate('admin/orders/track_trace.php')->render(['order' => $order]),
                 View::ALLOWED_TAGS
             );
+        }
+    }
+
+    /**
+     * Migrate the meta data from the legacy plug-in to the new structure
+     *
+     * @param \WC_Order $order
+     * @return void
+     * @throws GuzzleException
+     */
+    private function migrate_legacy_data(\WC_Order $order): void
+    {
+        if ($order->get_meta('sendy_shipment_id')) {
+            try {
+                $shipment = $this->shipments->get($order->get_meta('sendy_shipment_id'));
+
+                $order->update_meta_data('_sendy_shipment_id', $shipment['uuid']);
+                $order->update_meta_data('_sendy_packages', $shipment['packages']);
+                $order->update_meta_data('sendy_shipment_id', null);
+            } catch (ApiException $e) {
+            }
         }
     }
 }
