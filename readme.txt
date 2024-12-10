@@ -2,8 +2,8 @@
 Plugin Name: Sendy
 Plugin URI: https://app.sendy.nl/
 Description: A WooCommerce plugin that connects your site to the Sendy platform
-Version: 3.0.5
-Stable tag: 3.0.5
+Version: 3.0.6
+Stable tag: 3.0.6
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
@@ -60,6 +60,9 @@ Hierbij worden de adres- en contactgegevens van de je klanten en (optioneel) de 
 Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) en [privacy statement](https://sendy.nl/privacy-statement/) van toepassing.
 
 == Changelog ==
+
+= 3.0.6 =
+* Fix an issue where migrating data to the new format caused an error
 
 = 3.0.4 =
 * Prevent excessive requests to the API
