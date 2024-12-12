@@ -57,11 +57,9 @@ class OrderList
             return;
         }
 
-        $order = wc_get_order($order_id);
-
-        $this->migrate_legacy_data($order);
-
         if ($column === 'sendy_shipping_method') {
+            $order = wc_get_order($order_id);
+
             echo wp_kses(
                 View::fromTemplate('admin/orders/shipping_method.php')->render(['order' => $order]),
                 View::ALLOWED_TAGS
@@ -69,6 +67,10 @@ class OrderList
         }
 
         if ($column === 'sendy_track_trace') {
+            $order = wc_get_order($order_id);
+
+            $this->migrate_legacy_data($order);
+
             echo wp_kses(
                 View::fromTemplate('admin/orders/track_trace.php')->render(['order' => $order]),
                 View::ALLOWED_TAGS
@@ -81,21 +83,22 @@ class OrderList
      *
      * @param \WC_Order $order
      * @return void
-     * @throws GuzzleException
      */
     private function migrate_legacy_data(\WC_Order $order): void
     {
-        if ($order->get_meta('sendy_shipment_id')) {
+        if ($order->meta_exists('sendy_shipment_id')) {
             try {
                 $shipment = $this->shipments->get($order->get_meta('sendy_shipment_id'));
 
                 $order->update_meta_data('_sendy_shipment_id', $shipment['uuid']);
                 $order->update_meta_data('_sendy_packages', $shipment['packages']);
-                $order->update_meta_data('sendy_shipment_id', null);
-            } catch (ApiException $e) {
+                $order->delete_meta_data('sendy_shipment_id');
+            } catch (ApiException|GuzzleException $e) {
                 if ($e->getMessage() === 'Shipment data no longer exists') {
-                    $order->update_meta_data('sendy_shipment_id', null);
+                    $order->delete_meta_data('sendy_shipment_id');
                 }
+            } finally {
+                $order->save();
             }
         }
     }
