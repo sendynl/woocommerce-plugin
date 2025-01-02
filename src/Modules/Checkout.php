@@ -132,7 +132,7 @@ final class Checkout
      */
     private function get_shipping_method_instance_id(): ?int
     {
-        $selectedMethods = WC()->session->get('chosen_shipping_methods');
+        $selectedMethods = WC()->session->get('chosen_shipping_methods') ?? [];
 
         $pickupPointDelivery = array_filter(
             $selectedMethods,

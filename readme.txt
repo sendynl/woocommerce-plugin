@@ -64,6 +64,7 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 = 3.0.7 =
 * Reduce calls to the API when migrating legacy data
 * Improve performance on the overview pages
+* Fix an error on the checkout page
 
 = 3.0.6 =
 * Fix an issue where migrating data to the new format caused an error
