@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sendy 3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sendy\n"
-"POT-Creation-Date: 2024-11-01T08:49:36+00:00\n"
-"PO-Revision-Date: 2024-11-01 09:50+0100\n"
+"POT-Creation-Date: 2025-01-02T13:07:56+00:00\n"
+"PO-Revision-Date: 2025-01-02 14:09+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -37,50 +37,50 @@ msgstr "Een plug-in die je WooCommerce shop verbindt met Sendy"
 msgid "https://sendy.nl/"
 msgstr "https://sendy.nl/"
 
-#: resources/views/admin/meta_box/single.php:10
+#: resources/views/admin/meta_box/single.php:14
 #: src/Modules/Orders/BulkActions.php:177
 msgid "Shop"
 msgstr "Shop"
 
-#: resources/views/admin/meta_box/single.php:20
+#: resources/views/admin/meta_box/single.php:24
 msgid "Shipping preference"
 msgstr "Verzendprofiel"
 
-#: resources/views/admin/meta_box/single.php:28
+#: resources/views/admin/meta_box/single.php:32
 #: src/Modules/Orders/BulkActions.php:195
 msgid "Amount of packages"
 msgstr "Aantal pakketten"
 
-#: resources/views/admin/meta_box/single.php:34
+#: resources/views/admin/meta_box/single.php:38
 msgid "Create shipment"
 msgstr "Zending aanmaken"
 
-#: resources/views/admin/meta_box/single.php:39
-#: src/Modules/Orders/OrderList.php:31
+#: resources/views/admin/meta_box/single.php:43
+#: src/Modules/Orders/OrderList.php:38
 msgid "Track and trace"
 msgstr "Track en trace"
 
-#: resources/views/admin/meta_box/single.php:50
+#: resources/views/admin/meta_box/single.php:54
 msgid "Print label"
 msgstr "Print label"
 
-#: resources/views/admin/meta_box/single.php:52
+#: resources/views/admin/meta_box/single.php:56
 msgid "Print labels"
 msgstr "Print labels"
 
-#: resources/views/admin/modals/create-shipment.php:9
+#: resources/views/admin/modals/create-shipment.php:17
 msgid "Create shipments"
 msgstr "Zending aanmaken"
 
-#: resources/views/admin/orders/track_trace.php:4
+#: resources/views/admin/orders/track_trace.php:11
 msgid "No shipment created yet"
 msgstr "Nog geen zending aangemaakt"
 
-#: resources/views/admin/orders/track_trace.php:17
+#: resources/views/admin/orders/track_trace.php:24
 msgid "Edit shipment"
 msgstr "Zending bewerken"
 
-#: resources/views/admin/settings.php:7
+#: resources/views/admin/settings.php:15
 msgid ""
 "In order to start using the plug-in you have to authenticate with Sendy. "
 "Click the button to start"
@@ -88,53 +88,53 @@ msgstr ""
 "Om de plug-in the kunnen gebruiken moet je verbinden met Sendy. Klik op de "
 "knop om te verbinden"
 
-#: resources/views/admin/settings.php:11
+#: resources/views/admin/settings.php:19
 msgid "Authenticate"
 msgstr "Verbinden"
 
-#: resources/views/admin/settings.php:19
+#: resources/views/admin/settings.php:27
 msgid "Authentication"
 msgstr "Authenticatie"
 
 #. translators: %s will be filled with the e-mail address of the authenticated user
-#: resources/views/admin/settings.php:23
+#: resources/views/admin/settings.php:31
 msgid "Authenticated as %s"
 msgstr "Ingelogd als %s"
 
-#: resources/views/admin/settings.php:28
+#: resources/views/admin/settings.php:36
 msgid "Log out"
 msgstr "Uitloggen"
 
-#: resources/views/admin/settings.php:43
+#: resources/views/admin/settings.php:51
 msgid "Save settings"
 msgstr "Instellingen opslaan"
 
-#: resources/views/admin/single/shipping_data.php:3
-#: src/Modules/Orders/OrderList.php:30
+#: resources/views/admin/single/shipping_data.php:9
+#: src/Modules/Orders/OrderList.php:37
 msgid "Shipping method"
 msgstr "Verzendmethode"
 
-#: resources/views/admin/single/shipping_data.php:7
+#: resources/views/admin/single/shipping_data.php:13
 msgid "Chosen pick-up point"
 msgstr "Gekozen pick-up-punt"
 
-#: resources/views/checkout/order_confirmation.php:3
+#: resources/views/checkout/order_confirmation.php:11
 msgid "Your order will be delivered at the selected pick-up point:"
 msgstr "Je bestelling wordt bezorgd op het geselecteerde pick-up punt:"
 
-#: resources/views/checkout/pickup_point_selection.php:9
+#: resources/views/checkout/pickup_point_selection.php:13
 msgid "Pick-up point"
 msgstr "Pick-up punt"
 
-#: resources/views/checkout/pickup_point_selection.php:16
+#: resources/views/checkout/pickup_point_selection.php:20
 msgid "Select pick-up-point"
 msgstr "Selecteer pick-up punt"
 
-#: resources/views/checkout/pickup_point_selection.php:18
+#: resources/views/checkout/pickup_point_selection.php:22
 msgid "Change pick-up-point"
 msgstr "Pick-up punt wijzigen"
 
-#: resources/views/checkout/pickup_point_selection.php:23
+#: resources/views/checkout/pickup_point_selection.php:27
 msgid "Selected pickup point"
 msgstr "Geselecteerd pick-up punt"
 
