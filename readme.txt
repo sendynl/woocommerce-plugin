@@ -65,6 +65,7 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 * Reduce calls to the API when migrating legacy data
 * Improve performance on the overview pages
 * Fix an error on the checkout page
+* Fix an error where the address was not used when selecting a pick-up point
 
 = 3.0.6 =
 * Fix an issue where migrating data to the new format caused an error

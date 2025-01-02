@@ -6,10 +6,16 @@
     let _showPickupPointPicker = (event) => {
         event.preventDefault();
 
+        let address = $('#shipping_postcode').val();
+
+        if (address === '' || address === null) {
+            address = $('#billing_postcode').val()
+        }
+
         let data = {
             country: $('#shipping_country').find(':selected').val() ?? $('#billing_country').find(':selected').val(),
             carriers: [$('#sendy-pick-up-point-button').data('carrier')],
-            address: $('#shipping_postcode').val() ?? $('#billing_postcode').val(),
+            address: address,
         };
 
         window.Sendy.parcelShopPicker.open(data, _handleSelection, _handleErrors);
