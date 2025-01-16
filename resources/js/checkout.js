@@ -13,7 +13,11 @@
         }
 
         let data = {
-            country: $('#shipping_country').find(':selected').val() ?? $('#billing_country').find(':selected').val(),
+            country: $('#shipping_country').find(':selected').val()
+                ?? $('#billing_country').find(':selected').val()
+                ?? $('#shipping_country').val()
+                ?? $('#billing_country').val()
+                ?? 'NL',
             carriers: [$('#sendy-pick-up-point-button').data('carrier')],
             address: address,
         };
