@@ -14,7 +14,7 @@ use WC_Shipping_Method;
 
 class Plugin
 {
-    public const VERSION = '3.0.8';
+    public const VERSION = '3.0.9';
 
     public const SETTINGS_ID = 'sendy';
 
@@ -123,6 +123,7 @@ class Plugin
             'sendy_import_weight' => true,
             'sendy_import_products' => true,
             'sendy_mark_order_as_completed' => 'after-shipment-created',
+            'sendy_processing_method' => 'woocommerce',
         ];
 
         foreach ($defaultValues as $option => $defaultValue) {

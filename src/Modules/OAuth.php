@@ -11,28 +11,50 @@ class OAuth
     {
         add_action('admin_init', [$this, 'initialize_credentials']);
         add_action('admin_init', [$this, 'oauth_callback']);
+
+        add_action('update_option_sendy_access_token', [$this, 'reset_credentials_when_access_token_nullified'], 10, 3);
     }
 
     /**
-     * Initialize or reset the OAuth credentials
-     *
-     * When the client is not yet determined the manager will create a client id and secret pair. When the domain of the
-     * site changed, the id/secret pair will be reset because the redirect URI for the OAuth connection will be changed
-     * as well. In that case the user will need to re-authenticate with the application.
+     * Initialize the OAuth credentials
      *
      * @return void
      */
     public function initialize_credentials(): void
     {
-        if (get_option('sendy_client_id') == '' || get_option('sendy_hostname') != get_site_url()) {
+        if (get_option('sendy_client_id') == '') {
             update_option('sendy_client_id', wp_generate_uuid4());
             update_option('sendy_client_secret', wp_generate_password(40));
+            update_option('sendy_hostname', get_site_url());
+        }
+    }
 
-            update_option('sendy_access_token', null);
+    /**
+     * Reset the credentials when the access token is nullified
+     *
+     * When the domain of the site changed, the id/secret pair will be reset because the redirect URI for the OAuth
+     * connection will be changed as well. In that case the user will need to re-authenticate with the application.
+     *
+     * Otherwise, the user will be able to start the authentication flow with the existing id/secret pair.
+     *
+     * @param string $option The name of the updated option
+     * @param mixed $old_value The old option value
+     * @param mixed $value The new option value
+     * @return void
+     */
+    public function reset_credentials_when_access_token_nullified($old_value, $value, string $option): void
+    {
+        if (!is_null($value)) {
+            return;
+        }
+
+        if (get_option('sendy_hostname') != get_site_url()) {
+            update_option('sendy_client_id', wp_generate_uuid4());
+            update_option('sendy_client_secret', wp_generate_password(40));
+            update_option('sendy_hostname', get_site_url());
+
             update_option('sendy_refresh_token', null);
             update_option('sendy_token_expires', null);
-
-            update_option('sendy_hostname', get_site_url());
         }
     }
 
