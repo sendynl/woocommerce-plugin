@@ -1,5 +1,7 @@
 <?php
 
+use Sendy\WooCommerce\Enums\ProcessingMethod;
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
@@ -21,17 +23,21 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         <?php endforeach; ?>
     </select>
 
-    <p><b><?php esc_html_e('Shipping preference', 'sendy')?> </b></p>
+    <?php if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) : ?>
 
-    <select id="sendy-metabox-preference-dropdown" style="width: 100%">
-        <?php foreach ($preferences as $id => $preference) : ?>
-            <option value="<?php echo esc_html($id); ?>" <?php selected($id, get_option('sendy_previously_used_preference_id')) ?>><?php echo esc_html($preference)?> </option>
-        <?php endforeach; ?>
-    </select>
+        <p><b><?php esc_html_e('Shipping preference', 'sendy')?> </b></p>
 
-    <p><b><?php esc_html_e('Amount of packages', 'sendy')?> </b></p>
+        <select id="sendy-metabox-preference-dropdown" style="width: 100%">
+            <?php foreach ($preferences as $id => $preference) : ?>
+                <option value="<?php echo esc_html($id); ?>" <?php selected($id, get_option('sendy_previously_used_preference_id')) ?>><?php echo esc_html($preference)?> </option>
+            <?php endforeach; ?>
+        </select>
 
-    <input id="sendy-metabox-amount" type="number" step="1" value="<?php echo esc_html(get_option('sendy_previously_used_amount', 1)); ?>" style="width: 100%;">
+        <p><b><?php esc_html_e('Amount of packages', 'sendy')?> </b></p>
+
+        <input id="sendy-metabox-amount" type="number" step="1" value="<?php echo esc_html(get_option('sendy_previously_used_amount', 1)); ?>" style="width: 100%;">
+
+    <?php endif; ?>
 
     <p>
         <button class="button button-primary" id="sendy-metabox-create-shipment-button">
