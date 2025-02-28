@@ -3,7 +3,7 @@
     "license": "MIT",
     "type": "wordpress-plugin",
     "require": {
-        "sendynl/php-sdk": "^1.0"
+        "sendynl/php-sdk": "dev-main"
     },
     "autoload": {
         "psr-4": {

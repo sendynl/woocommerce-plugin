@@ -2,6 +2,7 @@
 
 namespace Sendy\WooCommerce\Modules\Orders;
 
+use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Plugin;
 use Sendy\WooCommerce\Repositories\Preferences;
 use Sendy\WooCommerce\Repositories\Shops;
@@ -57,17 +58,26 @@ class BulkActions extends OrdersModule
         }
 
         foreach ($objectIds as $id) {
-            $this->create_shipment_from_order(
-                wc_get_order($id),
-                sanitize_key($_REQUEST['sendy_preference_id'] ?? ''),
-                sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
-                sanitize_key($_REQUEST['sendy_amount'] ?? '')
-            );
+            if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
+                $this->create_shipment_from_order(
+                    wc_get_order($id),
+                    sanitize_key($_REQUEST['sendy_preference_id'] ?? ''),
+                    sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
+                    sanitize_key($_REQUEST['sendy_amount'] ?? '')
+                );
+
+                update_option('sendy_previously_used_preference_id', sanitize_key($_REQUEST['sendy_preference_id'] ?? ''));
+                update_option('sendy_previously_used_amount', sanitize_key($_REQUEST['sendy_amount'] ?? ''));
+            } else {
+                $this->create_shipment_with_smart_rules(
+                    wc_get_order($id),
+                    false,
+                    sanitize_key($_REQUEST['sendy_shop_id'] ?? '')
+                );
+            }
         }
 
-        update_option('sendy_previously_used_preference_id', sanitize_key($_REQUEST['sendy_preference_id'] ?? ''));
         update_option('sendy_previously_used_shop_id', sanitize_key($_REQUEST['sendy_shop_id'] ?? ''));
-        update_option('sendy_previously_used_amount', sanitize_key($_REQUEST['sendy_amount'] ?? ''));
 
         return $redirect;
     }
@@ -180,21 +190,23 @@ class BulkActions extends OrdersModule
             'options' => $shops,
         ];
 
-        $fields[] = [
-            'id' => 'sendy_preference_id',
-            'type' => 'select',
-            'label' => __('Select preference', 'sendy'),
-            'description' => __('The shipments will be created with the preference you select here', 'sendy'),
-            'value' => get_option('sendy_previously_used_preference_id'),
-            'options' => $preferences,
-        ];
+        if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
+            $fields[] = [
+                'id' => 'sendy_preference_id',
+                'type' => 'select',
+                'label' => __('Select preference', 'sendy'),
+                'description' => __('The shipments will be created with the preference you select here', 'sendy'),
+                'value' => get_option('sendy_previously_used_preference_id'),
+                'options' => $preferences,
+            ];
 
-        $fields[] = [
-            'id' => 'sendy_amount',
-            'type' => 'number',
-            'label' => __('Amount of packages', 'sendy'),
-            'value' => get_option('sendy_previously_used_amount', 1),
-        ];
+            $fields[] = [
+                'id' => 'sendy_amount',
+                'type' => 'number',
+                'label' => __('Amount of packages', 'sendy'),
+                'value' => get_option('sendy_previously_used_amount', 1),
+            ];
+        }
 
         return $fields;
     }

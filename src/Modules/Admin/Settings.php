@@ -4,8 +4,11 @@ namespace Sendy\WooCommerce\Modules\Admin;
 
 use Sendy\Api\ApiException;
 use Sendy\WooCommerce\ApiClientFactory;
+use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Modules\Admin\Fields\Checkbox;
 use Sendy\WooCommerce\Modules\Admin\Fields\Dropdown;
+use Sendy\WooCommerce\Plugin;
+use Sendy\WooCommerce\Repositories\Shops;
 use Sendy\WooCommerce\Utils\View;
 
 class Settings
@@ -16,9 +19,22 @@ class Settings
             return;
         }
 
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
+
         add_action('admin_menu', [$this, 'register_menu']);
         add_action('admin_init', [$this, 'register_settings']);
         add_action('admin_init', [$this, 'logout_action']);
+    }
+
+    public function enqueue_assets(): void
+    {
+        wp_enqueue_script(
+            'sendy-admin-settings',
+            SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-settings.js',
+            [],
+            Plugin::VERSION,
+            true
+        );
     }
 
     /**
@@ -76,6 +92,37 @@ class Settings
         register_setting('sendy_general_settings', 'sendy_import_weight', function ($value) { return $value === 'true'; } );
         register_setting('sendy_general_settings', 'sendy_import_products',  function ($value) { return $value === 'true'; });
         register_setting('sendy_general_settings', 'sendy_mark_order_as_completed');
+        register_setting('sendy_general_settings', 'sendy_processing_method');
+        register_setting('sendy_general_settings', 'sendy_processable_order_status');
+        register_setting('sendy_general_settings', 'sendy_default_shop');
+
+        add_settings_field(
+            'sendy_processing_method',
+            __('Processing method', 'sendy'),
+            [$this, 'render_processing_method_dropdown'],
+            $slug,
+            'sendy_section_id',
+        );
+
+        $hidden = get_option('sendy_processing_method') !== ProcessingMethod::Sendy ? 'hidden' : '';
+
+        add_settings_field(
+            'sendy_processable_order_status',
+            __('Send order to Sendy when status changed to', 'sendy'),
+            [$this, 'render_processable_order_status_dropdown'],
+            $slug,
+            'sendy_section_id',
+            ['class' => "sendy-processing-method-field {$hidden}"]
+        );
+
+        add_settings_field(
+            'sendy_default_shop',
+            __('Shop to use when orders are sent to Sendy', 'sendy'),
+            [$this, 'render_default_shop_dropdown'],
+            $slug,
+            'sendy_section_id',
+            ['class' => "sendy-processing-method-field {$hidden}"]
+        );
 
         add_settings_field(
             'sendy_import_weight',
@@ -117,10 +164,47 @@ class Settings
         $options = [
             'manually' => __('Manually', 'sendy'),
             'after-shipment-created' => __('After the shipment is created', 'sendy'),
-            'after-label-printed' => __('After the label is printed', 'sendy'),
         ];
 
+        if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
+            $options['after-label-printed'] = __('After the label is printed', 'sendy');
+        }
+
+        if (get_option('sendy_processing_method') === ProcessingMethod::Sendy) {
+            $options['after-shipment-delivered'] = __('After the shipment is delivered', 'sendy');
+        }
+
         (new Dropdown('sendy_mark_order_as_completed'))->render(['options' => $options]);
+    }
+
+    public function render_processing_method_dropdown(): void
+    {
+        $options = ProcessingMethod::casesWithDescription();
+
+        (new Dropdown('sendy_processing_method'))->render(['options' => $options]);
+    }
+
+    public function render_processable_order_status_dropdown(): void
+    {
+        $orderStatuses = wc_get_order_statuses();
+
+        $options = [];
+
+        foreach ($orderStatuses as $status => $label) {
+            // The 'wc-' prefix is stripped as it is intended only for WooCommerce internally.
+            $status = str_replace('wc-', '', $status);
+
+            $options[$status] = $label;
+        }
+
+        (new Dropdown('sendy_processable_order_status'))->render(['options' => $options]);
+    }
+
+    public function render_default_shop_dropdown(): void
+    {
+        $options = (new Shops())->list();
+
+        (new Dropdown('sendy_default_shop'))->render(['options' => $options]);
     }
 
     public function logout_action(): void

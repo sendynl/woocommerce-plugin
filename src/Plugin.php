@@ -7,14 +7,17 @@ use Sendy\WooCommerce\Modules\Admin\Settings;
 use Sendy\WooCommerce\Modules\Checkout;
 use Sendy\WooCommerce\Modules\OAuth;
 use Sendy\WooCommerce\Modules\Orders\BulkActions;
+use Sendy\WooCommerce\Modules\Orders\ProcessInBackground;
 use Sendy\WooCommerce\Modules\Orders\OrderList;
 use Sendy\WooCommerce\Modules\Orders\Single;
+use Sendy\WooCommerce\Modules\ShippingMethodsSynchronizer;
+use Sendy\WooCommerce\Modules\Webhooks;
 use Sendy\WooCommerce\ShippingMethods\PickupPointDelivery;
 use WC_Shipping_Method;
 
 class Plugin
 {
-    public const VERSION = '3.0.9';
+    public const VERSION = '3.1.0';
 
     public const SETTINGS_ID = 'sendy';
 
@@ -24,11 +27,9 @@ class Plugin
 
     private function __construct()
     {
-        add_action('init', [$this, 'initialize_plugin'], 1);
+        add_action('init', [$this, 'initialize_plugin'], 0);
         add_action('before_woocommerce_init', [$this, 'declare_wc_hpos_compatibility'], 10);
         add_action('before_woocommerce_init', [$this, 'declare_checkout_blocks_incompatibility'], 10);
-
-        load_plugin_textdomain('sendy', false, untrailingslashit( dirname( SENDY_WC_PLUGIN_BASENAME ) ) . '/languages');
     }
 
     public static function instance(): Plugin
@@ -41,6 +42,7 @@ class Plugin
         $this->set_default_values_for_settings();
         $this->define_constants();
         $this->init_hooks();
+        $this->init_internationalization();
     }
 
     public function declare_wc_hpos_compatibility(): void
@@ -52,8 +54,8 @@ class Plugin
 
     public function declare_checkout_blocks_incompatibility(): void
     {
-        if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
-            FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', SENDY_WC_PLUGIN_BASENAME, false );
+        if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
+            FeaturesUtil::declare_compatibility('cart_checkout_blocks', SENDY_WC_PLUGIN_BASENAME, false);
         }
     }
 
@@ -80,6 +82,29 @@ class Plugin
         }
     }
 
+    private function init_internationalization(): void
+    {
+        // This filter is added in order to override the translations from the WordPress translations directory if a
+        // translation is provided by the plug-in.
+        add_filter('load_textdomain_mofile', function (string $moFile, string $domain) {
+            $basePath = WP_CONTENT_DIR . '/plugins/sendy/languages/';
+
+            if ($domain === 'sendy' && str_starts_with($moFile, WP_LANG_DIR . '/plugins/') !== false) {
+                $locale = apply_filters('plugin_locale', determine_locale(), $domain);
+
+                $filename = $basePath . '/sendy-' . $locale . '.mo';
+
+                if (is_readable($filename)) {
+                    return $filename;
+                }
+            }
+
+            return $moFile;
+        }, 10, 2);
+
+        load_plugin_textdomain('sendy', false, untrailingslashit(dirname(SENDY_WC_PLUGIN_BASENAME)) . '/languages');
+    }
+
     public function initialize_modules(): void
     {
         $this->modules['oauth'] = new OAuth();
@@ -90,6 +115,9 @@ class Plugin
             $this->modules['orders_list'] = new OrderList();
             $this->modules['orders_single'] = new Single();
             $this->modules['checkout'] = new Checkout();
+            $this->modules['webhooks'] = new Webhooks();
+            $this->modules['orders_sendy'] = new ProcessInBackground();
+            $this->modules['shipping_methods_synchronizer'] = new ShippingMethodsSynchronizer();
         }
     }
 
@@ -124,6 +152,7 @@ class Plugin
             'sendy_import_products' => true,
             'sendy_mark_order_as_completed' => 'after-shipment-created',
             'sendy_processing_method' => 'woocommerce',
+            'sendy_processable_status' => 'processing',
         ];
 
         foreach ($defaultValues as $option => $defaultValue) {
