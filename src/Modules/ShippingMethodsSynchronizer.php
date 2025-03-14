@@ -19,7 +19,7 @@ class ShippingMethodsSynchronizer
 
     public function synchronize_shipping_methods(): void
     {
-        if (get_option('_sendy_shipping_methods_last_sync') > time() - 24 * 60 * 60) {
+        if (get_option('sendy_shipping_methods_last_sync') > time() - 24 * 60 * 60) {
             return;
         }
 
@@ -64,6 +64,6 @@ class ShippingMethodsSynchronizer
         $endpoint = new ShippingMethod(ApiClientFactory::buildConnectionUsingTokens());
         $endpoint->sync($data);
 
-        update_option('_sendy_shipping_methods_last_sync', time());
+        update_option('sendy_shipping_methods_last_sync', time());
     }
 }
