@@ -211,7 +211,7 @@ class Settings
     {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (isset($_GET['sendy_logout'])) {
-            update_option('sendy_client_id', '');
+            update_option('sendy_access_token', null);
 
             wp_safe_redirect(admin_url('admin.php?page=sendy'));
         }
