@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
             </mark>
         <?php endforeach; ?>
     <?php else : ?>
-        <a href="https://app.sendy.nl/shipment/<?php esc_url($order->get_meta('_sendy_shipment_id')) ?>/edit" target="_blank">
+        <a href="<?php echo esc_url(sprintf("https://app.sendy.nl/shipment/%s/edit", $order->get_meta('_sendy_shipment_id'))); ?>" target="_blank">
             <?php esc_html_e('Edit shipment', 'sendy'); ?>
         </a>
     <?php endif; ?>

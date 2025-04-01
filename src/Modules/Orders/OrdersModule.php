@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Sendy\Api\ApiException;
 use Sendy\Api\Connection;
 use Sendy\WooCommerce\ApiClientFactory;
+use Sendy\WooCommerce\Repositories\Shops;
 
 abstract class OrdersModule
 {
@@ -95,35 +96,52 @@ abstract class OrdersModule
             }
 
             $order->save();
-        } catch (ApiException $e) {
-            if ($e->getCode() === 500) {
-                // translators: %1$s should contain the ID of the order and %2$s the error
-                $message = sprintf(__('Error while creating shipment for order #%1$s: %2$s', 'sendy'), $order->get_id(), $e->getMessage());
+        } catch (ApiException $exception) {
+            sendy_flash_admin_notice('error', $this->parseException($exception, $order));
+        }
+    }
+
+    protected function create_shipment_with_smart_rules(\WC_Order $order, bool $executedInBackground = true, string $shopId = null): void
+    {
+        $firstShopId = array_keys((new Shops())->list())[0];
+        $shippingMethod = array_values($order->get_shipping_methods())[0];
+
+        $request = [
+            'shop_id' => $shopId ?? get_option('sendy_default_shop') ?? $firstShopId,
+            'amount' => 1,
+            'reference' => $order->get_id(),
+            'order_date' => $order->get_date_created()->format(\DateTimeInterface::RFC3339),
+            'options' => [],
+            'shippingMethodId' => $shippingMethod->get_instance_id(),
+        ];
+
+        $this->addAddressToRequest($order, $request);
+
+        if ($this->is_pickup_point_delivery($order)) {
+            $request['options']['parcel_shop_id'] = $order->get_meta('_sendy_pickup_point_id');
+        }
+
+        if (get_option('sendy_import_weight')) {
+            $this->addWeightToRequest($order, $request);
+        }
+
+        if (get_option('sendy_import_products')) {
+            $this->addProductsToRequest($order, $request);
+        }
+
+        try {
+            $shipment = ApiClientFactory::buildConnectionUsingTokens()->shipment->createWithSmartRules($request);
+
+            $order->update_meta_data('_sendy_shipment_id', $shipment['uuid']);
+            $order->save();
+        } catch (ApiException $exception) {
+            $message = $this->parseException($exception, $order);
+
+            if ($executedInBackground) {
+                // TODO Implement a logger
             } else {
-                $statusCode = $e->getPrevious()->getCode();
-
-                if ($statusCode === 401) {
-                    // translators: %s should contain the ID of the order
-                    $message = sprintf(__('Error while creating shipment for order #%s: Authentication failed. Check the settings page to reconnect with Sendy.', 'sendy'), $order->get_id());
-                } else if ($statusCode === 422) {
-                    $errors = [];
-
-                    foreach ($e->getErrors() as $_ => $messages) {
-                        $errors = array_merge($errors, $messages);
-                    }
-
-                    // translators: %1$s should contain the ID of the order and %2$s the error
-                    $message = sprintf(__('Error while creating shipment for order #%1$s: %2$s', 'sendy'), $order->get_id(), implode("\n", $errors));
-                } else if ($statusCode === 429) {
-                    // translators: %s should contain the ID of the order
-                    $message = sprintf(__('Error while creating shipment for order #%s: Too many requests. Please try again later.', 'sendy'), $order->get_id());
-                } else {
-                    // translators: %s should contain the ID of the order
-                    $message = sprintf(__('Error while creating shipment for order #%s: Unknown error.', 'sendy'), $order->get_id());
-                }
+                sendy_flash_admin_notice('error', $message);
             }
-
-            sendy_flash_admin_notice('error', $message);
         }
     }
 
@@ -255,5 +273,37 @@ abstract class OrdersModule
         }
 
         return $address;
+    }
+
+    private function parseException(ApiException $exception, \WC_Order $order): string
+    {
+        if ($exception->getCode() === 500) {
+            // translators: %1$s should contain the ID of the order and %2$s the error
+            $message = sprintf(__('Error while creating shipment for order #%1$s: %2$s', 'sendy'), $order->get_id(), $exception->getMessage());
+        } else {
+            $statusCode = $exception->getPrevious()->getCode();
+
+            if ($statusCode === 401) {
+                // translators: %s should contain the ID of the order
+                $message = sprintf(__('Error while creating shipment for order #%s: Authentication failed. Check the settings page to reconnect with Sendy.', 'sendy'), $order->get_id());
+            } else if ($statusCode === 422) {
+                $errors = [];
+
+                foreach ($exception->getErrors() as $_ => $messages) {
+                    $errors = array_merge($errors, $messages);
+                }
+
+                // translators: %1$s should contain the ID of the order and %2$s the error
+                $message = sprintf(__('Error while creating shipment for order #%1$s: %2$s', 'sendy'), $order->get_id(), implode("\n", $errors));
+            } else if ($statusCode === 429) {
+                // translators: %s should contain the ID of the order
+                $message = sprintf(__('Error while creating shipment for order #%s: Too many requests. Please try again later.', 'sendy'), $order->get_id());
+            } else {
+                // translators: %s should contain the ID of the order
+                $message = sprintf(__('Error while creating shipment for order #%s: Unknown error.', 'sendy'), $order->get_id());
+            }
+        }
+
+        return $message;
     }
 }
