@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9046d7c1cd48f68883fd118bb42f2b54",
+    "content-hash": "fd7d8370a56f0a0c0dee95099fc14808",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -537,7 +537,7 @@
         },
         {
             "name": "sendynl/php-sdk",
-            "version": "dev-main",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendynl/php-sdk.git",
@@ -560,7 +560,6 @@
                 "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.7"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -586,7 +585,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sendynl/php-sdk/issues",
-                "source": "https://github.com/sendynl/php-sdk/tree/main"
+                "source": "https://github.com/sendynl/php-sdk/tree/v2.0"
             },
             "time": "2025-02-25T10:17:58+00:00"
         },
@@ -661,9 +660,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "sendynl/php-sdk": 20
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {},
