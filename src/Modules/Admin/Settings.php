@@ -87,14 +87,58 @@ class Settings
     {
         $slug = 'sendy';
 
-        add_settings_section('sendy_section_id','', '', $slug);
+        add_settings_section('sendy_section_id', '', '', $slug);
 
-        register_setting('sendy_general_settings', 'sendy_import_weight', function ($value) { return $value === 'true'; } );
-        register_setting('sendy_general_settings', 'sendy_import_products',  function ($value) { return $value === 'true'; });
-        register_setting('sendy_general_settings', 'sendy_mark_order_as_completed');
-        register_setting('sendy_general_settings', 'sendy_processing_method');
-        register_setting('sendy_general_settings', 'sendy_processable_order_status');
-        register_setting('sendy_general_settings', 'sendy_default_shop');
+        register_setting('sendy_general_settings', 'sendy_import_weight', fn ($value) => $value === 'true');
+        register_setting('sendy_general_settings', 'sendy_import_products', fn ($value) => $value === 'true');
+
+        register_setting('sendy_general_settings', 'sendy_mark_order_as_completed', [
+            'sanitize_callback' => function ($value): string {
+                $possibleValues = [
+                    'manually',
+                    'after-shipment-created',
+                    'after-label-printed',
+                    'after-shipment-delivered',
+                ];
+
+                if (!in_array($value, $possibleValues)) {
+                    return 'manually';
+                }
+
+                return $value;
+            }
+        ]);
+
+        register_setting('sendy_general_settings', 'sendy_processing_method', [
+            'sanitize_callback' => function ($value): string {
+                if (!in_array($value, ProcessingMethod::cases())) {
+                    return ProcessingMethod::WooCommerce;
+                }
+
+                return $value;
+            }
+        ]);
+
+        register_setting('sendy_general_settings', 'sendy_processable_order_status', [
+            'sanitize_callback' => function ($value): string {
+                $orderStatuses = wc_get_order_statuses();
+
+                $possibleValues = [];
+
+                foreach ($orderStatuses as $status => $label) {
+                    // The 'wc-' prefix is stripped as it is intended only for WooCommerce internally.
+                    $possibleValues[] = str_replace('wc-', '', $status);
+                }
+
+                if (!in_array($value, $possibleValues)) {
+                    return $possibleValues[0];
+                }
+
+                return $value;
+            }
+        ]);
+
+        register_setting('sendy_general_settings', 'sendy_default_shop', fn ($value) => $value);
 
         add_settings_field(
             'sendy_processing_method',
