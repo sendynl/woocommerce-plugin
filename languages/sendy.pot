@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-27T14:49:27+00:00\n"
+"POT-Creation-Date: 2025-04-01T09:31:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: sendy\n"
@@ -143,59 +143,59 @@ msgstr ""
 msgid "Process shipments in Sendy"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:101
+#: src/Modules/Admin/Settings.php:145
 msgid "Processing method"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:111
+#: src/Modules/Admin/Settings.php:155
 msgid "Send order to Sendy when status changed to"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:120
+#: src/Modules/Admin/Settings.php:164
 msgid "Shop to use when orders are sent to Sendy"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:129
+#: src/Modules/Admin/Settings.php:173
 msgid "Import weight"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:137
+#: src/Modules/Admin/Settings.php:181
 msgid "Import products"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:145
+#: src/Modules/Admin/Settings.php:189
 msgid "Mark order as completed"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:154
+#: src/Modules/Admin/Settings.php:198
 msgid "Import weight when creating a shipment"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:159
+#: src/Modules/Admin/Settings.php:203
 msgid "Send products to Sendy when creating a shipment"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:165
+#: src/Modules/Admin/Settings.php:209
 msgid "Manually"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:166
+#: src/Modules/Admin/Settings.php:210
 msgid "After the shipment is created"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:170
+#: src/Modules/Admin/Settings.php:214
 msgid "After the label is printed"
 msgstr ""
 
-#: src/Modules/Admin/Settings.php:174
+#: src/Modules/Admin/Settings.php:218
 msgid "After the shipment is delivered"
 msgstr ""
 
-#: src/Modules/OAuth.php:66
+#: src/Modules/OAuth.php:88
 msgid "Authentication successful"
 msgstr ""
 
-#: src/Modules/OAuth.php:70
+#: src/Modules/OAuth.php:92
 msgid "Authentication failed. Please try again"
 msgstr ""
 
@@ -283,7 +283,7 @@ msgstr ""
 msgid "Rest of the world"
 msgstr ""
 
-#: src/Modules/Webhooks.php:174
+#: src/Modules/Webhooks.php:175
 msgid "Sendy: Shipment delivered"
 msgstr ""
 
