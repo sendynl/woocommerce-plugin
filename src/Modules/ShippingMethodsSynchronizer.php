@@ -2,6 +2,7 @@
 
 namespace Sendy\WooCommerce\Modules;
 
+use Sendy\Api\ApiException;
 use Sendy\WooCommerce\ApiClientFactory;
 use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Resources\ShippingMethod;
@@ -61,8 +62,12 @@ class ShippingMethodsSynchronizer
             ];
         }
 
-        $endpoint = new ShippingMethod(ApiClientFactory::buildConnectionUsingTokens());
-        $endpoint->sync($data);
+        try {
+            $endpoint = new ShippingMethod(ApiClientFactory::buildConnectionUsingTokens());
+            $endpoint->sync($data);
+        } catch (ApiException $exception) {
+            // TODO Implement logging
+        }
 
         update_option('sendy_shipping_methods_last_sync', time());
     }
