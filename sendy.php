@@ -41,3 +41,7 @@ function sendy_init() {
 }
 
 add_action('plugins_loaded', 'sendy_init');
+
+register_deactivation_hook(__FILE__, function () {
+    Sendy\WooCommerce\Plugin::instance()->deactivate();
+});

@@ -14,7 +14,7 @@ class Webhooks
     {
         add_action('update_option_sendy_processing_method', [$this, 'handle_sendy_processing_method_change'], 10, 3);
         add_action('rest_api_init', [$this, 'init_rest_api_endpoint']);
-        add_action('admin_init', [$this, 'ensure_webhook_installed']);
+        add_action('sendy_cron', [$this, 'ensure_webhook_installed']);
     }
 
     /**
@@ -54,7 +54,7 @@ class Webhooks
 
     public function webhook_callback(\WP_REST_Request $request)
     {
-        $payload = $request->get_json_params();
+        $payload = $request->get_json_params() ?? [];
 
         file_put_contents(SENDY_WC_PLUGIN_BASENAME . '/request.json', json_encode($payload));
 
@@ -89,11 +89,32 @@ class Webhooks
             return;
         }
 
-        if (get_option('sendy_webhook_id')) {
+        if (get_option('sendy_webhook_last_checked') >= time() - 24 * 60 * 60) {
             return;
         }
 
-        $this->createWebhook();
+        try {
+            $webhooks = ApiClientFactory::buildConnectionUsingTokens()->webhook->list();
+
+            $webhookIds = array_map(function ($webhook) {
+                return $webhook['id'];
+            }, $webhooks);
+
+            if (!get_option('sendy_webhook_id') || !in_array(get_option('sendy_webhook_id'), $webhookIds)) {
+                $this->createWebhook();
+            }
+
+            update_option('sendy_webhook_last_checked', time());
+        } catch (ApiException $exception) {
+            return;
+        }
+    }
+
+    public function deactivate(): void
+    {
+        $this->deleteWebhook();
+
+        delete_option('sendy_webhook_last_checked');
     }
 
     /**
@@ -108,10 +129,10 @@ class Webhooks
         if ($webhookId) {
             try {
                 ApiClientFactory::buildConnectionUsingTokens()->webhook->delete($webhookId);
-
-                update_option('sendy_webhook_id', null);
             } catch (ApiException $exception) {
-
+                // Webhook was likely already deleted
+            } finally {
+                delete_option('sendy_webhook_id');
             }
         }
     }

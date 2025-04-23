@@ -63,6 +63,7 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 = 3.1.2 =
 * Fix an error when creating a shipment
+* Fix an issue where the webhook was not installed properly
 
 = 3.1.1 =
 * Fix an error message when synchronizing shipping methods
