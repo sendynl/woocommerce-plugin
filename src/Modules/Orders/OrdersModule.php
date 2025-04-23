@@ -112,7 +112,7 @@ abstract class OrdersModule
             'reference' => $order->get_id(),
             'order_date' => $order->get_date_created()->format(\DateTimeInterface::RFC3339),
             'options' => [],
-            'shippingMethodId' => $shippingMethod->get_instance_id(),
+            'shippingMethodId' => $shippingMethod ? $shippingMethod->get_instance_id() : null,
         ];
 
         $this->addAddressToRequest($order, $request);
