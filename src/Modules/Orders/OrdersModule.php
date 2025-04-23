@@ -109,7 +109,7 @@ abstract class OrdersModule
         $request = [
             'shop_id' => $shopId ?? get_option('sendy_default_shop') ?? $firstShopId,
             'amount' => 1,
-            'reference' => $order->get_id(),
+            'reference' => $order->get_order_number(),
             'order_date' => $order->get_date_created()->format(\DateTimeInterface::RFC3339),
             'options' => [],
             'shippingMethodId' => $shippingMethod ? $shippingMethod->get_instance_id() : null,
