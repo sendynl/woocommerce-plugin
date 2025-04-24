@@ -12,7 +12,7 @@ class ShippingMethodsSynchronizer
     public function __construct()
     {
         if (get_option('sendy_processing_method') === ProcessingMethod::Sendy) {
-            add_action('admin_init', [$this, 'synchronize_shipping_methods']);
+            add_action('sendy_cron', [$this, 'synchronize_shipping_methods']);
             add_action('woocommerce_shipping_zone_method_added', [$this, 'handle_method_added'], 10, 3);
             add_action('woocommerce_shipping_zone_method_deleted', [$this, 'handle_method_deleted'], 10, 2);
         }
@@ -35,6 +35,11 @@ class ShippingMethodsSynchronizer
     public function handle_method_deleted($instanceId, $zoneId): void
     {
         $this->synchronizeShippingMethods();
+    }
+
+    public function deactivate(): void
+    {
+        delete_option('sendy_shipping_methods_last_sync');
     }
 
     private function synchronizeShippingMethods(): void

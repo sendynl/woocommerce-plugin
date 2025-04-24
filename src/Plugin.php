@@ -43,6 +43,7 @@ class Plugin
         $this->define_constants();
         $this->init_hooks();
         $this->init_internationalization();
+        $this->init_cron();
     }
 
     public function declare_wc_hpos_compatibility(): void
@@ -105,6 +106,13 @@ class Plugin
         load_plugin_textdomain('sendy', false, untrailingslashit(dirname(SENDY_WC_PLUGIN_BASENAME)) . '/languages');
     }
 
+    private function init_cron(): void
+    {
+        if (!wp_next_scheduled('sendy_cron')) {
+            wp_schedule_event(time(), 'hourly', 'sendy_cron');
+        }
+    }
+
     public function initialize_modules(): void
     {
         $this->modules['oauth'] = new OAuth();
@@ -158,6 +166,19 @@ class Plugin
         foreach ($defaultValues as $option => $defaultValue) {
             if (get_option($option) === false) {
                 update_option($option, $defaultValue);
+            }
+        }
+    }
+
+    public function deactivate(): void
+    {
+        if (wp_next_scheduled('sendy_cron')) {
+            wp_clear_scheduled_hook('sendy_cron');
+        }
+
+        foreach ($this->modules as $module) {
+            if (method_exists($module, 'deactivate')) {
+                $module->deactivate();
             }
         }
     }
