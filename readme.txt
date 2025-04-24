@@ -7,11 +7,11 @@ Stable tag: 3.1.2
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
-Tested up to: 6.7.1
+Tested up to: 6.8
 Requires PHP: 7.4
 Requires Plugins: woocommerce
 WC requires at least: 8.2
-WC tested up to: 9.5.2
+WC tested up to: 9.8.2
 
 Een plugin van Sendy voor WooCommerce waarmee je op eenvoudige wijze labels aan kunt maken voor zendingen.
 
@@ -64,6 +64,8 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 = 3.1.2 =
 * Fix an error when creating a shipment
 * Fix an issue where the webhook was not installed properly
+* Use the order number as reference when creating a shipment
+* Use a different method for determining the country when opening the pick-up point finder
 
 = 3.1.1 =
 * Fix an error message when synchronizing shipping methods
