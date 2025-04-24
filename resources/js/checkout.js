@@ -6,17 +6,21 @@
     let _showPickupPointPicker = (event) => {
         event.preventDefault();
 
-        let address = $('#shipping_postcode').val();
+        const shippingCountrySelector = '#shipping_country',
+            shippingPostcodeSelector = '#shipping_postcode',
+            billingCountrySelector = '#billing_country',
+            billingPostcodeSelector = '#billing_postcode';
 
-        if (address === '' || address === null) {
-            address = $('#billing_postcode').val()
-        }
+        let differentAddress = $('#ship-to-different-address-checkbox').is(':checked');
+
+        let countrySelector = differentAddress ? shippingCountrySelector : billingCountrySelector,
+            postcodeSelector = differentAddress ? shippingPostcodeSelector : billingPostcodeSelector;
+
+        let address = $(postcodeSelector).val();
 
         let data = {
-            country: $('#shipping_country').find(':selected').val()
-                ?? $('#billing_country').find(':selected').val()
-                ?? $('#shipping_country').val()
-                ?? $('#billing_country').val()
+            country: $(countrySelector).find(':selected').val()
+                ?? $(countrySelector).val()
                 ?? 'NL',
             carriers: [$('#sendy-pick-up-point-button').data('carrier')],
             address: address,
