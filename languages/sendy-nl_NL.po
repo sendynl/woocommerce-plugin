@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sendy 3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sendy\n"
-"POT-Creation-Date: 2025-04-25T09:18:46+00:00\n"
-"PO-Revision-Date: 2025-04-25 11:19+0200\n"
+"POT-Creation-Date: 2025-04-25T10:20:38+00:00\n"
+"PO-Revision-Date: 2025-04-25 12:21+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -304,30 +304,38 @@ msgstr "Rest van de wereld"
 msgid "Sendy: Shipment delivered"
 msgstr "Sendy: Zending geleverd"
 
-#: src/ShippingMethods/PickupPointDelivery.php:13
+#: src/ShippingMethods/PickupPointDelivery.php:17
 msgid "Pickup Point Delivery"
 msgstr "Pick-up punt levering"
 
-#: src/ShippingMethods/PickupPointDelivery.php:14
+#: src/ShippingMethods/PickupPointDelivery.php:18
 msgid "Let your customers choose a pick-up point"
 msgstr "Laat je klanten een pick-up punt selecteren tijdens het afrekenen"
 
-#. translators: %s contains the currency symbol of the shop
-#: src/ShippingMethods/PickupPointDelivery.php:65
-msgid "Free shipping from %s"
-msgstr "Gratis verzending vanaf"
-
-#: src/ShippingMethods/PickupPointDelivery.php:67
-msgid "Keep empty if you don’t want to use Free shipping"
-msgstr "Laat dit veld leeg als je geen gratis verzending wilt aanbieden"
-
-#: src/ShippingMethods/PickupPointDelivery.php:72
+#: src/ShippingMethods/PickupPointDelivery.php:41
 msgid "Carrier"
 msgstr "Vervoerder"
 
-#: src/ShippingMethods/PickupPointDelivery.php:81
+#: src/ShippingMethods/PickupPointDelivery.php:50
 msgid "Select which carrier to show the pickup points for"
 msgstr "Selecteer voor welke vervoerder je de pick-up punten wilt tonen"
+
+#. translators: %s contains the currency symbol of the shop
+#: src/ShippingMethods/ShippingMethodTrait.php:46
+msgid "Free shipping from %s"
+msgstr "Gratis verzending vanaf"
+
+#: src/ShippingMethods/ShippingMethodTrait.php:48
+msgid "Keep empty if you don’t want to use Free shipping"
+msgstr "Laat dit veld leeg als je geen gratis verzending wilt aanbieden"
+
+#: src/ShippingMethods/StandardDelivery.php:17
+msgid "Standard Delivery"
+msgstr "Standaard levering"
+
+#: src/ShippingMethods/StandardDelivery.php:18
+msgid "Standard delivery method"
+msgstr "Standaard levering met gratis verzending vanaf een bepaald bedrag"
 
 #~ msgid "Shipment for order #%s created successfully"
 #~ msgstr "Zending voor order #%s succesvol aangemaakt"

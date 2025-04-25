@@ -13,6 +13,7 @@ use Sendy\WooCommerce\Modules\Orders\Single;
 use Sendy\WooCommerce\Modules\ShippingMethodsSynchronizer;
 use Sendy\WooCommerce\Modules\Webhooks;
 use Sendy\WooCommerce\ShippingMethods\PickupPointDelivery;
+use Sendy\WooCommerce\ShippingMethods\StandardDelivery;
 use WC_Shipping_Method;
 
 class Plugin
@@ -135,6 +136,7 @@ class Plugin
      */
     public function add_shipping_methods(array $shippingMethods): array
     {
+        $shippingMethods[StandardDelivery::ID] = StandardDelivery::class;
         $shippingMethods[PickupPointDelivery::ID] = PickupPointDelivery::class;
 
         return $shippingMethods;

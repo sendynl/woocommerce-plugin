@@ -63,6 +63,7 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 = 3.1.3 =
 * Add validation for pick-up points in the checkout
+* Add a different shipping method
 
 = 3.1.2 =
 * Fix an error when creating a shipment
