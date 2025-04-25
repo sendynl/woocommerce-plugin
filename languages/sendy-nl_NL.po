@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Sendy 3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sendy\n"
-"POT-Creation-Date: 2025-04-01T09:31:33+00:00\n"
-"PO-Revision-Date: 2025-04-07 12:56+0200\n"
+"POT-Creation-Date: 2025-04-25T09:18:46+00:00\n"
+"PO-Revision-Date: 2025-04-25 11:19+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -194,6 +194,10 @@ msgstr "Nadat het label is geprint"
 msgid "After the shipment is delivered"
 msgstr "Nadat de zending is geleverd"
 
+#: src/Modules/Checkout.php:140 src/Modules/Checkout.php:145
+msgid "Please select a pick-up point."
+msgstr "Selecteer alstublieft een pick-up-punt."
+
 #: src/Modules/OAuth.php:88
 msgid "Authentication successful"
 msgstr "Authenticatie gelukt"
@@ -292,11 +296,11 @@ msgstr "Je hebt niet de juiste rechten om de pagina te bekijken."
 msgid "No shipment created for order"
 msgstr "Geen zending aangemaakt voor de bestelling"
 
-#: src/Modules/ShippingMethodsSynchronizer.php:60
+#: src/Modules/ShippingMethodsSynchronizer.php:66
 msgid "Rest of the world"
 msgstr "Rest van de wereld"
 
-#: src/Modules/Webhooks.php:175
+#: src/Modules/Webhooks.php:196
 msgid "Sendy: Shipment delivered"
 msgstr "Sendy: Zending geleverd"
 

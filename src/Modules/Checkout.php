@@ -4,6 +4,7 @@ namespace Sendy\WooCommerce\Modules;
 
 use Sendy\WooCommerce\Plugin;
 use Sendy\WooCommerce\Utils\View;
+use WP_Error;
 
 final class Checkout
 {
@@ -18,6 +19,8 @@ final class Checkout
         add_action('woocommerce_checkout_create_order', [$this, 'store_selected_pickup_point_in_order'], 10, 3);
 
         add_action('woocommerce_order_details_after_customer_address', [$this, 'show_selected_pickup_point_on_confirmation'], 10, 2);
+
+        add_action('woocommerce_after_checkout_validation', [$this, 'validate_pickup_point'], 10, 2);
     }
 
     /**
@@ -119,6 +122,29 @@ final class Checkout
                 ]),
                 View::ALLOWED_TAGS
             );
+        }
+    }
+
+    /**
+     * Validate if the pickup point is selected
+     *
+     * @param array $fields
+     * @param WP_Error $errors
+     */
+    public function validate_pickup_point(array $fields, WP_Error $errors): void
+    {
+        if (in_array('sendy_pickup_point', wc_get_chosen_shipping_method_ids())) {
+            $instanceId = $this->get_shipping_method_instance_id();
+
+            if (empty($instanceId)) {
+                $errors->add('sendy_pickup_point_error', __('Please select a pick-up point.', 'sendy'));
+            } else {
+                $selectedPickupPoint = WC()->session->get("sendy_selected_parcelshop_{$instanceId}");
+
+                if (empty($selectedPickupPoint)) {
+                    $errors->add('sendy_pickup_point_error', __('Please select a pick-up point.', 'sendy'));
+                }
+            }
         }
     }
 
