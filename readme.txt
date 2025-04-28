@@ -63,6 +63,7 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 = 3.1.3 =
 * Add validation for pick-up points in the checkout
+* Update the order status when a shipment is created via smart rules
 
 = 3.1.2 =
 * Fix an error when creating a shipment
