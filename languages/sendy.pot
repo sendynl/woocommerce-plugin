@@ -2,14 +2,14 @@
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sendy 3.1.2\n"
+"Project-Id-Version: Sendy 3.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sendy\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-04-25T09:18:46+00:00\n"
+"POT-Creation-Date: 2025-05-02T09:59:13+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: sendy\n"
@@ -239,31 +239,32 @@ msgid "Order #%s already has a shipment created"
 msgstr ""
 
 #: src/Modules/Orders/OrdersModule.php:95
+#: src/Modules/Orders/OrdersModule.php:138
 msgid "Sendy: Shipment created"
 msgstr ""
 
-#: src/Modules/Orders/OrdersModule.php:180
+#: src/Modules/Orders/OrdersModule.php:185
 msgid "Something went wrong while downloading the labels"
 msgstr ""
 
 #. translators: %1$s should contain the ID of the order and %2$s the error
-#: src/Modules/Orders/OrdersModule.php:282
-#: src/Modules/Orders/OrdersModule.php:297
+#: src/Modules/Orders/OrdersModule.php:287
+#: src/Modules/Orders/OrdersModule.php:302
 msgid "Error while creating shipment for order #%1$s: %2$s"
 msgstr ""
 
 #. translators: %s should contain the ID of the order
-#: src/Modules/Orders/OrdersModule.php:288
+#: src/Modules/Orders/OrdersModule.php:293
 msgid "Error while creating shipment for order #%s: Authentication failed. Check the settings page to reconnect with Sendy."
 msgstr ""
 
 #. translators: %s should contain the ID of the order
-#: src/Modules/Orders/OrdersModule.php:300
+#: src/Modules/Orders/OrdersModule.php:305
 msgid "Error while creating shipment for order #%s: Too many requests. Please try again later."
 msgstr ""
 
 #. translators: %s should contain the ID of the order
-#: src/Modules/Orders/OrdersModule.php:303
+#: src/Modules/Orders/OrdersModule.php:308
 msgid "Error while creating shipment for order #%s: Unknown error."
 msgstr ""
 
@@ -292,27 +293,35 @@ msgstr ""
 msgid "Sendy: Shipment delivered"
 msgstr ""
 
-#: src/ShippingMethods/PickupPointDelivery.php:13
-msgid "Pickup Point Delivery"
+#: src/ShippingMethods/PickupPointDelivery.php:17
+msgid "Sendy - Pickup Point Delivery"
 msgstr ""
 
-#: src/ShippingMethods/PickupPointDelivery.php:14
+#: src/ShippingMethods/PickupPointDelivery.php:18
 msgid "Let your customers choose a pick-up point"
 msgstr ""
 
-#. translators: %s contains the currency symbol of the shop
-#: src/ShippingMethods/PickupPointDelivery.php:65
-msgid "Free shipping from %s"
-msgstr ""
-
-#: src/ShippingMethods/PickupPointDelivery.php:67
-msgid "Keep empty if you don’t want to use Free shipping"
-msgstr ""
-
-#: src/ShippingMethods/PickupPointDelivery.php:72
+#: src/ShippingMethods/PickupPointDelivery.php:41
 msgid "Carrier"
 msgstr ""
 
-#: src/ShippingMethods/PickupPointDelivery.php:81
+#: src/ShippingMethods/PickupPointDelivery.php:50
 msgid "Select which carrier to show the pickup points for"
+msgstr ""
+
+#. translators: %s contains the currency symbol of the shop
+#: src/ShippingMethods/ShippingMethodTrait.php:46
+msgid "Free shipping from %s"
+msgstr ""
+
+#: src/ShippingMethods/ShippingMethodTrait.php:48
+msgid "Keep empty if you don’t want to use Free shipping"
+msgstr ""
+
+#: src/ShippingMethods/StandardDelivery.php:17
+msgid "Sendy - Standard Delivery"
+msgstr ""
+
+#: src/ShippingMethods/StandardDelivery.php:18
+msgid "Standard delivery method"
 msgstr ""
