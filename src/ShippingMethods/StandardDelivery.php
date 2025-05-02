@@ -14,7 +14,7 @@ class StandardDelivery extends WC_Shipping_Flat_Rate
     {
         $this->id = self::ID;
         $this->instance_id = absint($instance_id);
-        $this->method_title = __('Standard Delivery', 'sendy');
+        $this->method_title = __('Sendy - Standard Delivery', 'sendy');
         $this->method_description = __('Standard delivery method', 'sendy');
 
 

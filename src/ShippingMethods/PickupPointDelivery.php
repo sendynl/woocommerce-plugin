@@ -14,7 +14,7 @@ class PickupPointDelivery extends WC_Shipping_Flat_Rate
     {
         $this->id = self::ID;
         $this->instance_id = absint($instance_id);
-        $this->method_title = __('Pickup Point Delivery', 'sendy');
+        $this->method_title = __('Sendy - Pickup Point Delivery', 'sendy');
         $this->method_description = __('Let your customers choose a pick-up point', 'sendy');
 
         $this->supports = [
