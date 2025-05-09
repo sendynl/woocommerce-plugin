@@ -6,7 +6,9 @@ use WC_Shipping_Flat_Rate;
 
 class PickupPointDelivery extends WC_Shipping_Flat_Rate
 {
-    use ShippingMethodTrait;
+    use ShippingMethodTrait {
+        ShippingMethodTrait::instance_form_fields as trait_instance_form_fields;
+    }
 
     public const ID = 'sendy_pickup_point';
 
@@ -37,6 +39,8 @@ class PickupPointDelivery extends WC_Shipping_Flat_Rate
      */
     public function instance_form_fields(array $form_fields): array
     {
+        $form_fields = $this->trait_instance_form_fields($form_fields);
+
         $form_fields['carrier'] = [
             'title' => __('Carrier', 'sendy'),
             'type' => 'select',
