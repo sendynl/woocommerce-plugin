@@ -169,6 +169,11 @@ class Webhooks
             $shipment = ApiClientFactory::buildConnectionUsingTokens()->shipment->get($shipmentId);
 
             $order->update_meta_data('_sendy_packages', $shipment['packages']);
+
+            if (get_option('sendy_mark_order_as_completed') === 'after-shipment-created') {
+                $order->set_status('completed', __('Sendy: Shipment created', 'sendy'));
+            }
+
             $order->save();
         }
     }
