@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Sendy\Api\ApiException;
 use Sendy\Api\Connection;
 use Sendy\WooCommerce\ApiClientFactory;
+use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Repositories\Shops;
 
 abstract class OrdersModule
@@ -133,11 +134,6 @@ abstract class OrdersModule
             $shipment = ApiClientFactory::buildConnectionUsingTokens()->shipment->createWithSmartRules($request);
 
             $order->update_meta_data('_sendy_shipment_id', $shipment['uuid']);
-
-            if (get_option('sendy_mark_order_as_completed') === 'after-shipment-created') {
-                $order->set_status('completed', __('Sendy: Shipment created', 'sendy'));
-            }
-
             $order->save();
         } catch (ApiException $exception) {
             $message = $this->parseException($exception, $order);
