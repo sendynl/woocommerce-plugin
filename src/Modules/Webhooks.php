@@ -146,7 +146,7 @@ class Webhooks
     {
         try {
             $webhook = ApiClientFactory::buildConnectionUsingTokens()->webhook->create([
-                'url' => get_site_url(null, 'wp-json/sendy/v1/webhook', 'https'),
+                'url' => get_rest_url(null, 'sendy/v1/webhook', 'https'),
                 'events' => [
                     'shipment.generated',
                     'shipment.deleted',
