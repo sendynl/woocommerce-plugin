@@ -61,6 +61,9 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 == Changelog ==
 
+= Unreleased =
+* Fix an issue where the webhook was not using the correct URL
+
 = 3.2.2 =
 * Fix an issue where the order status was not updated correctly
 
