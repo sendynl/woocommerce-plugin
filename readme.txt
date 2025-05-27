@@ -63,6 +63,7 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 = Unreleased =
 * Fix an issue where the webhook was not using the correct URL
+* Respect the weight defined on the shipping preference in the portal instead of using 1kg
 
 = 3.2.2 =
 * Fix an issue where the order status was not updated correctly
