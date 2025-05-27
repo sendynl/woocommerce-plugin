@@ -65,7 +65,6 @@ abstract class OrdersModule
         $request = [
             'preference_id' => $preferenceId,
             'shop_id' => $shopId,
-            'weight' => 1,
             'amount' => $amount,
             'reference' => $order->get_id(),
             'order_date' => $order->get_date_created()->format(\DateTimeInterface::RFC3339),
