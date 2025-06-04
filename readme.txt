@@ -2,8 +2,8 @@
 Plugin Name: Sendy
 Plugin URI: https://app.sendy.nl/
 Description: A WooCommerce plugin that connects your site to the Sendy platform
-Version: 3.2.2
-Stable tag: 3.2.2
+Version: 3.2.3
+Stable tag: 3.2.3
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
@@ -61,7 +61,7 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 == Changelog ==
 
-= Unreleased =
+= 3.2.3 =
 * Fix an issue where the webhook was not using the correct URL
 * Respect the weight defined on the shipping preference in the portal instead of using 1kg
 

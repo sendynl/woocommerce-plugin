@@ -11,3 +11,4 @@ SECURITY.md
 output.log
 DOCKER_ENV
 docker_tag
+bump_version.sh
