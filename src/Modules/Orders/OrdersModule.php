@@ -221,7 +221,7 @@ abstract class OrdersModule
         $weight = 0;
 
         foreach ($order->get_items() as $item) {
-            $weight += (float)$item->get_product()->get_weight() * $item->get_quantity();
+            $weight += (float) wc_get_weight($item->get_product()->get_weight(), 'kg') * $item->get_quantity();
         }
 
         if ($weight > 0) {
@@ -246,7 +246,7 @@ abstract class OrdersModule
                 'sku' => $product->get_sku(),
                 'quantity' => $item->get_quantity(),
                 'unit_price' => $item->get_subtotal() / $item->get_quantity(),
-                'unit_weight' => absint($product->get_weight()) > 0 ? absint($product->get_weight()) * 1000 : null,
+                'unit_weight' => absint($product->get_weight()) > 0 ? wc_get_weight($product->get_weight(), 'kg') : null,
             ];
         }
     }
