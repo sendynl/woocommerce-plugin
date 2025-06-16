@@ -32,8 +32,8 @@ final class Checkout
     {
         if (is_checkout()) {
             wp_enqueue_script('wp-util');
-            wp_enqueue_script('sendy-api', 'https://app.sendy.nl/embed/api.js', [], Plugin::VERSION);
-            wp_enqueue_script('sendy-checkout', SENDY_WC_PLUGIN_DIR_URL . '/resources/js/checkout.js', ['jquery', 'sendy-api'], Plugin::VERSION);
+            wp_enqueue_script('sendy-api', 'https://app.sendy.nl/embed/api.js', [], Plugin::VERSION, ['in_footer' => true]);
+            wp_enqueue_script('sendy-checkout', SENDY_WC_PLUGIN_DIR_URL . '/resources/js/checkout.js', ['jquery', 'sendy-api'], Plugin::VERSION,  ['in_footer' => true]);
         }
     }
 
