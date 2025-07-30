@@ -30,22 +30,13 @@ Nog geen klant van Sendy? Ga naar www.sendy.nl en maak een gratis online account
 
 == Installation ==
 
-1. Installeer en activeer de plug-in via de plug-in-directory
-2. Ga in de back-end van je webshop naar *WooCommerce* -> *Sendy*.
-3. Klik op *Verbinden*. Je gaat nu naar je Sendy verzendaccount. Mogelijk moet je hier nog inloggen.
-4. Klik op *Toegang geven*.
-5. Als alles gelukt is zie je bovenin WooCommerce de melding '*Authenticatie gelukt*'
-
-= Parcelshopfinder installeren =
-
-Laat je klanten in de checkout kiezen voor een parcelshoplevering, zodat ze de zending bij een parcelshop naar keuze kunnen ophalen.
-
-1. Ga in de back-end van WooCommerce links in het menu naar *WooCommerce* → *Instellingen*.
-2. Klik op het tabblad *Verzending*.
-3. Klik bij de zone waarvoor je een parcelshopfinder wil activeren op *Bewerken*.
-4. Klik op *Verzendmethode toevoegen*.
-5. Kies voor de verzendmethode '*Pick-up punt levering*' en klik op *Doorgaan*.
-6. Vul de instellingen voor de verzendmethode naar wens in en klik op *Aanmaken en opslaan*.
+1. Ga bij WooCommerce in de linker werkbalk naar Plugins → Nieuwe plugin toevoegen.
+2. Tik in de zoekbalk 'Sendy' in.
+3. Installeer en activeer de Sendy plugin.
+4. Ga in de back-end van je webshop naar *WooCommerce* -> *Sendy*.
+5. Klik op *Verbinden*. Je gaat nu naar je Sendy verzendaccount. Mogelijk moet je hier nog inloggen.
+6. Klik op *Toegang geven*.
+7. Als alles gelukt is zie je bovenin WooCommerce de melding '*Authenticatie gelukt*'
 
 = Handleiding =
 
