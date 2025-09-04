@@ -73,7 +73,7 @@ class Settings
                 // the access token option and restart the authentication process from the start. Only resetting the
                 // access token is sufficient as it will not generate multiple instances of the WooCommerce integration
                 // in the Sendy application
-                update_option('sendy_access_token', null);
+                update_option('sendy_access_token', null, false);
             }
         }
 
@@ -255,7 +255,7 @@ class Settings
     {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (isset($_GET['sendy_logout'])) {
-            update_option('sendy_access_token', null);
+            update_option('sendy_access_token', null, false);
 
             wp_safe_redirect(admin_url('admin.php?page=sendy'));
         }

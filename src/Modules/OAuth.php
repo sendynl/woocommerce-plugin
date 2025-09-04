@@ -24,7 +24,7 @@ class OAuth
     {
         if (get_option('sendy_client_id') == '') {
             update_option('sendy_client_id', wp_generate_uuid4());
-            update_option('sendy_client_secret', wp_generate_password(40));
+            update_option('sendy_client_secret', wp_generate_password(40), false);
             update_option('sendy_hostname', get_site_url());
         }
     }
@@ -50,11 +50,11 @@ class OAuth
 
         if (get_option('sendy_hostname') != get_site_url()) {
             update_option('sendy_client_id', wp_generate_uuid4());
-            update_option('sendy_client_secret', wp_generate_password(40));
+            update_option('sendy_client_secret', wp_generate_password(40), false);
             update_option('sendy_hostname', get_site_url());
 
-            update_option('sendy_refresh_token', null);
-            update_option('sendy_token_expires', null);
+            update_option('sendy_refresh_token', null, false);
+            update_option('sendy_token_expires', null, false);
         }
     }
 
