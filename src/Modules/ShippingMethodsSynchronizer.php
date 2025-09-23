@@ -68,8 +68,7 @@ class ShippingMethodsSynchronizer
         }
 
         try {
-            $endpoint = new ShippingMethod(ApiClientFactory::buildConnectionUsingTokens());
-            $endpoint->sync($data);
+            (new ShippingMethod())->sync($data);
         } catch (ApiException $exception) {
             // TODO Implement logging
         }

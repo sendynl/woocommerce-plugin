@@ -6,6 +6,8 @@ use Sendy\Api\Connection;
 
 class ApiClientFactory
 {
+    private static ?Connection $connection = null;
+
     public static function buildBaseConnection(): Connection
     {
         return (new Connection())
@@ -32,7 +34,11 @@ class ApiClientFactory
 
     public static function buildConnectionUsingCode(string $code): Connection
     {
-        return self::buildBaseConnection()->setAuthorizationCode($code);
+        if (! self::$connection instanceof Connection) {
+            self::$connection = self::buildBaseConnection()->setAuthorizationCode($code);
+        }
+
+        return self::$connection;
     }
 
     public static function buildConnectionUsingTokens(): Connection
@@ -41,10 +47,14 @@ class ApiClientFactory
             throw new \RuntimeException('Please authenticate first before using this method');
         }
 
-        return self::buildBaseConnection()
-            ->setAccessToken(get_option('sendy_access_token'))
-            ->setRefreshToken(get_option('sendy_refresh_token'))
-            ->setTokenExpires(get_option('sendy_token_expires'))
-        ;
+        if (! self::$connection instanceof Connection) {
+            return self::$connection = self::buildBaseConnection()
+                ->setAccessToken(get_option('sendy_access_token'))
+                ->setRefreshToken(get_option('sendy_refresh_token'))
+                ->setTokenExpires(get_option('sendy_token_expires'))
+            ;
+        }
+
+        return self::$connection;
     }
 }

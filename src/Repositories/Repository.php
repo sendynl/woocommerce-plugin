@@ -7,10 +7,8 @@ use Sendy\WooCommerce\ApiClientFactory;
 
 abstract class Repository
 {
-    protected Connection $connection;
-
-    public function __construct()
+    protected function connection(): Connection
     {
-        $this->connection = ApiClientFactory::buildConnectionUsingTokens();
+        return ApiClientFactory::buildConnectionUsingTokens();
     }
 }

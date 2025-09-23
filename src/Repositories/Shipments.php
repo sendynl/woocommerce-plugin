@@ -14,6 +14,6 @@ class Shipments extends Repository
      */
     public function get(string $shipmentId): array
     {
-        return $this->connection->shipment->get($shipmentId);
+        return $this->connection()->shipment->get($shipmentId);
     }
 }
