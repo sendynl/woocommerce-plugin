@@ -104,6 +104,7 @@ class Plugin
             return $moFile;
         }, 10, 2);
 
+        // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
         load_plugin_textdomain('sendy', false, untrailingslashit(dirname(SENDY_WC_PLUGIN_BASENAME)) . '/languages');
     }
 
