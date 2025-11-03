@@ -19,7 +19,7 @@ class Shops extends Repository
         $shops = get_transient('sendy_shops');
 
         if (! $shops) {
-            $result = $this->connection->shop->list();
+            $result = $this->connection()->shop->list();
 
             $shops = [];
 

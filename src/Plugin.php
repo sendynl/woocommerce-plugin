@@ -18,7 +18,7 @@ use WC_Shipping_Method;
 
 class Plugin
 {
-    public const VERSION = '3.2.6';
+    public const VERSION = '3.2.7';
 
     public const SETTINGS_ID = 'sendy';
 
@@ -104,6 +104,7 @@ class Plugin
             return $moFile;
         }, 10, 2);
 
+        // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
         load_plugin_textdomain('sendy', false, untrailingslashit(dirname(SENDY_WC_PLUGIN_BASENAME)) . '/languages');
     }
 
