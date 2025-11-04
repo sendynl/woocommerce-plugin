@@ -7,7 +7,7 @@ Stable tag: 3.3.0
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
-Tested up to: 6.8.3
+Tested up to: 6.8
 Requires PHP: 7.4
 Requires Plugins: woocommerce
 WC requires at least: 8.2
@@ -51,6 +51,9 @@ Hierbij worden de adres- en contactgegevens van de je klanten en (optioneel) de 
 Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) en [privacy statement](https://sendy.nl/privacy-statement/) van toepassing.
 
 == Changelog ==
+
+= 3.3 =
+* Update the Sendy SDK to version 3.0
 
 = 3.2.7 =
 * Use a singleton for the API client to prevent exceptions regarding revoked tokens
