@@ -56,8 +56,6 @@ class Webhooks
     {
         $payload = $request->get_json_params() ?? [];
 
-        file_put_contents(SENDY_WC_PLUGIN_BASENAME . '/request.json', json_encode($payload));
-
         if (!array_key_exists('data', $payload)) {
             return;
         }
@@ -207,7 +205,9 @@ class Webhooks
     {
         $query = new WC_Order_Query([
             'limit' => 1,
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
             'meta_key' => '_sendy_shipment_id',
+            // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
             'meta_value' => $shipmentId,
             'meta_compare' => '=',
         ]);
