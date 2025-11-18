@@ -12,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 <?php else : ?>
     <?php if ($order->meta_exists('_sendy_packages')) : ?>
-        <?php foreach ($order->get_meta('_sendy_packages') as $package) : ?>
+        <?php foreach ($order->get_meta('_sendy_packages') as $sendy_package) : ?>
             <mark class="order-status status-processing">
-                <a href="<?php echo esc_url($package['tracking_url'])?> " target="_blank" class="order-status status-processing">
-                    <span><?php echo esc_html($package['package_number']) ?></span>
+                <a href="<?php echo esc_url($sendy_package['tracking_url'])?> " target="_blank" class="order-status status-processing">
+                    <span><?php echo esc_html($sendy_package['package_number']) ?></span>
                 </a>
             </mark>
         <?php endforeach; ?>

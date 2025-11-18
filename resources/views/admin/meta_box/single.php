@@ -18,8 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <input type="hidden" id="sendy-create-shipment-nonce" name="sendy_create_shipment_nonce" value="<?php echo esc_html(wp_create_nonce('sendy_create_shipment'))?>">
 
     <select id="sendy-metabox-shop-dropdown" style="width: 100%">
-        <?php foreach ($shops as $id => $shop) : ?>
-            <option value="<?php echo esc_html($id); ?>" <?php selected($id, get_option('sendy_previously_used_shop_id')) ?>><?php echo esc_html($shop)?> </option>
+        <?php foreach ($shops as $id => $sendy_shop) : ?>
+            <option value="<?php echo esc_html($id); ?>" <?php selected($id, get_option('sendy_previously_used_shop_id')) ?>><?php echo esc_html($sendy_shop)?> </option>
         <?php endforeach; ?>
     </select>
 
@@ -28,8 +28,8 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         <p><b><?php esc_html_e('Shipping preference', 'sendy')?> </b></p>
 
         <select id="sendy-metabox-preference-dropdown" style="width: 100%">
-            <?php foreach ($preferences as $id => $preference) : ?>
-                <option value="<?php echo esc_html($id); ?>" <?php selected($id, get_option('sendy_previously_used_preference_id')) ?>><?php echo esc_html($preference)?> </option>
+            <?php foreach ($preferences as $id => $sendy_preference) : ?>
+                <option value="<?php echo esc_html($id); ?>" <?php selected($id, get_option('sendy_previously_used_preference_id')) ?>><?php echo esc_html($sendy_preference)?> </option>
             <?php endforeach; ?>
         </select>
 
@@ -48,9 +48,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     <?php if ($order->meta_exists('_sendy_packages')) : ?>
         <p><b><?php esc_html_e('Track and trace', 'sendy'); ?></b></p>
 
-        <?php foreach ($order->get_meta('_sendy_packages') as $package) : ?>
-            <a href="<?php echo esc_url($package['tracking_url'])?>" target="_blank">
-                <span><?php echo esc_html($package['package_number']); ?></span>
+        <?php foreach ($order->get_meta('_sendy_packages') as $sendy_package) : ?>
+            <a href="<?php echo esc_url($sendy_package['tracking_url'])?>" target="_blank">
+                <span><?php echo esc_html($sendy_package['package_number']); ?></span>
             </a>
         <?php endforeach; ?>
 
