@@ -56,8 +56,6 @@ class Webhooks
     {
         $payload = $request->get_json_params() ?? [];
 
-        file_put_contents(SENDY_WC_PLUGIN_BASENAME . '/request.json', json_encode($payload));
-
         if (!array_key_exists('data', $payload)) {
             return;
         }
