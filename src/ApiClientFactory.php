@@ -23,12 +23,6 @@ class ApiClientFactory
                 update_option('sendy_access_token', $connection->getAccessToken(), false);
                 update_option('sendy_refresh_token', $connection->getRefreshToken(), false);
                 update_option('sendy_token_expires', $connection->getTokenExpires(), false);
-
-                if (function_exists('wp_cache_set')) {
-                    wp_cache_set('sendy_access_token', $connection->getAccessToken(), 'options');
-                    wp_cache_set('sendy_refresh_token', $connection->getRefreshToken(), 'options');
-                    wp_cache_set('sendy_token_expires', $connection->getTokenExpires(), 'options');
-                }
             })
         ;
     }
