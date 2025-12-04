@@ -11,7 +11,7 @@
  * Text Domain: sendy
  * Domain Path: /languages
  * Requires at least: 5.2
- * Tested up to: 6.8
+ * Tested up to: 6.9
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
  * WC requires at least: 8.2
@@ -19,6 +19,8 @@
  *
  * @package Sendy
  */
+
+use Sendy\WooCommerce\Modules\BlocksCheckout;
 
 if (! defined('ABSPATH')) {
     exit;
@@ -35,7 +37,7 @@ if (! defined('SENDY_WC_PLUGIN_BASENAME')) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 function sendy_init() {
-    require_once __DIR__ . '/src/helpers.php';
+    require_once __DIR__ . '/lib/helpers.php';
 
     return Sendy\WooCommerce\Plugin::instance();
 }
@@ -45,3 +47,5 @@ add_action('plugins_loaded', 'sendy_init');
 register_deactivation_hook(__FILE__, function () {
     Sendy\WooCommerce\Plugin::instance()->deactivate();
 });
+
+BlocksCheckout::init();

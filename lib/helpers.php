@@ -144,3 +144,33 @@ if (! function_exists('sendy_parse_house_number')) {
         return $object;
     }
 }
+
+if (! function_exists('sendy_shipping_method_instance_id')) {
+    /**
+     * Get the instance id of the selected shipment method
+     *
+     * This ID is used to correctly store the selected pickup point and makes it possible to offer pickup point delivery
+     * for multiple carriers.
+     *
+     * @return int|null
+     */
+    function sendy_shipping_method_instance_id(): ?int
+    {
+        $selectedMethods = WC()->session->get('chosen_shipping_methods') ?? [];
+
+        $pickupPointDelivery = array_filter(
+            $selectedMethods,
+            function ($item) {
+                return str_starts_with($item, 'sendy_pickup_point');
+            }
+        );
+
+        if (count($pickupPointDelivery) > 0) {
+            [$name, $instanceId] = explode(':', $pickupPointDelivery[0]);
+
+            return (int) $instanceId;
+        }
+
+        return null;
+    }
+}

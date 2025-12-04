@@ -3,6 +3,7 @@
 namespace Sendy\WooCommerce\Modules;
 
 use Sendy\WooCommerce\Plugin;
+use Sendy\WooCommerce\ShippingMethods\PickupPointDelivery;
 use Sendy\WooCommerce\Utils\View;
 use WP_Error;
 
@@ -33,7 +34,7 @@ final class Checkout
         if (is_checkout()) {
             wp_enqueue_script('wp-util');
             wp_enqueue_script('sendy-api', 'https://app.sendy.nl/embed/api.js', [], Plugin::VERSION, ['in_footer' => true]);
-            wp_enqueue_script('sendy-checkout', SENDY_WC_PLUGIN_DIR_URL . '/resources/js/checkout.js', ['jquery', 'sendy-api'], Plugin::VERSION,  ['in_footer' => true]);
+            wp_enqueue_script('sendy-checkout', SENDY_WC_PLUGIN_DIR_URL . '/resources/js/checkout.js', ['jquery', 'sendy-api'], Plugin::VERSION, ['in_footer' => true]);
         }
     }
 
@@ -45,15 +46,15 @@ final class Checkout
     public function render_pickup_point_field(): void
     {
         if (in_array('sendy_pickup_point', wc_get_chosen_shipping_method_ids())) {
-            if (!is_null($this->get_shipping_method_instance_id())) {
-                $carrier = $this->get_carrier_for_shipping_method($this->get_shipping_method_instance_id());
+            if (!is_null(sendy_shipping_method_instance_id())) {
+                $carrier = $this->get_carrier_for_shipping_method(sendy_shipping_method_instance_id());
 
-                $selectedPickupPoint = WC()->session->get("sendy_selected_parcelshop_{$this->get_shipping_method_instance_id()}");
+                $selectedPickupPoint = WC()->session->get("sendy_selected_parcelshop_". sendy_shipping_method_instance_id());
 
                 echo wp_kses(
                     View::fromTemplate('checkout/pickup_point_selection.php')->render([
                         'carrier' => $carrier,
-                        'instance_id' => $this->get_shipping_method_instance_id(),
+                        'instance_id' => sendy_shipping_method_instance_id(),
                         'selected_pickup_point' => $selectedPickupPoint,
                     ]),
                     View::ALLOWED_TAGS
@@ -95,7 +96,7 @@ final class Checkout
      */
     public function store_selected_pickup_point_in_order(\WC_Order $order): void
     {
-        $instanceId = $this->get_shipping_method_instance_id();
+        $instanceId = sendy_shipping_method_instance_id();
 
         if ($data = WC()->session->get("sendy_selected_parcelshop_{$instanceId}")) {
 
@@ -134,7 +135,7 @@ final class Checkout
     public function validate_pickup_point(array $fields, WP_Error $errors): void
     {
         if (in_array('sendy_pickup_point', wc_get_chosen_shipping_method_ids())) {
-            $instanceId = $this->get_shipping_method_instance_id();
+            $instanceId = sendy_shipping_method_instance_id();
 
             if (empty($instanceId)) {
                 $errors->add('sendy_pickup_point_error', __('Please select a pick-up point.', 'sendy'));
@@ -149,32 +150,6 @@ final class Checkout
     }
 
     /**
-     * Get the instance id of the selected shipment method
-     *
-     * This ID is used to correctly store the selected pickup point and makes it possible to offer pickup point delivery
-     * for multiple carriers.
-     *
-     * @return int|null
-     */
-    private function get_shipping_method_instance_id(): ?int
-    {
-        $selectedMethods = WC()->session->get('chosen_shipping_methods') ?? [];
-
-        $pickupPointDelivery = array_filter(
-            $selectedMethods,
-            function ($item) { return str_starts_with($item, 'sendy_pickup_point'); }
-        );
-
-        if (count($pickupPointDelivery) > 0) {
-            [$name, $instanceId] = explode(':', $pickupPointDelivery[0]);
-
-            return (int) $instanceId;
-        }
-
-        return null;
-    }
-
-    /**
      * Get the carrier for the shipping method
      *
      * This method is used to load the correct pick-up points for a carrier in the checkout
@@ -184,8 +159,6 @@ final class Checkout
      */
     private function get_carrier_for_shipping_method(int $instance_id): ?string
     {
-        $options = get_option("woocommerce_sendy_pickup_point_{$instance_id}_settings");
-
-        return $options['carrier'] ?? null;
+        return (new PickupPointDelivery($instance_id))->get_option('carrier');
     }
 }
