@@ -19,7 +19,7 @@ class Preferences extends Repository
         $preferences = get_transient('sendy_shipping_preferences');
 
         if (! $preferences) {
-            $result = $this->connection->shippingPreference->list();
+            $result = $this->connection()->shippingPreference->list();
 
             $preferences = [];
 

@@ -81,9 +81,7 @@ class OAuth
             }
 
             try {
-                $connection = ApiClientFactory::buildConnectionUsingCode(sanitize_key($_GET['code']));
-
-                $connection->checkOrAcquireAccessToken();
+                ApiClientFactory::buildConnectionUsingCode(sanitize_key($_GET['code']))->checkOrAcquireAccessToken();
 
                 sendy_flash_admin_notice('success', __('Authentication successful', 'sendy'));
 

@@ -4,15 +4,11 @@ namespace Sendy\WooCommerce\Modules\Orders;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Sendy\Api\ApiException;
-use Sendy\Api\Connection;
 use Sendy\WooCommerce\ApiClientFactory;
-use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Repositories\Shops;
 
 abstract class OrdersModule
 {
-    private Connection $apiClient;
-
     /**
      * Initialize an order object from the meta box
      *
@@ -55,8 +51,6 @@ abstract class OrdersModule
      */
     protected function create_shipment_from_order(\WC_Order $order, string $preferenceId, string $shopId, int $amount): void
     {
-        $this->apiClient ??= ApiClientFactory::buildConnectionUsingTokens();
-
         if ($order->meta_exists('_sendy_shipment_id')) {
             // translators: %s The ID of the order
             sendy_flash_admin_notice('notice', sprintf(__('Order #%s already has a shipment created', 'sendy'), $order->get_id()));
@@ -86,7 +80,7 @@ abstract class OrdersModule
         }
 
         try {
-            $result = $this->apiClient->shipment->createFromPreference($request);
+            $result = ApiClientFactory::buildConnectionUsingTokens()->shipment->createFromPreference($request);
 
             $order->update_meta_data('_sendy_shipment_id', $result['uuid']);
             $order->update_meta_data('_sendy_packages', $result['packages']);
@@ -154,10 +148,8 @@ abstract class OrdersModule
      */
     protected function offer_labels_as_download(array $shipment_ids): void
     {
-        $this->apiClient ??= ApiClientFactory::buildConnectionUsingTokens();
-
         try {
-            $response = $this->apiClient->label->get($shipment_ids);
+            $response = ApiClientFactory::buildConnectionUsingTokens()->label->get($shipment_ids);
 
             if (ob_get_contents()) {
                 ob_clean();

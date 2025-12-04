@@ -18,7 +18,7 @@ use WC_Shipping_Method;
 
 class Plugin
 {
-    public const VERSION = '3.2.6';
+    public const VERSION = '3.3.0';
 
     public const SETTINGS_ID = 'sendy';
 
@@ -92,6 +92,7 @@ class Plugin
             $basePath = WP_CONTENT_DIR . '/plugins/sendy/languages/';
 
             if ($domain === 'sendy' && str_starts_with($moFile, WP_LANG_DIR . '/plugins/') !== false) {
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
                 $locale = apply_filters('plugin_locale', determine_locale(), $domain);
 
                 $filename = $basePath . '/sendy-' . $locale . '.mo';
@@ -104,6 +105,7 @@ class Plugin
             return $moFile;
         }, 10, 2);
 
+        // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
         load_plugin_textdomain('sendy', false, untrailingslashit(dirname(SENDY_WC_PLUGIN_BASENAME)) . '/languages');
     }
 

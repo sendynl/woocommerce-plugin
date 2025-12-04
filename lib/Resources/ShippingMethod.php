@@ -2,13 +2,13 @@
 
 namespace Sendy\WooCommerce\Resources;
 
-use Sendy\Api\Resources\Resource;
+use Sendy\WooCommerce\ApiClientFactory;
 
-final class ShippingMethod extends Resource
+final class ShippingMethod
 {
     public function sync(array $data): array
     {
-        return $this->connection->put('/webshop_shipping_methods', [
+        return ApiClientFactory::buildConnectionUsingTokens()->put('/webshop_shipping_methods', [
             'shipping_methods' => $data,
         ]);
     }
