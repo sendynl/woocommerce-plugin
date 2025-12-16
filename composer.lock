@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "44f52be19142d1d6c3aafa6b2b191e4f",
+    "content-hash": "c77fdcf5df4d0558a83fbe5a0e4b80d9",
     "packages": [
         {
             "name": "sendynl/php-sdk",
-            "version": "3.x-dev",
+            "version": "v3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendynl/php-sdk.git",
-                "reference": "75e9dc2e6703c499295f56d05c745b1924256471"
+                "reference": "fb4dc8bdfeff7fa3d981eea0e28028e6fb923295"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendynl/php-sdk/zipball/75e9dc2e6703c499295f56d05c745b1924256471",
-                "reference": "75e9dc2e6703c499295f56d05c745b1924256471",
+                "url": "https://api.github.com/repos/sendynl/php-sdk/zipball/fb4dc8bdfeff7fa3d981eea0e28028e6fb923295",
+                "reference": "fb4dc8bdfeff7fa3d981eea0e28028e6fb923295",
                 "shasum": ""
             },
             "require": {
@@ -57,17 +57,15 @@
             ],
             "support": {
                 "issues": "https://github.com/sendynl/php-sdk/issues",
-                "source": "https://github.com/sendynl/php-sdk/tree/3.x"
+                "source": "https://github.com/sendynl/php-sdk/tree/v3.0"
             },
-            "time": "2025-11-04T11:09:27+00:00"
+            "time": "2025-11-04T14:36:32+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "sendynl/php-sdk": 20
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {},
@@ -75,5 +73,5 @@
     "platform-overrides": {
         "php": "7.4.0"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
