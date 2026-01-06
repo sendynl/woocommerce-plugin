@@ -52,6 +52,9 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 == Changelog ==
 
+= 3.3.1 =
+* Fix a PHP error which prevented version 3.3 from being released
+
 = 3.3 =
 * Update the Sendy SDK to version 3.0
 
