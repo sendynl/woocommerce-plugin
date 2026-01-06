@@ -24,7 +24,7 @@ echo "Bumping version to: $new_version"
 perl -pi -e "s/^Version: .*/Version: $new_version/" readme.txt
 perl -pi -e "s/^Stable tag: .*/Stable tag: $new_version/" readme.txt
 perl -pi -e "s/^ \* Version: .*/ \* Version: $new_version/" sendy.php
-perl -pi -e "s/^    public const VERSION = .*/    public const VERSION = '$new_version';/" src/Plugin.php
+perl -pi -e "s/^    public const VERSION = .*/    public const VERSION = '$new_version';/" lib/Plugin.php
 
 if ! grep -q "^= $new_version =$" readme.txt
 then

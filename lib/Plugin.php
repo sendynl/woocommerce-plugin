@@ -18,7 +18,7 @@ use WC_Shipping_Method;
 
 class Plugin
 {
-    public const VERSION = '3.3.0';
+    public const VERSION = '3.4.0';
 
     public const SETTINGS_ID = 'sendy';
 
@@ -30,7 +30,6 @@ class Plugin
     {
         add_action('init', [$this, 'initialize_plugin'], 0);
         add_action('before_woocommerce_init', [$this, 'declare_wc_hpos_compatibility'], 10);
-        add_action('before_woocommerce_init', [$this, 'declare_checkout_blocks_incompatibility'], 10);
     }
 
     public static function instance(): Plugin
@@ -51,13 +50,6 @@ class Plugin
     {
         if (class_exists('Automattic\WooCommerce\Utilities\FeaturesUtil')) {
             FeaturesUtil::declare_compatibility('custom_order_tables', SENDY_WC_PLUGIN_BASENAME);
-        }
-    }
-
-    public function declare_checkout_blocks_incompatibility(): void
-    {
-        if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
-            FeaturesUtil::declare_compatibility('cart_checkout_blocks', SENDY_WC_PLUGIN_BASENAME, false);
         }
     }
 

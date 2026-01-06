@@ -12,8 +12,6 @@ const Block = ({ children, checkoutExtensionData }) => {
 
     const selectedPickupPointData = store.getCartData().extensions?.['sendy-pickup-point'] || null;
 
-    console.log(selectedPickupPointData);
-
     if (! shouldBeVisible(selectedShippingRates(shippingRates))) {
         return <></>;
     }
