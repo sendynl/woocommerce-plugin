@@ -15,7 +15,7 @@
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce
  * WC requires at least: 8.2
- * WC tested up to: 10.3.4
+ * WC tested up to: 10.3.6
  *
  * @package Sendy
  */

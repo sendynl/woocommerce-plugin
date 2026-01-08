@@ -11,7 +11,7 @@ Tested up to: 6.9
 Requires PHP: 7.4
 Requires Plugins: woocommerce
 WC requires at least: 8.2
-WC tested up to: 10.3.4
+WC tested up to: 10.3.6
 
 Een plugin van Sendy voor WooCommerce waarmee je op eenvoudige wijze labels aan kunt maken voor zendingen.
 
@@ -54,6 +54,9 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 = 3.4 =
 * Add a checkout block for the pickup point picker to support the blocks checkout
+
+= 3.3.1 =
+* Fix a PHP error which prevented version 3.3 from being released
 
 = 3.3 =
 * Update the Sendy SDK to version 3.0
