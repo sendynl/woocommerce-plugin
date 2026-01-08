@@ -10,18 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Subversion
         run: |
           sudo apt update
           sudo apt install subversion
 
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: 'npm'
+
       - name: Install composer dependencies
         uses: php-actions/composer@v6
         with:
           dev: no
           args: "--optimize-autoloader"
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build the frontend assets
+        run: npm build
 
       - name: Publish the plugin to the WordPress plugin directory
         id: deploy
