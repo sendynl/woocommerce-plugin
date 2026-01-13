@@ -103,7 +103,7 @@ class Plugin
 
     private function init_cron(): void
     {
-        if (!wp_next_scheduled('sendy_cron')) {
+        if (! wp_next_scheduled('sendy_cron')) {
             wp_schedule_event(time(), 'hourly', 'sendy_cron');
         }
     }

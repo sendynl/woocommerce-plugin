@@ -26,8 +26,6 @@ final class Checkout
 
     /**
      * Load the assets, but only on the checkout page
-     *
-     * @return void
      */
     public function enqueue_assets(): void
     {
@@ -40,16 +38,14 @@ final class Checkout
 
     /**
      * Render the button to select a pick-up point in the checkout
-     *
-     * @return void
      */
     public function render_pickup_point_field(): void
     {
         if (in_array('sendy_pickup_point', wc_get_chosen_shipping_method_ids())) {
-            if (!is_null(sendy_shipping_method_instance_id())) {
+            if (! is_null(sendy_shipping_method_instance_id())) {
                 $carrier = $this->get_carrier_for_shipping_method(sendy_shipping_method_instance_id());
 
-                $selectedPickupPoint = WC()->session->get("sendy_selected_parcelshop_". sendy_shipping_method_instance_id());
+                $selectedPickupPoint = WC()->session->get("sendy_selected_parcelshop_" . sendy_shipping_method_instance_id());
 
                 echo wp_kses(
                     View::fromTemplate('checkout/pickup_point_selection.php')->render([
@@ -57,7 +53,7 @@ final class Checkout
                         'instance_id' => sendy_shipping_method_instance_id(),
                         'selected_pickup_point' => $selectedPickupPoint,
                     ]),
-                    View::ALLOWED_TAGS
+                    View::ALLOWED_TAGS,
                 );
             }
         }
@@ -65,22 +61,20 @@ final class Checkout
 
     /**
      * Store the selected pickup point in the session
-     *
-     * @return void
      */
     public function store_selected_pickup_point_in_session(): void
     {
-        if (empty($_REQUEST['nonce']) || !wp_verify_nonce(sanitize_key($_REQUEST['nonce']), 'sendy_store_pickup_point')) {
+        if (empty($_REQUEST['nonce']) || ! wp_verify_nonce(sanitize_key($_REQUEST['nonce']), 'sendy_store_pickup_point')) {
             wp_send_json_error('Nonce verification failed');
         }
 
         $data = [
-            'id' => sanitize_text_field(wp_unslash(isset($_REQUEST['id']) ? $_REQUEST['id'] : '')),
-            'name' => sanitize_text_field(wp_unslash(isset($_REQUEST['name']) ? $_REQUEST['name'] : '')),
-            'street' => sanitize_text_field(wp_unslash(isset($_REQUEST['street']) ? $_REQUEST['street'] : '')),
-            'number' => sanitize_text_field(wp_unslash(isset($_REQUEST['number']) ? $_REQUEST['number'] : '')),
-            'postal_code' => sanitize_text_field(wp_unslash(isset($_REQUEST['postal_code']) ? $_REQUEST['postal_code'] : '')),
-            'city' => sanitize_text_field(wp_unslash(isset($_REQUEST['city']) ? $_REQUEST['city'] : ''))
+            'id' => sanitize_text_field(wp_unslash($_REQUEST['id'] ?? '')),
+            'name' => sanitize_text_field(wp_unslash($_REQUEST['name'] ?? '')),
+            'street' => sanitize_text_field(wp_unslash($_REQUEST['street'] ?? '')),
+            'number' => sanitize_text_field(wp_unslash($_REQUEST['number'] ?? '')),
+            'postal_code' => sanitize_text_field(wp_unslash($_REQUEST['postal_code'] ?? '')),
+            'city' => sanitize_text_field(wp_unslash($_REQUEST['city'] ?? '')),
         ];
 
         WC()->session->set('sendy_selected_parcelshop_' . sanitize_key($_REQUEST['instance_id'] ?? ''), $data);
@@ -90,9 +84,6 @@ final class Checkout
 
     /**
      * Add the selected pickup point to the order metadata
-     *
-     * @param \WC_Order $order
-     * @return void
      */
     public function store_selected_pickup_point_in_order(\WC_Order $order): void
     {
@@ -109,28 +100,21 @@ final class Checkout
 
     /**
      * Display the address of the selected pickup point on the order confirmation page
-     *
-     * @param string $addressType
-     * @param \WC_Order $order
-     * @return void
      */
     public function show_selected_pickup_point_on_confirmation(string $addressType, \WC_Order $order): void
     {
         if ($addressType === 'shipping' && $order->meta_exists('_sendy_pickup_point_id')) {
             echo wp_kses(
                 View::fromTemplate('checkout/order_confirmation.php')->render([
-                    'pickup_point' => $order->get_meta('_sendy_pickup_point_data')
+                    'pickup_point' => $order->get_meta('_sendy_pickup_point_data'),
                 ]),
-                View::ALLOWED_TAGS
+                View::ALLOWED_TAGS,
             );
         }
     }
 
     /**
      * Validate if the pickup point is selected
-     *
-     * @param array $fields
-     * @param WP_Error $errors
      */
     public function validate_pickup_point(array $fields, WP_Error $errors): void
     {
@@ -153,9 +137,6 @@ final class Checkout
      * Get the carrier for the shipping method
      *
      * This method is used to load the correct pick-up points for a carrier in the checkout
-     *
-     * @param int $instance_id
-     * @return string|null
      */
     private function get_carrier_for_shipping_method(int $instance_id): ?string
     {

@@ -15,7 +15,7 @@ class Settings
 {
     public function __construct()
     {
-        if (!is_admin()) {
+        if (! is_admin()) {
             return;
         }
 
@@ -33,14 +33,12 @@ class Settings
             SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-settings.js',
             [],
             Plugin::VERSION,
-            true
+            true,
         );
     }
 
     /**
      * Add the settings page for the module as a submenu item for the WooCommerce menu
-     *
-     * @return void
      */
     public function register_menu(): void
     {
@@ -56,8 +54,6 @@ class Settings
 
     /**
      * Render the settings page
-     *
-     * @return void
      */
     public function render_settings_page(): void
     {
@@ -79,7 +75,7 @@ class Settings
 
         echo wp_kses(
             View::fromTemplate('admin/settings.php')->render(['name' => $name]),
-            View::ALLOWED_TAGS
+            View::ALLOWED_TAGS,
         );
     }
 
@@ -89,8 +85,8 @@ class Settings
 
         add_settings_section('sendy_section_id', '', '', $slug);
 
-        register_setting('sendy_general_settings', 'sendy_import_weight', fn ($value) => $value === 'true');
-        register_setting('sendy_general_settings', 'sendy_import_products', fn ($value) => $value === 'true');
+        register_setting('sendy_general_settings', 'sendy_import_weight', fn($value) => $value === 'true');
+        register_setting('sendy_general_settings', 'sendy_import_products', fn($value) => $value === 'true');
 
         register_setting('sendy_general_settings', 'sendy_mark_order_as_completed', [
             'sanitize_callback' => function ($value): string {
@@ -101,22 +97,22 @@ class Settings
                     'after-shipment-delivered',
                 ];
 
-                if (!in_array($value, $possibleValues)) {
+                if (! in_array($value, $possibleValues)) {
                     return 'manually';
                 }
 
                 return $value;
-            }
+            },
         ]);
 
         register_setting('sendy_general_settings', 'sendy_processing_method', [
             'sanitize_callback' => function ($value): string {
-                if (!in_array($value, ProcessingMethod::cases())) {
+                if (! in_array($value, ProcessingMethod::cases())) {
                     return ProcessingMethod::WooCommerce;
                 }
 
                 return $value;
-            }
+            },
         ]);
 
         register_setting('sendy_general_settings', 'sendy_processable_order_status', [
@@ -130,15 +126,15 @@ class Settings
                     $possibleValues[] = str_replace('wc-', '', $status);
                 }
 
-                if (!in_array($value, $possibleValues)) {
+                if (! in_array($value, $possibleValues)) {
                     return $possibleValues[0];
                 }
 
                 return $value;
-            }
+            },
         ]);
 
-        register_setting('sendy_general_settings', 'sendy_default_shop', fn ($value) => $value);
+        register_setting('sendy_general_settings', 'sendy_default_shop', fn($value) => $value);
 
         add_settings_field(
             'sendy_processing_method',
@@ -156,7 +152,7 @@ class Settings
             [$this, 'render_processable_order_status_dropdown'],
             $slug,
             'sendy_section_id',
-            ['class' => "sendy-processing-method-field {$hidden}"]
+            ['class' => "sendy-processing-method-field {$hidden}"],
         );
 
         add_settings_field(
@@ -165,7 +161,7 @@ class Settings
             [$this, 'render_default_shop_dropdown'],
             $slug,
             'sendy_section_id',
-            ['class' => "sendy-processing-method-field {$hidden}"]
+            ['class' => "sendy-processing-method-field {$hidden}"],
         );
 
         add_settings_field(
@@ -173,7 +169,7 @@ class Settings
             __('Import weight', 'sendy'),
             [$this, 'render_import_weight_field'],
             $slug,
-            'sendy_section_id'
+            'sendy_section_id',
         );
 
         add_settings_field(

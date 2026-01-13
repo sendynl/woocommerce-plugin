@@ -16,7 +16,7 @@ class View
             'href'   => [],
             'rel'    => [],
             'title'  => [],
-            'target' => []
+            'target' => [],
         ],
         'abbr'       => [
             'title' => [],
@@ -61,10 +61,10 @@ class View
         'h5'         => [],
         'h6'         => [],
         'hr'         => [
-            'class' => []
+            'class' => [],
         ],
         'i'          => [
-            'class' => []
+            'class' => [],
         ],
         'img'        => [
             'alt'    => [],
@@ -104,7 +104,7 @@ class View
             'fill'            => [],
             'd'               => [],
             'class'           => [],
-            'data-v-19c3f3ae' => []
+            'data-v-19c3f3ae' => [],
         ],
         'q'          => [
             'cite'  => [],
@@ -130,13 +130,13 @@ class View
         'strike'     => [],
         'strong'     => [],
         'table'      => [
-            'class' => []
+            'class' => [],
         ],
         'tbody'      => [
-            'class' => []
+            'class' => [],
         ],
         'thead'      => [
-            'class' => []
+            'class' => [],
         ],
         'tr'         => [
             'class'     => [],

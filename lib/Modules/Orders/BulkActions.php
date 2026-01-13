@@ -41,11 +41,6 @@ class BulkActions extends OrdersModule
 
     /**
      * Create the shipments with the selected preference
-     *
-     * @param string $redirect
-     * @param string $action
-     * @param array $objectIds
-     * @return string
      */
     public function handle_bulk_action_create_shipments(string $redirect, string $action, array $objectIds): string
     {
@@ -53,7 +48,7 @@ class BulkActions extends OrdersModule
             return $redirect;
         }
 
-        if (!isset($_REQUEST['sendy_bulk_modal_nonce']) || ! wp_verify_nonce(sanitize_key($_REQUEST['sendy_bulk_modal_nonce']), 'sendy_bulk_modal')) {
+        if (! isset($_REQUEST['sendy_bulk_modal_nonce']) || ! wp_verify_nonce(sanitize_key($_REQUEST['sendy_bulk_modal_nonce']), 'sendy_bulk_modal')) {
             wp_die('Nonce verification failed');
         }
 
@@ -63,7 +58,7 @@ class BulkActions extends OrdersModule
                     wc_get_order($id),
                     sanitize_key($_REQUEST['sendy_preference_id'] ?? ''),
                     sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
-                    sanitize_key($_REQUEST['sendy_amount'] ?? '')
+                    sanitize_key($_REQUEST['sendy_amount'] ?? ''),
                 );
 
                 update_option('sendy_previously_used_preference_id', sanitize_key($_REQUEST['sendy_preference_id'] ?? ''));
@@ -72,7 +67,7 @@ class BulkActions extends OrdersModule
                 $this->create_shipment_with_smart_rules(
                     wc_get_order($id),
                     false,
-                    sanitize_key($_REQUEST['sendy_shop_id'] ?? '')
+                    sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
                 );
             }
         }
@@ -85,9 +80,6 @@ class BulkActions extends OrdersModule
     /**
      * Handle the print labels bulk action
      *
-     * @param string $redirect
-     * @param string $action
-     * @param array $objectIds
      * @return string|void
      */
     public function handle_bulk_action_print_labels(string $redirect, string $action, array $objectIds)
@@ -122,8 +114,6 @@ class BulkActions extends OrdersModule
 
     /**
      * Load the assets when needed
-     *
-     * @return void
      */
     public function enqueue_assets(): void
     {
@@ -136,7 +126,7 @@ class BulkActions extends OrdersModule
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-order-bulk.js',
                 [],
                 Plugin::VERSION,
-                true
+                true,
             );
 
             wp_enqueue_style(
@@ -151,7 +141,6 @@ class BulkActions extends OrdersModule
     /**
      * Add a modal to the overview page
      *
-     * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Sendy\Api\ApiException
      */
@@ -163,9 +152,9 @@ class BulkActions extends OrdersModule
 
             echo wp_kses(
                 View::fromTemplate('admin/modals/create-shipment.php')->render([
-                    'fields' => $this->create_shipment_fields($shops, $preferences)
+                    'fields' => $this->create_shipment_fields($shops, $preferences),
                 ]),
-                View::ALLOWED_TAGS
+                View::ALLOWED_TAGS,
             );
         }
     }
@@ -173,8 +162,6 @@ class BulkActions extends OrdersModule
     /**
      * Return the fields needed for the modal to create a shipment
      *
-     * @param array $shops
-     * @param array $preferences
      * @return array<int,array<string,mixed>>
      */
     private function create_shipment_fields(array $shops, array $preferences): array
@@ -213,16 +200,14 @@ class BulkActions extends OrdersModule
 
     /**
      * Determine whether the user is on an orders overview page
-     *
-     * @return bool
      */
     private function on_orders_list_page(): bool
     {
         $screen = get_current_screen();
 
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        return ($screen->id === 'woocommerce_page_wc-orders' && !isset($_GET['action'])) ||
+        return ($screen->id === 'woocommerce_page_wc-orders' && ! isset($_GET['action']))
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-            ($screen->id === 'edit-shop_order' && $screen->base === 'edit' && !isset($_GET['action']));
+            || ($screen->id === 'edit-shop_order' && $screen->base === 'edit' && ! isset($_GET['action']));
     }
 }

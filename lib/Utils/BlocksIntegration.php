@@ -9,7 +9,6 @@ define('SENDY_BLOCK_VERSION', '1.0.0');
 
 class BlocksIntegration implements IntegrationInterface
 {
-
     public function get_name()
     {
         return 'sendy-pickup-points';
@@ -60,7 +59,7 @@ class BlocksIntegration implements IntegrationInterface
             $script_url,
             $script_asset['dependencies'],
             $script_asset['version'],
-            true
+            true,
         );
     }
 
@@ -81,7 +80,7 @@ class BlocksIntegration implements IntegrationInterface
             $script_url,
             $script_asset['dependencies'],
             $script_asset['version'],
-            true
+            true,
         );
     }
 

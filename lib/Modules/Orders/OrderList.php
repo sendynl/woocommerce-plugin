@@ -24,9 +24,6 @@ class OrderList
 
     /**
      * Add the headers for the Sendy columns to the table with orders
-     *
-     * @param array $columns
-     * @return array
      */
     public function add_sendy_column_headers(array $columns): array
     {
@@ -46,10 +43,6 @@ class OrderList
 
     /**
      * Add the content of the columns to the table with orders
-     *
-     * @param $column
-     * @param $order_id
-     * @return void
      */
     public function add_sendy_columns($column, $order_id = null): void
     {
@@ -62,7 +55,7 @@ class OrderList
 
             echo wp_kses(
                 View::fromTemplate('admin/orders/shipping_method.php')->render(['order' => $order]),
-                View::ALLOWED_TAGS
+                View::ALLOWED_TAGS,
             );
         }
 
@@ -73,16 +66,13 @@ class OrderList
 
             echo wp_kses(
                 View::fromTemplate('admin/orders/track_trace.php')->render(['order' => $order]),
-                View::ALLOWED_TAGS
+                View::ALLOWED_TAGS,
             );
         }
     }
 
     /**
      * Migrate the meta data from the legacy plug-in to the new structure
-     *
-     * @param \WC_Order $order
-     * @return void
      */
     private function migrate_legacy_data(\WC_Order $order): void
     {

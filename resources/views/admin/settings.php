@@ -1,6 +1,8 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if (! defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * @var string|null $name
@@ -11,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 <div class="wrap">
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
-    <?php if (!sendy_is_authenticated()) : ?>
+    <?php if (! sendy_is_authenticated()) : ?>
         <p><?php esc_html_e('In order to start using the plug-in you have to authenticate with Sendy. Click the button to start', 'sendy'); ?></p>
 
         <p>
@@ -29,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
                     <p><?php
                         // translators: %s will be filled with the e-mail address of the authenticated user
                         echo esc_html(sprintf(__("Authenticated as %s", 'sendy'), $name));
-                    ?></p>
+        ?></p>
 
                     <p>
                         <a class="button" href="<?php echo esc_url(admin_url('?sendy_logout')); ?>">
@@ -46,10 +48,10 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
             settings_fields('sendy_general_settings');
 
-            do_settings_sections('sendy');
+        do_settings_sections('sendy');
 
-            submit_button(__('Save settings', 'sendy'));
-            ?>
+        submit_button(__('Save settings', 'sendy'));
+        ?>
         </form>
     <?php endif; ?>
 </div>

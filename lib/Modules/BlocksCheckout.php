@@ -10,7 +10,7 @@ final class BlocksCheckout
 {
     public static function init(): self
     {
-        return new self;
+        return new self();
     }
 
     private function __construct()
@@ -30,9 +30,6 @@ final class BlocksCheckout
 
     /**
      * Validate if a pick-up point is selected
-     *
-     * @param \WC_Order $order
-     * @return void
      */
     public function validate_pickup_point(\WC_Order $order): void
     {
@@ -52,9 +49,6 @@ final class BlocksCheckout
 
     /**
      * Add the selected pickup point to the order metadata
-     *
-     * @param \WC_Order $order
-     * @return void
      */
     public function store_selected_pickup_point_in_order(\WC_Order $order): void
     {
@@ -85,7 +79,7 @@ final class BlocksCheckout
                     'street' => sanitize_text_field($data['street'] ?? ''),
                     'number' => sanitize_text_field($data['number'] ?? ''),
                     'postal_code' => sanitize_text_field($data['postal_code'] ?? ''),
-                    'city' => sanitize_text_field($data['city'] ?? '')
+                    'city' => sanitize_text_field($data['city'] ?? ''),
                 ];
 
                 WC()->session->set('sendy_selected_parcelshop_' . $instanceId, $selectedPickupPoint);
@@ -108,7 +102,7 @@ final class BlocksCheckout
                     'city' => $data['city'] ?? null,
                 ];
             },
-            'schema_callback' => fn () => [
+            'schema_callback' => fn() => [
                 'properties' => [
                     'name' => [
                         'description' => 'Name of the pickup point',
@@ -135,7 +129,7 @@ final class BlocksCheckout
                         'type' => ['string', 'null'],
                         'readonly' => true,
                     ],
-                ]
+                ],
             ],
             'schema_type' => ARRAY_A,
         ]);
@@ -152,14 +146,14 @@ final class BlocksCheckout
                     'carrier' => $carrier ?? null,
                 ];
             },
-            'schema_callback' => fn () => [
+            'schema_callback' => fn() => [
                 'properties' => [
                     'name' => [
                         'description' => 'The carrier to user for the pickup point picker',
                         'type' => ['string', 'null'],
                         'readonly' => true,
                     ],
-                ]
+                ],
             ],
             'schema_type' => ARRAY_A,
         ]);

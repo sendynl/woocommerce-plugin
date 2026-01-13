@@ -2,7 +2,9 @@
 
 use Sendy\WooCommerce\Enums\ProcessingMethod;
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if (! defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * @var WC_Order $order
@@ -12,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 ?>
 
-<?php if (!$order->meta_exists('_sendy_shipment_id')): ?>
+<?php if (! $order->meta_exists('_sendy_shipment_id')): ?>
     <p><b><?php esc_html_e('Shop', 'sendy')?> </b></p>
 
     <input type="hidden" id="sendy-create-shipment-nonce" name="sendy_create_shipment_nonce" value="<?php echo esc_html(wp_create_nonce('sendy_create_shipment'))?>">

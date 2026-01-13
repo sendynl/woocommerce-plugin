@@ -14,8 +14,7 @@ abstract class Field
     public function __construct(
         string $optionName,
         string $extraDescription = null
-    )
-    {
+    ) {
         $this->optionName = $optionName;
         $this->extraDescription = $extraDescription;
     }
@@ -25,10 +24,8 @@ abstract class Field
      *
      * This method is called from the render method when rendering the view. Therefor it's only necessary to implement
      * this method on the child classes without calling it.
-     *
-     * @return void
      */
-    abstract function initializeView(): void;
+    abstract public function initializeView(): void;
 
     final public function render(array $parameters = []): void
     {
@@ -39,7 +36,7 @@ abstract class Field
                 'option_name' => $this->optionName,
                 'extra_description' => $this->extraDescription,
             ])),
-            View::ALLOWED_TAGS
+            View::ALLOWED_TAGS,
         );
     }
 }

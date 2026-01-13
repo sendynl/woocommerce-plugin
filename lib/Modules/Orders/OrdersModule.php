@@ -30,9 +30,6 @@ abstract class OrdersModule
 
     /**
      * Determine if the order should be shipped to a pickup point
-     *
-     * @param \WC_Order $order
-     * @return bool
      */
     protected function is_pickup_point_delivery(\WC_Order $order): bool
     {
@@ -42,11 +39,9 @@ abstract class OrdersModule
     /**
      * Create the order in the Sendy API
      *
-     * @param \WC_Order $order
      * @param string $preferenceId The UUID of the selected shipping preference
      * @param string $shopId The UUID of the selected shop
      * @param int $amount The amount of packages the shipment should contain
-     * @return void
      * @throws GuzzleException
      */
     protected function create_shipment_from_order(\WC_Order $order, string $preferenceId, string $shopId, int $amount): void
@@ -142,8 +137,6 @@ abstract class OrdersModule
     /**
      * Fetch the labels from the Sendy API and offer them as download to the user
      *
-     * @param array $shipment_ids
-     * @return void
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function offer_labels_as_download(array $shipment_ids): void
@@ -175,17 +168,13 @@ abstract class OrdersModule
 
     /**
      * Add the shipping address to the request to create the shipment
-     *
-     * @param \WC_Order $order
-     * @param $request
-     * @return void
      */
     private function addAddressToRequest(\WC_Order $order, &$request): void
     {
         $request['contact'] = sprintf(
             '%s %s',
             $order->get_shipping_first_name() ?? $order->get_billing_first_name(),
-            $order->get_shipping_last_name() ?? $order->get_billing_last_name()
+            $order->get_shipping_last_name() ?? $order->get_billing_last_name(),
         );
 
         $address = $this->parseAddressFromOrder($order);
@@ -203,10 +192,6 @@ abstract class OrdersModule
 
     /**
      * Add the weight to the request to create a shipment
-     *
-     * @param \WC_Order $order
-     * @param $request
-     * @return void
      */
     private function addWeightToRequest(\WC_Order $order, &$request): void
     {
@@ -223,10 +208,6 @@ abstract class OrdersModule
 
     /**
      * Add the product data to the request to create a shipment
-     *
-     * @param \WC_Order $order
-     * @param $request
-     * @return void
      */
     private function addProductsToRequest(\WC_Order $order, &$request): void
     {
@@ -250,7 +231,6 @@ abstract class OrdersModule
      * addition are stored in address_2. It will concatenate address_1 and address_2 and parse the address from the
      * concatenated string.
      *
-     * @param \WC_Order $order
      * @return object{street: string, house_number:string|null, house_number_addition:string|null}
      */
     private function parseAddressFromOrder(\WC_Order $order): \stdClass
@@ -258,9 +238,10 @@ abstract class OrdersModule
         $address = sendy_parse_address($order->get_shipping_address_1() ?? $order->get_billing_address_1());
 
         if (is_null($address->number)) {
-            return sendy_parse_address(sprintf('%s %s',
+            return sendy_parse_address(sprintf(
+                '%s %s',
                 $order->get_shipping_address_1() ?? $order->get_billing_address_1(),
-                $order->get_shipping_address_2() ?? $order->get_billing_address_2()
+                $order->get_shipping_address_2() ?? $order->get_billing_address_2(),
             ));
         }
 
@@ -278,7 +259,7 @@ abstract class OrdersModule
             if ($statusCode === 401) {
                 // translators: %s should contain the ID of the order
                 $message = sprintf(__('Error while creating shipment for order #%s: Authentication failed. Check the settings page to reconnect with Sendy.', 'sendy'), $order->get_id());
-            } else if ($statusCode === 422) {
+            } elseif ($statusCode === 422) {
                 $errors = [];
 
                 foreach ($exception->getErrors() as $_ => $messages) {
@@ -287,7 +268,7 @@ abstract class OrdersModule
 
                 // translators: %1$s should contain the ID of the order and %2$s the error
                 $message = sprintf(__('Error while creating shipment for order #%1$s: %2$s', 'sendy'), $order->get_id(), implode("\n", $errors));
-            } else if ($statusCode === 429) {
+            } elseif ($statusCode === 429) {
                 // translators: %s should contain the ID of the order
                 $message = sprintf(__('Error while creating shipment for order #%s: Too many requests. Please try again later.', 'sendy'), $order->get_id());
             } else {

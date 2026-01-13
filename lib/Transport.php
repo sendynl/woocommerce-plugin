@@ -9,7 +9,6 @@ use Sendy\Api\Http\Transport\TransportInterface;
 
 final class Transport implements TransportInterface
 {
-
     public function send(Request $request): Response
     {
         $args = [
@@ -32,7 +31,7 @@ final class Transport implements TransportInterface
         return new Response(
             wp_remote_retrieve_response_code($response),
             wp_remote_retrieve_headers($response)->getAll(),
-            wp_remote_retrieve_body($response)
+            wp_remote_retrieve_body($response),
         );
     }
 

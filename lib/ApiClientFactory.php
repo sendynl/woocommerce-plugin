@@ -15,7 +15,7 @@ class ApiClientFactory
             ->setClientId(get_option('sendy_client_id'))
             ->setClientSecret(get_option('sendy_client_secret'))
             ->setUserAgentAppendix(
-                sprintf('WooCommerce/%s Sendy/%s', WC_VERSION, Plugin::VERSION)
+                sprintf('WooCommerce/%s Sendy/%s', WC_VERSION, Plugin::VERSION),
             )
             ->setOauthClient(true)
             ->setRedirectUrl(sendy_oauth_redirect_url())

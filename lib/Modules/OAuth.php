@@ -17,8 +17,6 @@ class OAuth
 
     /**
      * Initialize the OAuth credentials
-     *
-     * @return void
      */
     public function initialize_credentials(): void
     {
@@ -40,11 +38,10 @@ class OAuth
      * @param string $option The name of the updated option
      * @param mixed $old_value The old option value
      * @param mixed $value The new option value
-     * @return void
      */
     public function reset_credentials_when_access_token_nullified($old_value, $value, string $option): void
     {
-        if (!is_null($value)) {
+        if (! is_null($value)) {
             return;
         }
 
@@ -60,23 +57,19 @@ class OAuth
 
     /**
      * Handle the OAuth callback
-     *
-     *
-     *
-     * @return void
      */
     public function oauth_callback(): void
     {
         if (isset($_GET['sendy_oauth_callback'])) {
-            if (!current_user_can('manage_woocommerce')) {
+            if (! current_user_can('manage_woocommerce')) {
                 wp_die('You do not have sufficient permissions to access this page.');
             }
 
-            if (!isset($_GET['state']) || !wp_verify_nonce(sanitize_key($_GET['state']), 'sendy_oauth_callback_nonce')) {
+            if (! isset($_GET['state']) || ! wp_verify_nonce(sanitize_key($_GET['state']), 'sendy_oauth_callback_nonce')) {
                 wp_die('Nonce verification failed.');
             }
 
-            if (!isset($_GET['code'])) {
+            if (! isset($_GET['code'])) {
                 wp_die('Missing code parameter in the URL');
             }
 

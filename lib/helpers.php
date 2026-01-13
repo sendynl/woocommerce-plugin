@@ -15,7 +15,8 @@ if (! function_exists('sendy_initialize_plugin_url')) {
 }
 
 if (! function_exists('sendy_oauth_redirect_url')) {
-    function sendy_oauth_redirect_url(): string {
+    function sendy_oauth_redirect_url(): string
+    {
         return admin_url('?sendy_oauth_callback');
     }
 }
@@ -39,7 +40,8 @@ if (! function_exists('sendy_fields_generator')) {
 }
 
 if (! function_exists('sendy_is_authenticated')) {
-    function sendy_is_authenticated(): bool {
+    function sendy_is_authenticated(): bool
+    {
         return get_option('sendy_access_token') != '';
     }
 }
@@ -63,10 +65,10 @@ if (! function_exists('sendy_parse_address')) {
     /**
      * Extract the street, number and addition from a given string
      *
-     * @param string $address
      * @return object{street: string, house_number:string|null, house_number_addition:string|null}
      */
-    function sendy_parse_address(string $address): stdClass {
+    function sendy_parse_address(string $address): stdClass
+    {
         $address = trim($address);
         $parts = explode(' ', $address);
         $partsCount = count($parts);
@@ -126,10 +128,10 @@ if (! function_exists('sendy_parse_house_number')) {
     /**
      * Split the house number and addition
      *
-     * @param string $number
      * @return object{house_number:string, house_number_addition:string|null}
      */
-    function sendy_parse_house_number(string $number): stdClass {
+    function sendy_parse_house_number(string $number): stdClass
+    {
         $addition = null;
 
         if (! ctype_digit($number)) {
@@ -151,8 +153,6 @@ if (! function_exists('sendy_shipping_method_instance_id')) {
      *
      * This ID is used to correctly store the selected pickup point and makes it possible to offer pickup point delivery
      * for multiple carriers.
-     *
-     * @return int|null
      */
     function sendy_shipping_method_instance_id(): ?int
     {
@@ -162,7 +162,7 @@ if (! function_exists('sendy_shipping_method_instance_id')) {
             $selectedMethods,
             function ($item) {
                 return str_starts_with($item, 'sendy_pickup_point');
-            }
+            },
         );
 
         if (count($pickupPointDelivery) > 0) {

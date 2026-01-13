@@ -22,11 +22,10 @@ class Webhooks
      *
      * @param mixed $oldValue
      * @param mixed $newValue
-     * @return void
      */
     public function handle_sendy_processing_method_change($oldValue, $newValue): void
     {
-        if ($oldValue === $newValue || !in_array($newValue, ProcessingMethod::cases())) {
+        if ($oldValue === $newValue || ! in_array($newValue, ProcessingMethod::cases())) {
             return;
         }
 
@@ -48,7 +47,7 @@ class Webhooks
         register_rest_route('sendy/v1', '/webhook', [
             'methods' => 'POST',
             'callback' => [$this, 'webhook_callback'],
-            'permission_callback' => function () { return true; }
+            'permission_callback' => function () { return true; },
         ]);
     }
 
@@ -56,7 +55,7 @@ class Webhooks
     {
         $payload = $request->get_json_params() ?? [];
 
-        if (!array_key_exists('data', $payload)) {
+        if (! array_key_exists('data', $payload)) {
             return;
         }
 
@@ -98,7 +97,7 @@ class Webhooks
                 return $webhook['id'];
             }, $webhooks);
 
-            if (!get_option('sendy_webhook_id') || !in_array(get_option('sendy_webhook_id'), $webhookIds)) {
+            if (! get_option('sendy_webhook_id') || ! in_array(get_option('sendy_webhook_id'), $webhookIds)) {
                 $this->createWebhook();
             }
 
@@ -117,8 +116,6 @@ class Webhooks
 
     /**
      * Delete the webhook in the API
-     *
-     * @return void
      */
     private function deleteWebhook(): void
     {
@@ -137,8 +134,6 @@ class Webhooks
 
     /**
      * Create the webhook in the API
-     *
-     * @return void
      */
     private function createWebhook(): void
     {
@@ -150,7 +145,7 @@ class Webhooks
                     'shipment.deleted',
                     'shipment.cancelled',
                     'shipment.delivered',
-                ]
+                ],
             ]);
 
             update_option('sendy_webhook_id', $webhook['id']);

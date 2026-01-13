@@ -51,7 +51,7 @@ class PickupPointDelivery extends WC_Shipping_Flat_Rate
             ],
             'class' => 'wc-enhanced-select',
             'default' => 'class',
-            'description' => __('Select which carrier to show the pickup points for', 'sendy')
+            'description' => __('Select which carrier to show the pickup points for', 'sendy'),
         ];
 
         return $form_fields;

@@ -3,7 +3,6 @@
 namespace Sendy\WooCommerce\Modules;
 
 use Sendy\Api\ApiException;
-use Sendy\WooCommerce\ApiClientFactory;
 use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Resources\ShippingMethod;
 
