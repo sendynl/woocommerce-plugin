@@ -2,8 +2,8 @@
 Plugin Name: Sendy
 Plugin URI: https://app.sendy.nl/
 Description: A WooCommerce plugin that connects your site to the Sendy platform
-Version: 3.3.1
-Stable tag: 3.3.1
+Version: 3.4.0
+Stable tag: 3.4.0
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
@@ -51,6 +51,9 @@ Hierbij worden de adres- en contactgegevens van de je klanten en (optioneel) de 
 Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) en [privacy statement](https://sendy.nl/privacy-statement/) van toepassing.
 
 == Changelog ==
+
+= 3.4 =
+* Add a checkout block for the pickup point picker to support the blocks checkout
 
 = 3.3.1 =
 * Fix a PHP error which prevented version 3.3 from being released

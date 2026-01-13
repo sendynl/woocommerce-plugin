@@ -1,0 +1,45 @@
+name: Fix code styling
+on: [push]
+
+jobs:
+    code-styling:
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: write
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v6
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '7.4'
+                  extensions: json, dom, curl, libxml, mbstring
+                  coverage: none
+
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 20
+                  cache: 'npm'
+
+            - name: Install Composer dependencies
+              uses: ramsey/composer-install@v3
+
+            - name: Install Node dependencies
+              run: npm ci
+
+            - name: Run PHP CS Fixer
+              run: composer run-script fix
+
+            - name: Run wp-scripts format
+              run: npm run format
+
+            - name: Commit linted files
+              uses: stefanzweifel/git-auto-commit-action@v7
+              with:
+                  commit_message: 'Apply code styling changes'
+                  # The --no-verify option is passed to skip the pre-commit checks as these checks also run in other workflows
+                  commit_options: '--no-verify'

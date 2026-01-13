@@ -4,7 +4,7 @@
  * Plugin Name: Sendy
  * Plugin URI: https://app.sendy.nl/
  * Description: A WooCommerce plugin that connects your site to the Sendy platform
- * Version: 3.3.1
+ * Version: 3.4.0
  * Author: Sendy
  * Author URI: https://sendy.nl/
  * License: MIT
@@ -19,6 +19,8 @@
  *
  * @package Sendy
  */
+
+use Sendy\WooCommerce\Modules\BlocksCheckout;
 
 if (! defined('ABSPATH')) {
     exit;
@@ -35,7 +37,7 @@ if (! defined('SENDY_WC_PLUGIN_BASENAME')) {
 require_once __DIR__ . '/vendor/autoload.php';
 
 function sendy_init() {
-    require_once __DIR__ . '/src/helpers.php';
+    require_once __DIR__ . '/lib/helpers.php';
 
     return Sendy\WooCommerce\Plugin::instance();
 }
@@ -45,3 +47,5 @@ add_action('plugins_loaded', 'sendy_init');
 register_deactivation_hook(__FILE__, function () {
     Sendy\WooCommerce\Plugin::instance()->deactivate();
 });
+
+BlocksCheckout::init();
