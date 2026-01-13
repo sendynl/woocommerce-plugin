@@ -5,44 +5,53 @@ const { registerCheckoutBlock, extensionCartUpdate } = wc.blocksCheckout;
 const { cartStore } = window.wc.wcBlocksData;
 
 const Block = ({ children, checkoutExtensionData }) => {
-    let store = select(cartStore);
-    const shippingRates = store.getCartData().shippingRates;
+	let store = select(cartStore);
+	const shippingRates = store.getCartData().shippingRates;
 
-    const selectedPickupPointData = store.getCartData().extensions?.['sendy-pickup-point'] || null;
+	const selectedPickupPointData =
+		store.getCartData().extensions?.['sendy-pickup-point'] || null;
 
-    if (! shouldBeVisible(selectedShippingRates(shippingRates))) {
-        return <></>;
-    }
+	if (!shouldBeVisible(selectedShippingRates(shippingRates))) {
+		return <></>;
+	}
 
-    const selectedPickupPoint = (data) => {
-        if (data.name === null) {
-            return <></>;
-        }
+	const selectedPickupPoint = (data) => {
+		if (data.name === null) {
+			return <></>;
+		}
 
-        return <>
-            <h3 className="wc-block-components-title sendy-checkout-title">Geselecteerd pick-up-punt</h3>
+		return (
+			<>
+				<h3 className="wc-block-components-title sendy-checkout-title">
+					Geselecteerd pick-up-punt
+				</h3>
 
-            <p className="sendy-checkout-content">
-                {data.name} <br />
-                {data.street} {data.number} <br/>
-                {data.postal_code} {data.city}
-            </p>
-        </>
-    };
+				<p className="sendy-checkout-content">
+					{data.name} <br />
+					{data.street} {data.number} <br />
+					{data.postal_code} {data.city}
+				</p>
+			</>
+		);
+	};
 
-	return <div>
-        <h3 className="wc-block-components-title sendy-checkout-title">
-            Pick-up-punt
-        </h3>
+	return (
+		<div>
+			<h3 className="wc-block-components-title sendy-checkout-title">
+				Pick-up-punt
+			</h3>
 
-        <div className="sendy-checkout-content">
-            <button onClick={openPickupPointPicker}>
-                {selectedPickupPointData.name ? "Wijzig pick-up-punt" : "Selecteer pick-up-punt"}
-            </button>
-        </div>
+			<div className="sendy-checkout-content">
+				<button onClick={openPickupPointPicker}>
+					{selectedPickupPointData.name
+						? 'Wijzig pick-up-punt'
+						: 'Selecteer pick-up-punt'}
+				</button>
+			</div>
 
-        {selectedPickupPoint(selectedPickupPointData)}
-    </div>;
+			{selectedPickupPoint(selectedPickupPointData)}
+		</div>
+	);
 };
 
 const options = {
@@ -55,60 +64,65 @@ const options = {
  * @returns {boolean}
  */
 const shouldBeVisible = (shippingRates) => {
-    if (shippingRates === null) {
-        return false;
-    }
+	if (shippingRates === null) {
+		return false;
+	}
 
-    return shippingRates[0].rate_id.startsWith("sendy_pickup_point");
+	return shippingRates[0].rate_id.startsWith('sendy_pickup_point');
 };
 
 const selectedShippingRates = (shippingRates) => {
-    if (!shippingRates.length) {
-        return null;
-    }
+	if (!shippingRates.length) {
+		return null;
+	}
 
-    let activeShippingRates = [];
+	let activeShippingRates = [];
 
-    for (let i = 0; i < shippingRates.length; i++) {
-        if (! shippingRates[i].shipping_rates) {
-            continue;
-        }
+	for (let i = 0; i < shippingRates.length; i++) {
+		if (!shippingRates[i].shipping_rates) {
+			continue;
+		}
 
-        for (let j = 0; j < shippingRates[i].shipping_rates.length; j++) {
-            activeShippingRates.push(shippingRates[i].shipping_rates[j]);
-        }
-    }
+		for (let j = 0; j < shippingRates[i].shipping_rates.length; j++) {
+			activeShippingRates.push(shippingRates[i].shipping_rates[j]);
+		}
+	}
 
-    return activeShippingRates.filter((shippingRate) => {
-        return shippingRate.selected;
-    });
-}
+	return activeShippingRates.filter((shippingRate) => {
+		return shippingRate.selected;
+	});
+};
 
 const openPickupPointPicker = (event) => {
-    event.preventDefault();
+	event.preventDefault();
 
-    const cartData = select(cartStore).getCartData();
+	const cartData = select(cartStore).getCartData();
 
-    const carrier = cartData?.extensions?.['sendy-carrier']?.carrier || '';
+	const carrier = cartData?.extensions?.['sendy-carrier']?.carrier || '';
 
-    const data = {
-        country: cartData.shippingAddress.country ?? cartData.billingAddress.country ?? 'NL',
-        carriers: [carrier],
-        address: cartData.shippingAddress.postcode ?? cartData.billingAddress.postcode,
-    };
+	const data = {
+		country:
+			cartData.shippingAddress.country ??
+			cartData.billingAddress.country ??
+			'NL',
+		carriers: [carrier],
+		address:
+			cartData.shippingAddress.postcode ??
+			cartData.billingAddress.postcode,
+	};
 
-    window.Sendy.parcelShopPicker.open(
-        data,
-        (data) => {
-            extensionCartUpdate({
-                namespace: 'sendy-set-pickup-point',
-                data: data,
-            });
-        },
-        (errors) => {
-            console.log(errors);
-        }
-    );
+	window.Sendy.parcelShopPicker.open(
+		data,
+		(data) => {
+			extensionCartUpdate({
+				namespace: 'sendy-set-pickup-point',
+				data: data,
+			});
+		},
+		(errors) => {
+			console.log(errors);
+		}
+	);
 };
 
 registerCheckoutBlock(options);
