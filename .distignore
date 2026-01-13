@@ -13,3 +13,4 @@ DOCKER_ENV
 docker_tag
 bump_version.sh
 webpack.config.js
+.php-cs-fixer.dist.php
