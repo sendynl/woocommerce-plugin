@@ -3,6 +3,7 @@
 namespace Sendy\WooCommerce\Utils;
 
 use Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface;
+use Sendy\WooCommerce\Plugin;
 
 define('SENDY_BLOCK_VERSION', '1.0.0');
 
@@ -27,7 +28,7 @@ class BlocksIntegration implements IntegrationInterface
 
     public function get_editor_script_handles()
     {
-        return ['gift-message-block-editor'];
+        return ['sendy-block-editor'];
     }
 
     public function get_script_data()
@@ -37,9 +38,8 @@ class BlocksIntegration implements IntegrationInterface
 
     private function register_block_frontend_scripts()
     {
-        $script_path = '/build/sendy-checkout-block-frontend.js';
-        $script_url = plugins_url('/sendy' . $script_path);
-        $script_asset_path = WP_PLUGIN_DIR . '/sendy/build/sendy-checkout-block-frontend.asset.php';
+        $script_url = SENDY_WC_PLUGIN_DIR_URL . '/build/sendy-checkout-block-frontend.js';
+        $script_asset_path = SENDY_WC_PLUGIN_DIR_URL . '/build/sendy-checkout-block-frontend.asset.php';
 
         $script_asset = file_exists($script_asset_path)
             ? require $script_asset_path
@@ -47,6 +47,13 @@ class BlocksIntegration implements IntegrationInterface
                 'dependencies' => [],
                 'version' => $this->get_file_version($script_asset_path),
             ];
+
+        wp_enqueue_style(
+            'sendy-checkout-block-frontend-styling',
+            SENDY_WC_PLUGIN_DIR_URL . '/resources/css/frontend.css',
+            [],
+            Plugin::VERSION,
+        );
 
         wp_register_script(
             'sendy-checkout-block-frontend',
@@ -70,7 +77,7 @@ class BlocksIntegration implements IntegrationInterface
             ];
 
         wp_register_script(
-            'gift-message-block-editor',
+            'sendy-block-editor',
             $script_url,
             $script_asset['dependencies'],
             $script_asset['version'],

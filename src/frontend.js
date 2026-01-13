@@ -1,8 +1,6 @@
 import metadata from './block.json';
 import { select } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 
-// Global import
 const { registerCheckoutBlock, extensionCartUpdate } = wc.blocksCheckout;
 const { cartStore } = window.wc.wcBlocksData;
 
@@ -22,9 +20,9 @@ const Block = ({ children, checkoutExtensionData }) => {
         }
 
         return <>
-            <h3 className="wc-block-components-title sendy-checkout-title">{__('Selected pickup point', 'sendy')}</h3>
+            <h3 className="wc-block-components-title sendy-checkout-title">Geselecteerd pick-up-punt</h3>
 
-            <p>
+            <p className="sendy-checkout-content">
                 {data.name} <br />
                 {data.street} {data.number} <br/>
                 {data.postal_code} {data.city}
@@ -34,12 +32,12 @@ const Block = ({ children, checkoutExtensionData }) => {
 
 	return <div>
         <h3 className="wc-block-components-title sendy-checkout-title">
-            {__('Pick-up point', 'sendy')}
+            Pick-up-punt
         </h3>
 
-        <div>
+        <div className="sendy-checkout-content">
             <button onClick={openPickupPointPicker}>
-                {selectedPickupPointData.name ? __('Change pick-up-point', 'sendy') : __('Select pick-up-point', 'sendy')}
+                {selectedPickupPointData.name ? "Wijzig pick-up-punt" : "Selecteer pick-up-punt"}
             </button>
         </div>
 
