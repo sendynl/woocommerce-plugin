@@ -254,7 +254,7 @@ abstract class OrdersModule
             // translators: %1$s should contain the ID of the order and %2$s the error
             $message = sprintf(__('Error while creating shipment for order #%1$s: %2$s', 'sendy'), $order->get_id(), $exception->getMessage());
         } else {
-            $statusCode = $exception->getPrevious()->getCode();
+            $statusCode = $exception->getCode();
 
             if ($statusCode === 401) {
                 // translators: %s should contain the ID of the order

@@ -18,7 +18,7 @@ use WC_Shipping_Method;
 
 class Plugin
 {
-    public const VERSION = '3.4.0';
+    public const VERSION = '3.4.1';
 
     public const SETTINGS_ID = 'sendy';
 
