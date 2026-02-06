@@ -3,6 +3,7 @@
 namespace Sendy\WooCommerce\Modules;
 
 use Sendy\Api\ApiException;
+use Sendy\Api\Exceptions\SendyException;
 use Sendy\WooCommerce\ApiClientFactory;
 use Sendy\WooCommerce\Enums\ProcessingMethod;
 use WC_Order;
@@ -53,6 +54,12 @@ class Webhooks
 
     public function webhook_callback(\WP_REST_Request $request)
     {
+        $verificationError = $this->verifySignature($request);
+
+        if ($verificationError) {
+            return $verificationError;
+        }
+
         $payload = $request->get_json_params() ?? [];
 
         if (! array_key_exists('data', $payload)) {
@@ -107,11 +114,53 @@ class Webhooks
         }
     }
 
+    /**
+     * @throws SendyException
+     */
+    public static function regenerateWebhookSecret(): void
+    {
+        $clientId = get_option('sendy_client_id');
+        $response = ApiClientFactory::buildConnectionUsingTokens()
+            ->post("/regenerate-webhook-secret/{$clientId}");
+
+        update_option('sendy_webhook_secret', $response['webhook_secret'], false);
+    }
+
     public function deactivate(): void
     {
         $this->deleteWebhook();
 
         delete_option('sendy_webhook_last_checked');
+    }
+
+    private function verifySignature(\WP_REST_Request $request): ?\WP_REST_Response
+    {
+        $signature = $request->get_header('X-Signature');
+        $timestamp = $request->get_header('X-Timestamp');
+
+        if (! $signature || ! $timestamp) {
+            return new \WP_REST_Response(['error' => 'Missing signature headers'], 401);
+        }
+
+        $secret = get_option('sendy_webhook_secret');
+
+        if (! $secret) {
+            try {
+                self::regenerateWebhookSecret();
+            } catch (\Exception $e) {
+                return new \WP_REST_Response(['error' => 'Failed to regenerate webhook secret'], 500);
+            }
+
+            return new \WP_REST_Response(['error' => 'Webhook secret not configured'], 401);
+        }
+
+        $expected = hash_hmac('sha256', $timestamp . $request->get_body(), $secret);
+
+        if (! hash_equals($expected, $signature)) {
+            return new \WP_REST_Response(['error' => 'Invalid signature'], 401);
+        }
+
+        return null;
     }
 
     /**

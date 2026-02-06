@@ -54,6 +54,7 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 = Unreleased =
 * Improve error handling on order pages
+* Fix CVE-2025-68564 - Verify webhook requests using the signature
 
 = 3.4.1 =
 * Fix an error handling issue when creating shipments
