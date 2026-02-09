@@ -3,6 +3,7 @@
 namespace Sendy\WooCommerce\Modules\Orders;
 
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+use Sendy\Api\Exceptions\SendyException;
 use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Plugin;
 use Sendy\WooCommerce\Repositories\Preferences;
@@ -65,8 +66,14 @@ class Single extends OrdersModule
             return;
         }
 
-        $preferences = (new Preferences())->get();
-        $shops = (new Shops())->list();
+        try {
+            $preferences = (new Preferences())->get();
+            $shops = (new Shops())->list();
+        } catch (SendyException $exception) {
+            echo View::fromTemplate('admin/notices/connection-error.php')->render(['code' => $exception->getCode()]);
+
+            return;
+        }
 
         echo wp_kses(
             View::fromTemplate('admin/meta_box/single.php')->render([
