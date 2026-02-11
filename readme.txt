@@ -52,6 +52,9 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 == Changelog ==
 
+= Unreleased =
+* Improve error handling on order pages
+
 = 3.4.1 =
 * Fix an error handling issue when creating shipments
 

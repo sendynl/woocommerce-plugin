@@ -16,9 +16,9 @@ msgstr ""
 #. Plugin Name of the plugin
 #. Author of the plugin
 #: sendy.php
-#: lib/Modules/Admin/Settings.php:49
-#: lib/Modules/Admin/Settings.php:50
-#: lib/Modules/Orders/Single.php:51
+#: lib/Modules/Admin/Settings.php:47
+#: lib/Modules/Admin/Settings.php:48
+#: lib/Modules/Orders/Single.php:50
 msgid "Sendy"
 msgstr "Sendy"
 
@@ -37,113 +37,101 @@ msgstr "Een plug-in die je WooCommerce shop verbindt met Sendy"
 msgid "https://sendy.nl/"
 msgstr "https://sendy.nl/"
 
-#: lib/Modules/Orders/BulkActions.php:187
-#: resources/views/admin/meta_box/single.php:16
+#: lib/Modules/Orders/BulkActions.php:181
+#: resources/views/admin/meta_box/single.php:18
 msgid "Shop"
 msgstr "Shop"
 
-#: resources/views/admin/meta_box/single.php:28
+#: resources/views/admin/meta_box/single.php:30
 msgid "Shipping preference"
 msgstr "Verzendprofiel"
 
-#: lib/Modules/Orders/BulkActions.php:206
-#: resources/views/admin/meta_box/single.php:36
+#: lib/Modules/Orders/BulkActions.php:200
+#: resources/views/admin/meta_box/single.php:38
 msgid "Amount of packages"
 msgstr "Aantal pakketten"
 
-#: resources/views/admin/meta_box/single.php:44
+#: resources/views/admin/meta_box/single.php:46
 msgid "Create shipment"
 msgstr "Zending aanmaken"
 
-#: lib/Modules/Orders/OrderList.php:38
-#: resources/views/admin/meta_box/single.php:49
+#: lib/Modules/Orders/OrderList.php:35
+#: resources/views/admin/meta_box/single.php:51
 msgid "Track and trace"
 msgstr "Track en trace"
 
-#: resources/views/admin/meta_box/single.php:60
+#: resources/views/admin/meta_box/single.php:62
 msgid "Print label"
 msgstr "Print label"
 
-#: resources/views/admin/meta_box/single.php:62
+#: resources/views/admin/meta_box/single.php:64
 msgid "Print labels"
 msgstr "Print labels"
 
-#: resources/views/admin/modals/create-shipment.php:17
+#: resources/views/admin/modals/create-shipment.php:19
 msgid "Create shipments"
 msgstr "Zending aanmaken"
 
-#: resources/views/admin/orders/track_trace.php:11
+#: resources/views/admin/orders/track_trace.php:13
 msgid "No shipment created yet"
 msgstr "Nog geen zending aangemaakt"
 
-#: resources/views/admin/orders/track_trace.php:24
+#: resources/views/admin/orders/track_trace.php:26
 msgid "Edit shipment"
 msgstr "Zending bewerken"
 
-#: resources/views/admin/settings.php:15
+#: resources/views/admin/settings.php:17
 msgid "In order to start using the plug-in you have to authenticate with Sendy. Click the button to start"
 msgstr "Om de plug-in te kunnen gebruiken moet je verbinden met Sendy. Klik op de knop om te verbinden"
 
-#: resources/views/admin/settings.php:19
+#: resources/views/admin/settings.php:21
 msgid "Authenticate"
 msgstr "Verbinden"
 
-#: resources/views/admin/settings.php:27
+#: resources/views/admin/settings.php:29
 msgid "Authentication"
 msgstr "Authenticatie"
 
 #. translators: %s will be filled with the e-mail address of the authenticated user
-#: resources/views/admin/settings.php:31
+#: resources/views/admin/settings.php:33
 #, php-format
 msgid "Authenticated as %s"
 msgstr "Ingelogd als %s"
 
-#: resources/views/admin/settings.php:36
+#: resources/views/admin/settings.php:38
 msgid "Log out"
 msgstr "Uitloggen"
 
-#: resources/views/admin/settings.php:51
+#: resources/views/admin/settings.php:53
 msgid "Save settings"
 msgstr "Instellingen opslaan"
 
-#: lib/Modules/Orders/OrderList.php:37
-#: resources/views/admin/single/shipping_data.php:9
+#: lib/Modules/Orders/OrderList.php:34
+#: resources/views/admin/single/shipping_data.php:11
 msgid "Shipping method"
 msgstr "Verzendmethode"
 
-#: resources/views/admin/single/shipping_data.php:13
+#: resources/views/admin/single/shipping_data.php:15
 msgid "Chosen pick-up point"
 msgstr "Gekozen pick-up-punt"
 
-#: resources/views/checkout/order_confirmation.php:11
+#: resources/views/checkout/order_confirmation.php:13
 msgid "Your order will be delivered at the selected pick-up point:"
 msgstr "Je bestelling wordt bezorgd op het geselecteerde pick-up punt:"
 
-#: resources/views/checkout/pickup_point_selection.php:13
-#: build/checkout-block-frontend.js:161
-#: src/frontend.js:39
-#: build/checkout-block-frontend.js:91
+#: resources/views/checkout/pickup_point_selection.php:15
 msgid "Pick-up point"
 msgstr "Pick-up punt"
 
-#: resources/views/checkout/pickup_point_selection.php:20
-#: build/checkout-block-frontend.js:163
-#: src/frontend.js:44
-#: build/checkout-block-frontend.js:96
+#: resources/views/checkout/pickup_point_selection.php:22
 msgid "Select pick-up-point"
 msgstr "Selecteer pick-up punt"
 
-#: resources/views/checkout/pickup_point_selection.php:22
-#: build/checkout-block-frontend.js:163
-#: src/frontend.js:44
-#: build/checkout-block-frontend.js:96
+#: resources/views/checkout/pickup_point_selection.php:24
 msgid "Change pick-up-point"
 msgstr "Pick-up punt wijzigen"
 
-#: resources/views/checkout/pickup_point_selection.php:27
-#: build/checkout-block-frontend.js:157
-#: src/frontend.js:27
-#: build/checkout-block-frontend.js:79
+#: resources/views/checkout/pickup_point_selection.php:29
 msgid "Selected pickup point"
 msgstr "Geselecteerd pick-up punt"
 
@@ -155,159 +143,159 @@ msgstr "Zending aanmaken in WooCommerce"
 msgid "Process shipments in Sendy"
 msgstr "Verwerk zendingen in Sendy"
 
-#: lib/Modules/Admin/Settings.php:145
+#: lib/Modules/Admin/Settings.php:141
 msgid "Processing method"
 msgstr "Werkwijze"
 
-#: lib/Modules/Admin/Settings.php:155
+#: lib/Modules/Admin/Settings.php:151
 msgid "Send order to Sendy when status changed to"
 msgstr "Verstuur orders naar Sendy als de status wordt gewijzigd naar"
 
-#: lib/Modules/Admin/Settings.php:164
+#: lib/Modules/Admin/Settings.php:160
 msgid "Shop to use when orders are sent to Sendy"
 msgstr "Gebruik deze shop als de orders worden aangemaakt in Sendy"
 
-#: lib/Modules/Admin/Settings.php:173
+#: lib/Modules/Admin/Settings.php:169
 msgid "Import weight"
 msgstr "Importeer gewicht"
 
-#: lib/Modules/Admin/Settings.php:181
+#: lib/Modules/Admin/Settings.php:177
 msgid "Import products"
 msgstr "Importeer producten"
 
-#: lib/Modules/Admin/Settings.php:189
+#: lib/Modules/Admin/Settings.php:185
 msgid "Mark order as completed"
 msgstr "Wijzig orderstatus naar afgerond"
 
-#: lib/Modules/Admin/Settings.php:198
+#: lib/Modules/Admin/Settings.php:194
 msgid "Import weight when creating a shipment"
 msgstr "Verstuur gewichten naar Sendy bij het aanmaken van een zending"
 
-#: lib/Modules/Admin/Settings.php:203
+#: lib/Modules/Admin/Settings.php:199
 msgid "Send products to Sendy when creating a shipment"
 msgstr "Verstuur producten naar Sendy bij het aanmaken van een zending"
 
-#: lib/Modules/Admin/Settings.php:209
+#: lib/Modules/Admin/Settings.php:205
 msgid "Manually"
 msgstr "Handmatig"
 
-#: lib/Modules/Admin/Settings.php:210
+#: lib/Modules/Admin/Settings.php:206
 msgid "After the shipment is created"
 msgstr "Nadat de zending is aangemaakt"
 
-#: lib/Modules/Admin/Settings.php:214
+#: lib/Modules/Admin/Settings.php:210
 msgid "After the label is printed"
 msgstr "Nadat het label is geprint"
 
-#: lib/Modules/Admin/Settings.php:218
+#: lib/Modules/Admin/Settings.php:214
 msgid "After the shipment is delivered"
 msgstr "Nadat de zending is geleverd"
 
-#: lib/Modules/BlocksCheckout.php:48
-#: lib/Modules/Checkout.php:141
-#: lib/Modules/Checkout.php:146
+#: lib/Modules/BlocksCheckout.php:45
+#: lib/Modules/Checkout.php:125
+#: lib/Modules/Checkout.php:130
 msgid "Please select a pick-up point."
 msgstr "Selecteer alstublieft een pick-up-punt."
 
-#: lib/Modules/OAuth.php:88
+#: lib/Modules/OAuth.php:79
 msgid "Authentication successful"
 msgstr "Authenticatie gelukt"
 
-#: lib/Modules/OAuth.php:92
+#: lib/Modules/OAuth.php:83
 msgid "Authentication failed. Please try again"
 msgstr "Authenticatie mislukt. Probeer het opnieuw"
 
-#: lib/Modules/Orders/BulkActions.php:36
+#: lib/Modules/Orders/BulkActions.php:37
 msgid "Sendy - Create shipments"
 msgstr "Sendy - Zendingen aanmaken"
 
-#: lib/Modules/Orders/BulkActions.php:37
+#: lib/Modules/Orders/BulkActions.php:38
 msgid "Sendy - Print labels"
 msgstr "Sendy - Labels printen"
 
-#: lib/Modules/Orders/BulkActions.php:108
-#: lib/Modules/Orders/Single.php:190
+#: lib/Modules/Orders/BulkActions.php:101
+#: lib/Modules/Orders/Single.php:187
 msgid "Sendy: Label printed"
 msgstr "Sendy: Label geprint"
 
-#: lib/Modules/Orders/BulkActions.php:115
+#: lib/Modules/Orders/BulkActions.php:108
 msgid "Non of the selected orders have any labels"
 msgstr "Voor de geselecteerde zendingen is geen label beschikbaar"
 
-#: lib/Modules/Orders/BulkActions.php:188
+#: lib/Modules/Orders/BulkActions.php:182
 msgid "The shipments will be created with the selected shop"
 msgstr "De zendingen worden aangemaakt met de geselecteerde shop"
 
-#: lib/Modules/Orders/BulkActions.php:197
+#: lib/Modules/Orders/BulkActions.php:191
 msgid "Select preference"
 msgstr "Selecteer verzendprofiel"
 
-#: lib/Modules/Orders/BulkActions.php:198
+#: lib/Modules/Orders/BulkActions.php:192
 msgid "The shipments will be created with the preference you select here"
 msgstr "De zendingen worden aangemaakt met de geselecteerde verzendvoorkeur"
 
 #. translators: %s The ID of the order
-#: lib/Modules/Orders/OrdersModule.php:62
+#: lib/Modules/Orders/OrdersModule.php:51
 #, php-format
 msgid "Order #%s already has a shipment created"
 msgstr "Voor order #%s is al een zending aangemaakt"
 
-#: lib/Modules/Orders/OrdersModule.php:95
-#: lib/Modules/Webhooks.php:174
+#: lib/Modules/Orders/OrdersModule.php:84
+#: lib/Modules/Webhooks.php:167
 msgid "Sendy: Shipment created"
 msgstr "Sendy: Zending aangemaakt"
 
-#: lib/Modules/Orders/OrdersModule.php:180
+#: lib/Modules/Orders/OrdersModule.php:165
 msgid "Something went wrong while downloading the labels"
 msgstr "Er ging iets mis bij het downloaden van de labels"
 
 #. translators: %1$s should contain the ID of the order and %2$s the error
-#: lib/Modules/Orders/OrdersModule.php:282
-#: lib/Modules/Orders/OrdersModule.php:297
+#: lib/Modules/Orders/OrdersModule.php:255
+#: lib/Modules/Orders/OrdersModule.php:270
 #, php-format
 msgid "Error while creating shipment for order #%1$s: %2$s"
 msgstr "Er ging iets mis bij het aanmaken van een zending voor order #%1$s: %2$s"
 
 #. translators: %s should contain the ID of the order
-#: lib/Modules/Orders/OrdersModule.php:288
+#: lib/Modules/Orders/OrdersModule.php:261
 #, php-format
 msgid "Error while creating shipment for order #%s: Authentication failed. Check the settings page to reconnect with Sendy."
 msgstr "Er ging iets mis bij het aanmaken van een zending voor order #%s:: Authenticatie mislukt. Ga naar de instellingen om opnieuw te verbinden met Sendy."
 
 #. translators: %s should contain the ID of the order
-#: lib/Modules/Orders/OrdersModule.php:300
+#: lib/Modules/Orders/OrdersModule.php:273
 #, php-format
 msgid "Error while creating shipment for order #%s: Too many requests. Please try again later."
 msgstr "Er ging iets mis bij het aanmaken van een zending voor order #%s: Te veel requests. Probeer het later opnieuw."
 
 #. translators: %s should contain the ID of the order
-#: lib/Modules/Orders/OrdersModule.php:303
+#: lib/Modules/Orders/OrdersModule.php:276
 #, php-format
 msgid "Error while creating shipment for order #%s: Unknown error."
 msgstr "Er ging iets mis bij het aanmaken van een zending voor order #%s: Onbekende fout."
 
-#: lib/Modules/Orders/Single.php:112
-#: lib/Modules/Orders/Single.php:171
+#: lib/Modules/Orders/Single.php:113
+#: lib/Modules/Orders/Single.php:168
 msgid "Nonce verification failed"
 msgstr "Nonce verificatie mislukt"
 
-#: lib/Modules/Orders/Single.php:178
+#: lib/Modules/Orders/Single.php:175
 msgid "Order could not be found"
 msgstr "De bestelling kan niet gevonden worden"
 
-#: lib/Modules/Orders/Single.php:182
+#: lib/Modules/Orders/Single.php:179
 msgid "You do not have sufficient permissions to access this page."
 msgstr "Je hebt niet de juiste rechten om de pagina te bekijken."
 
-#: lib/Modules/Orders/Single.php:186
+#: lib/Modules/Orders/Single.php:183
 msgid "No shipment created for order"
 msgstr "Geen zending aangemaakt voor de bestelling"
 
-#: lib/Modules/ShippingMethodsSynchronizer.php:66
+#: lib/Modules/ShippingMethodsSynchronizer.php:65
 msgid "Rest of the world"
 msgstr "Rest van de wereld"
 
-#: lib/Modules/Webhooks.php:201
+#: lib/Modules/Webhooks.php:194
 msgid "Sendy: Shipment delivered"
 msgstr "Sendy: Zending geleverd"
 
@@ -345,8 +333,25 @@ msgstr "Sendy - Pick-up punt levering"
 msgid "Sendy - Standard Delivery"
 msgstr "Sendy - Standaard levering"
 
-#: build/block.json
 #: src/block.json
 msgctxt "block title"
 msgid "Sendy - Pick-up punten"
 msgstr ""
+
+#: resources/views/admin/notices/connection-error.php:15
+msgid "Could not connect to Sendy. Please try signing in again."
+msgstr "Kan geen verbinding maken met Sendy. Probeer opnieuw in te loggen."
+
+#: resources/views/admin/notices/connection-error.php:16
+msgid "Go to settings"
+msgstr "Ga naar instellingen"
+
+#. translators: %d is the HTTP error code returned by the Sendy API
+#: resources/views/admin/notices/connection-error.php:19
+#, php-format
+msgid "Could not connect to Sendy (error %d). Please try again later."
+msgstr "Kan geen verbinding maken met Sendy (foutcode %d). Probeer het later opnieuw."
+
+#: resources/views/admin/notices/connection-error.php:21
+msgid "Could not connect to Sendy. Please try again later."
+msgstr "Kan geen verbinding maken met Sendy. Probeer het later opnieuw."
