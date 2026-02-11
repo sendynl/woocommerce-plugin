@@ -136,8 +136,6 @@ abstract class OrdersModule
 
     /**
      * Fetch the labels from the Sendy API and offer them as download to the user
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function offer_labels_as_download(array $shipment_ids): void
     {
