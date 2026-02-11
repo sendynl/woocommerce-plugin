@@ -2,8 +2,8 @@
 Plugin Name: Sendy
 Plugin URI: https://app.sendy.nl/
 Description: A WooCommerce plugin that connects your site to the Sendy platform
-Version: 3.4.1
-Stable tag: 3.4.1
+Version: 3.4.2
+Stable tag: 3.4.2
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
@@ -52,8 +52,9 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 == Changelog ==
 
-= Unreleased =
+= 3.4.2 =
 * Improve error handling on order pages
+* Fix CVE-2025-68564 - Verify webhook requests using the signature
 
 = 3.4.1 =
 * Fix an error handling issue when creating shipments

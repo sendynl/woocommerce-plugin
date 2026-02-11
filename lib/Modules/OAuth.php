@@ -2,7 +2,7 @@
 
 namespace Sendy\WooCommerce\Modules;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Sendy\Api\Exceptions\SendyException;
 use Sendy\WooCommerce\ApiClientFactory;
 
 class OAuth
@@ -52,6 +52,8 @@ class OAuth
 
             update_option('sendy_refresh_token', null, false);
             update_option('sendy_token_expires', null, false);
+
+            delete_option('sendy_webhook_secret');
         }
     }
 
@@ -76,10 +78,12 @@ class OAuth
             try {
                 ApiClientFactory::buildConnectionUsingCode(sanitize_key($_GET['code']))->checkOrAcquireAccessToken();
 
+                Webhooks::regenerateWebhookSecret();
+
                 sendy_flash_admin_notice('success', __('Authentication successful', 'sendy'));
 
                 wp_safe_redirect(admin_url('admin.php?page=sendy'));
-            } catch (GuzzleException $e) {
+            } catch (SendyException $e) {
                 sendy_flash_admin_notice('warning', __('Authentication failed. Please try again', 'sendy'));
 
                 wp_safe_redirect(admin_url('admin.php?page=sendy'));
