@@ -47,7 +47,7 @@ if (! defined('ABSPATH')) {
         </button>
     </p>
 <?php else: ?>
-    <?php if ($order->meta_exists('_sendy_packages')) : ?>
+    <?php if ($order->meta_exists('_sendy_packages') && is_array($order->get_meta('_sendy_packages'))) : ?>
         <p><b><?php esc_html_e('Track and trace', 'sendy'); ?></b></p>
 
         <?php foreach ($order->get_meta('_sendy_packages') as $sendy_package) : ?>

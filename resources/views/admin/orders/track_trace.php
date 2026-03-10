@@ -13,7 +13,7 @@ if (! defined('ABSPATH')) {
     <p><?php esc_html_e('No shipment created yet', 'sendy'); ?></p>
 
 <?php else : ?>
-    <?php if ($order->meta_exists('_sendy_packages')) : ?>
+    <?php if ($order->meta_exists('_sendy_packages') && is_array($order->get_meta('_sendy_packages'))) : ?>
         <?php foreach ($order->get_meta('_sendy_packages') as $sendy_package) : ?>
             <mark class="order-status status-processing">
                 <a href="<?php echo esc_url($sendy_package['tracking_url'])?> " target="_blank" class="order-status status-processing">
