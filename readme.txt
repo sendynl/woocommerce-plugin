@@ -52,9 +52,12 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 == Changelog ==
 
+= Unreleased =
+* Fix CVE-2025-68564 - Protect the logout endpoint
+
 = 3.4.2 =
 * Improve error handling on order pages
-* Fix CVE-2025-68564 - Verify webhook requests using the signature
+* Verify webhook requests using the signature
 
 = 3.4.1 =
 * Fix an error handling issue when creating shipments

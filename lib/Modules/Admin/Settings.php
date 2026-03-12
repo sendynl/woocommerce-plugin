@@ -249,11 +249,19 @@ class Settings
 
     public function logout_action(): void
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (isset($_GET['sendy_logout'])) {
+            if (! current_user_can('manage_woocommerce')) {
+                wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'sendy'), 403);
+            }
+
+            if (! wp_verify_nonce($_GET['_wpnonce'] ?? '', 'sendy_logout')) {
+                wp_die(esc_html__('Nonce verification failed.', 'sendy'), 401);
+            }
+
             update_option('sendy_access_token', null, false);
 
             wp_safe_redirect(admin_url('admin.php?page=sendy'));
+            exit;
         }
     }
 
