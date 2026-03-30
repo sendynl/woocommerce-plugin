@@ -2,7 +2,9 @@
 /.git
 /.github
 /node_modules
+/.idea
 
+.DS_Store
 .distignore
 .gitignore
 README.md
@@ -16,3 +18,4 @@ webpack.config.js
 .php-cs-fixer.dist.php
 .php-cs-fixer.cache
 .prettierignore
+build_release.sh

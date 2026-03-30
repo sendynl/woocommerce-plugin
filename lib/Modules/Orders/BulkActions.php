@@ -89,6 +89,10 @@ class BulkActions extends OrdersModule
             return $redirect;
         }
 
+        if (! current_user_can('manage_woocommerce')) {
+            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'sendy'), 403);
+        }
+
         $shipmentIds = [];
 
         foreach ($objectIds as $objectId) {

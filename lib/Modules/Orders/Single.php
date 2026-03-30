@@ -109,6 +109,10 @@ class Single extends OrdersModule
     public function handle_create_shipment_from_form(): void
     {
         try {
+            if (! current_user_can('manage_woocommerce')) {
+                throw new \Exception(esc_html__('You do not have sufficient permissions to access this page.', 'sendy'));
+            }
+
             if (! isset($_REQUEST['nonce']) || ! check_ajax_referer('sendy_create_shipment', 'nonce')) {
                 throw new \Exception(esc_html__('Nonce verification failed', 'sendy'));
             }

@@ -34,7 +34,7 @@ if (! defined('ABSPATH')) {
         ?></p>
 
                     <p>
-                        <a class="button" href="<?php echo esc_url(admin_url('?sendy_logout')); ?>">
+                        <a class="button" href="<?php echo esc_url(wp_nonce_url(admin_url('?sendy_logout'), 'sendy_logout')); ?>">
                             <?php esc_html_e('Log out', 'sendy'); ?>
                         </a>
                     </p>
