@@ -22,8 +22,18 @@ class OAuth
     {
         if (get_option('sendy_client_id') == '') {
             update_option('sendy_client_id', wp_generate_uuid4());
-            update_option('sendy_client_secret', wp_generate_password(40), false);
+            update_option('sendy_client_secret', wp_generate_password(40, false), false);
             update_option('sendy_hostname', get_site_url());
+
+            return;
+        }
+
+        // Regenerate secrets that contain characters requiring URL-encoding.
+        // Such characters (e.g. #, %) break the OAuth URL even when percent-encoded,
+        // because WordPress's esc_url() can revert %23 to # which browsers treat as a fragment separator.
+        $secret = get_option('sendy_client_secret');
+        if ($secret !== false && $secret !== '' && ! sendy_is_authenticated() && rawurlencode($secret) !== $secret) {
+            update_option('sendy_client_secret', wp_generate_password(40, false), false);
         }
     }
 
@@ -47,7 +57,7 @@ class OAuth
 
         if (get_option('sendy_hostname') != get_site_url()) {
             update_option('sendy_client_id', wp_generate_uuid4());
-            update_option('sendy_client_secret', wp_generate_password(40), false);
+            update_option('sendy_client_secret', wp_generate_password(40, false), false);
             update_option('sendy_hostname', get_site_url());
 
             update_option('sendy_refresh_token', null, false);
