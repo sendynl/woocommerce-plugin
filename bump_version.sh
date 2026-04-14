@@ -19,17 +19,19 @@ then
   exit 1
 fi
 
+if ! grep -q "^= $new_version =$" readme.txt
+then
+  echo "Error: No changelog entry found in readme.txt for version $new_version."
+  echo "Add a '= $new_version =' section under '== Changelog ==' before bumping."
+  exit 1
+fi
+
 echo "Bumping version to: $new_version"
 
 perl -pi -e "s/^Version: .*/Version: $new_version/" readme.txt
 perl -pi -e "s/^Stable tag: .*/Stable tag: $new_version/" readme.txt
 perl -pi -e "s/^ \* Version: .*/ \* Version: $new_version/" sendy.php
 perl -pi -e "s/^    public const VERSION = .*/    public const VERSION = '$new_version';/" lib/Plugin.php
-
-if ! grep -q "^= $new_version =$" readme.txt
-then
-  echo "Remember to add a new changelog entry in the readme.txt for version $new_version."
-fi
 
 echo
 echo "You can now commit the changes and merge them into the main branch. Then, create a new release on GitHub:"
