@@ -46,8 +46,7 @@ jobs:
           SLUG: 'sendy'
 
       - name: Attach the zip file to the release
-        uses: softprops/action-gh-release@v2
+        run:
+          gh release upload "${{ github.ref_name }}" "${{ github.workspace }}/sendy.zip" --clobber
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          files: ${{ github.workspace }}/sendy.zip
+          GITHUB_TOKEN: ${{ github.token }}
