@@ -12,6 +12,18 @@ jobs:
       - name: Checkout the source code
         uses: actions/checkout@v5
 
+      - name: Verify readme.txt matches release version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if ! grep -q "^Stable tag: $VERSION$" readme.txt; then
+            echo "::error::Stable tag in readme.txt does not match release version $VERSION"
+            exit 1
+          fi
+          if ! grep -q "^= $VERSION =$" readme.txt; then
+            echo "::error::No changelog entry found in readme.txt for version $VERSION"
+            exit 1
+          fi
+
       - name: Install Subversion
         run: |
           sudo apt update
