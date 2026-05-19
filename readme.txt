@@ -52,6 +52,9 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 == Changelog ==
 
+= Unreleased =
+* Fix incomplete shipments showing "Print labels" instead of "Edit shipment" link
+
 = 3.4.5 =
 * Fix missing changelog entry for version 3.4.4
 
