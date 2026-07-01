@@ -83,6 +83,9 @@ class Settings
     {
         $slug = 'sendy';
 
+        // Save with the same capability the page is shown with; options.php requires 'manage_options' otherwise.
+        add_filter('option_page_capability_sendy_general_settings', fn() => 'manage_woocommerce');
+
         add_settings_section('sendy_section_id', '', '', $slug);
 
         register_setting('sendy_general_settings', 'sendy_import_weight', fn($value) => $value === 'true');
