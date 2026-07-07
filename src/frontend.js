@@ -4,19 +4,19 @@ import { select } from '@wordpress/data';
 const { registerCheckoutBlock, extensionCartUpdate } = wc.blocksCheckout;
 const { cartStore } = window.wc.wcBlocksData;
 
-const Block = ({ children, checkoutExtensionData }) => {
-	let store = select(cartStore);
+const Block = ( { children, checkoutExtensionData } ) => {
+	let store = select( cartStore );
 	const shippingRates = store.getCartData().shippingRates;
 
 	const selectedPickupPointData =
-		store.getCartData().extensions?.['sendy-pickup-point'] || null;
+		store.getCartData().extensions?.[ 'sendy-pickup-point' ] || null;
 
-	if (!shouldBeVisible(selectedShippingRates(shippingRates))) {
+	if ( ! shouldBeVisible( selectedShippingRates( shippingRates ) ) ) {
 		return <></>;
 	}
 
-	const selectedPickupPoint = (data) => {
-		if (data.name === null) {
+	const selectedPickupPoint = ( data ) => {
+		if ( data.name === null ) {
 			return <></>;
 		}
 
@@ -27,9 +27,9 @@ const Block = ({ children, checkoutExtensionData }) => {
 				</h3>
 
 				<p className="sendy-checkout-content">
-					{data.name} <br />
-					{data.street} {data.number} <br />
-					{data.postal_code} {data.city}
+					{ data.name } <br />
+					{ data.street } { data.number } <br />
+					{ data.postal_code } { data.city }
 				</p>
 			</>
 		);
@@ -42,14 +42,14 @@ const Block = ({ children, checkoutExtensionData }) => {
 			</h3>
 
 			<div className="sendy-checkout-content">
-				<button onClick={openPickupPointPicker}>
-					{selectedPickupPointData.name
+				<button onClick={ openPickupPointPicker }>
+					{ selectedPickupPointData.name
 						? 'Wijzig pick-up-punt'
-						: 'Selecteer pick-up-punt'}
+						: 'Selecteer pick-up-punt' }
 				</button>
 			</div>
 
-			{selectedPickupPoint(selectedPickupPointData)}
+			{ selectedPickupPoint( selectedPickupPointData ) }
 		</div>
 	);
 };
@@ -63,49 +63,49 @@ const options = {
  * @param shippingRates
  * @returns {boolean}
  */
-const shouldBeVisible = (shippingRates) => {
-	if (shippingRates === null) {
+const shouldBeVisible = ( shippingRates ) => {
+	if ( shippingRates === null ) {
 		return false;
 	}
 
-	return shippingRates[0].rate_id.startsWith('sendy_pickup_point');
+	return shippingRates[ 0 ].rate_id.startsWith( 'sendy_pickup_point' );
 };
 
-const selectedShippingRates = (shippingRates) => {
-	if (!shippingRates.length) {
+const selectedShippingRates = ( shippingRates ) => {
+	if ( ! shippingRates.length ) {
 		return null;
 	}
 
 	let activeShippingRates = [];
 
-	for (let i = 0; i < shippingRates.length; i++) {
-		if (!shippingRates[i].shipping_rates) {
+	for ( let i = 0; i < shippingRates.length; i++ ) {
+		if ( ! shippingRates[ i ].shipping_rates ) {
 			continue;
 		}
 
-		for (let j = 0; j < shippingRates[i].shipping_rates.length; j++) {
-			activeShippingRates.push(shippingRates[i].shipping_rates[j]);
+		for ( let j = 0; j < shippingRates[ i ].shipping_rates.length; j++ ) {
+			activeShippingRates.push( shippingRates[ i ].shipping_rates[ j ] );
 		}
 	}
 
-	return activeShippingRates.filter((shippingRate) => {
+	return activeShippingRates.filter( ( shippingRate ) => {
 		return shippingRate.selected;
-	});
+	} );
 };
 
-const openPickupPointPicker = (event) => {
+const openPickupPointPicker = ( event ) => {
 	event.preventDefault();
 
-	const cartData = select(cartStore).getCartData();
+	const cartData = select( cartStore ).getCartData();
 
-	const carrier = cartData?.extensions?.['sendy-carrier']?.carrier || '';
+	const carrier = cartData?.extensions?.[ 'sendy-carrier' ]?.carrier || '';
 
 	const data = {
 		country:
 			cartData.shippingAddress.country ??
 			cartData.billingAddress.country ??
 			'NL',
-		carriers: [carrier],
+		carriers: [ carrier ],
 		address:
 			cartData.shippingAddress.postcode ??
 			cartData.billingAddress.postcode,
@@ -113,16 +113,16 @@ const openPickupPointPicker = (event) => {
 
 	window.Sendy.parcelShopPicker.open(
 		data,
-		(data) => {
-			extensionCartUpdate({
+		( data ) => {
+			extensionCartUpdate( {
 				namespace: 'sendy-set-pickup-point',
 				data: data,
-			});
+			} );
 		},
-		(errors) => {
-			console.log(errors);
+		( errors ) => {
+			console.log( errors );
 		}
 	);
 };
 
-registerCheckoutBlock(options);
+registerCheckoutBlock( options );

@@ -7,12 +7,11 @@
 		"lib": "lib"
 	},
 	"devDependencies": {
-		"@woocommerce/block-library": "^2.3.0",
-		"@woocommerce/dependency-extraction-webpack-plugin": "^2.2.0",
-		"@woocommerce/eslint-plugin": "^2.2.0",
-		"@wordpress/blocks": "^12.6.0",
-		"@wordpress/scripts": "^26.0.0",
-		"@wordpress/components": "^23.8.0"
+		"@woocommerce/dependency-extraction-webpack-plugin": "^5.1.0",
+		"@wordpress/blocks": "^15.23.0",
+		"@wordpress/components": "^36.1.0",
+		"@wordpress/data": "^10.50.0",
+		"@wordpress/scripts": "^32.6.0"
 	},
 	"scripts": {
 		"build": "wp-scripts build",
