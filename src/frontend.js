@@ -64,7 +64,7 @@ const options = {
  * @returns {boolean}
  */
 const shouldBeVisible = ( shippingRates ) => {
-	if ( shippingRates === null ) {
+	if ( shippingRates === null || ! shippingRates.length ) {
 		return false;
 	}
 
