@@ -28,3 +28,8 @@ if (! file_exists($_tests_dir . '/includes/functions.php')) {
 require_once $_tests_dir . '/includes/functions.php';
 
 require $_tests_dir . '/includes/bootstrap.php';
+
+// The plugin is not loaded as a WordPress plugin in the test environment; pull
+// in its procedural helpers and the test doubles the tests rely on.
+require_once dirname(__DIR__) . '/lib/helpers.php';
+require_once __DIR__ . '/doubles.php';

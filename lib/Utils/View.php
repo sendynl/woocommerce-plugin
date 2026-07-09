@@ -31,6 +31,7 @@ class View
             'id'       => [],
             'disabled' => [],
             'data-carrier' => [],
+            'data-order-id' => [],
         ],
         'cite'       => [
             'title' => [],

@@ -22,8 +22,6 @@ class Single extends OrdersModule
         add_action('wp_ajax_sendy_order_single_save_form', [$this, 'handle_create_shipment_from_form']);
 
         add_action('woocommerce_admin_order_data_after_shipping_address', [$this, 'display_shipping_data'], 10, 1);
-
-        add_action('admin_init', [$this, 'download_label'], 10);
     }
 
     /**
@@ -91,10 +89,18 @@ class Single extends OrdersModule
     public function enqueue_assets(): void
     {
         if ($this->on_order_edit_page()) {
+            wp_register_script(
+                'sendy-print-labels',
+                SENDY_WC_PLUGIN_DIR_URL . '/resources/js/print-labels.js',
+                [],
+                Plugin::VERSION,
+                true,
+            );
+
             wp_enqueue_script(
                 'sendy-admin-order-single',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-order-single.js',
-                [],
+                ['sendy-print-labels'],
                 Plugin::VERSION,
                 true,
             );
@@ -151,49 +157,6 @@ class Single extends OrdersModule
             View::fromTemplate('admin/single/shipping_data.php')->render(['order' => $order]),
             View::ALLOWED_TAGS,
         );
-    }
-
-    /**
-     * Offer the label as a download to the user
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     */
-    public function download_label(): void
-    {
-        if (empty($_GET['sendy_download_label_nonce'])) {
-            return;
-        }
-
-        if (empty($_GET['sendy_action'])) {
-            return;
-        }
-
-        if (! wp_verify_nonce(sanitize_key($_REQUEST['sendy_download_label_nonce'] ?? ''), 'sendy_download_label')) {
-            wp_die(esc_html__('Nonce verification failed', 'sendy'));
-        }
-
-        if (sanitize_key($_REQUEST['sendy_action'] ?? '') === 'download_label') {
-            $order = wc_get_order(sanitize_key($_REQUEST['order_id'] ?? ''));
-
-            if (! $order) {
-                wp_die(esc_html__('Order could not be found', 'sendy'));
-            }
-
-            if (! current_user_can('manage_woocommerce') || ! current_user_can('edit_shop_orders')) {
-                wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'sendy'));
-            }
-
-            if (! $order->meta_exists('_sendy_shipment_id')) {
-                wp_die(esc_html__('No shipment created for order', 'sendy'));
-            }
-
-            if (get_option('sendy_mark_order_as_completed') === 'after-label-printed') {
-                $order->set_status('completed', __('Sendy: Label printed', 'sendy'));
-                $order->save();
-            }
-
-            $this->offer_labels_as_download([$order->get_meta('_sendy_shipment_id')]);
-        }
     }
 
     /**

@@ -19,6 +19,38 @@
 				'.button.action',
 				this.disableSubmitButton
 			);
+
+			$(ordersFilter).on('submit', this.interceptPrintLabels);
+		},
+
+		/**
+		 * Handle the print labels bulk action client-side so the labels can
+		 * be sent to the print app
+		 *
+		 * @param {Event} event
+		 */
+		interceptPrintLabels: function (event) {
+			let form = $(this),
+				action = form.find('select[name=action]').val(),
+				action2 = form.find('select[name=action2]').val();
+
+			if (
+				action !== 'sendy_print_labels' &&
+				action2 !== 'sendy_print_labels'
+			) {
+				return;
+			}
+
+			event.preventDefault();
+
+			let orderIds = form
+				.find('input[name="id[]"]:checked, input[name="post[]"]:checked')
+				.map(function () {
+					return this.value;
+				})
+				.get();
+
+			window.sendyPrintLabels(orderIds);
 		},
 
 		/**

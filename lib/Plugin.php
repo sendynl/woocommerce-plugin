@@ -7,6 +7,7 @@ use Sendy\WooCommerce\Modules\Admin\Settings;
 use Sendy\WooCommerce\Modules\Checkout;
 use Sendy\WooCommerce\Modules\OAuth;
 use Sendy\WooCommerce\Modules\Orders\BulkActions;
+use Sendy\WooCommerce\Modules\Orders\PrintLabels;
 use Sendy\WooCommerce\Modules\Orders\ProcessInBackground;
 use Sendy\WooCommerce\Modules\Orders\OrderList;
 use Sendy\WooCommerce\Modules\Orders\Single;
@@ -117,6 +118,7 @@ class Plugin
             $this->modules['orders_bulk_actions'] = new BulkActions();
             $this->modules['orders_list'] = new OrderList();
             $this->modules['orders_single'] = new Single();
+            $this->modules['orders_print_labels'] = new PrintLabels();
             $this->modules['checkout'] = new Checkout();
             $this->modules['webhooks'] = new Webhooks();
             $this->modules['orders_sendy'] = new ProcessInBackground();

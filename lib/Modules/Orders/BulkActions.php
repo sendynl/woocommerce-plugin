@@ -24,6 +24,7 @@ class BulkActions extends OrdersModule
         add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
 
         add_action('admin_footer', [$this, 'modal_create_shipments']);
+        add_action('admin_footer', [$this, 'print_labels_nonce_field']);
     }
 
     /**
@@ -81,40 +82,19 @@ class BulkActions extends OrdersModule
     /**
      * Handle the print labels bulk action
      *
-     * @return string|void
+     * The real work happens through the sendy_print_labels AJAX endpoint;
+     * print-labels.js intercepts the form submission. Reaching this handler
+     * means JavaScript was disabled or bypassed.
      */
-    public function handle_bulk_action_print_labels(string $redirect, string $action, array $objectIds)
+    public function handle_bulk_action_print_labels(string $redirect, string $action, array $objectIds): string
     {
-        if ($action !== 'sendy_print_labels' || empty($objectIds)) {
+        if ($action !== 'sendy_print_labels') {
             return $redirect;
         }
 
-        if (! current_user_can('manage_woocommerce')) {
-            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'sendy'), 403);
-        }
+        sendy_flash_admin_notice('error', __('Printing labels requires JavaScript. Enable JavaScript in your browser and try again.', 'sendy'));
 
-        $shipmentIds = [];
-
-        foreach ($objectIds as $objectId) {
-            $order = wc_get_order($objectId);
-
-            if ($order->meta_exists('_sendy_shipment_id')) {
-                $shipmentIds[] = $order->get_meta('_sendy_shipment_id');
-
-                if (get_option('sendy_mark_order_as_completed') === 'after-label-printed') {
-                    $order->set_status('completed', __('Sendy: Label printed', 'sendy'));
-                    $order->save();
-                }
-            }
-        }
-
-        if (count($shipmentIds) == 0) {
-            sendy_flash_admin_notice('notice', __('Non of the selected orders have any labels', 'sendy'));
-
-            return $redirect;
-        }
-
-        $this->offer_labels_as_download($shipmentIds);
+        return $redirect;
     }
 
     /**
@@ -126,10 +106,18 @@ class BulkActions extends OrdersModule
             wp_enqueue_style('thickbox');
             wp_enqueue_script('thickbox');
 
+            wp_register_script(
+                'sendy-print-labels',
+                SENDY_WC_PLUGIN_DIR_URL . '/resources/js/print-labels.js',
+                [],
+                Plugin::VERSION,
+                true,
+            );
+
             wp_enqueue_script(
                 'sendy-admin-order-bulk',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-order-bulk.js',
-                [],
+                ['sendy-print-labels'],
                 Plugin::VERSION,
                 true,
             );
@@ -166,6 +154,19 @@ class BulkActions extends OrdersModule
                     'fields' => $this->create_shipment_fields($shops, $preferences),
                 ]),
                 View::ALLOWED_TAGS,
+            );
+        }
+    }
+
+    /**
+     * Render the nonce used by print-labels.js for the print labels bulk action
+     */
+    public function print_labels_nonce_field(): void
+    {
+        if ($this->on_orders_list_page()) {
+            printf(
+                '<input type="hidden" id="sendy-print-labels-nonce" value="%s">',
+                esc_attr(wp_create_nonce('sendy_print_labels')),
             );
         }
     }

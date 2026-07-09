@@ -56,14 +56,16 @@ if (! defined('ABSPATH')) {
             </a>
         <?php endforeach; ?>
 
+        <input type="hidden" id="sendy-print-labels-nonce" value="<?php echo esc_attr(wp_create_nonce('sendy_print_labels')); ?>">
+
         <p>
-            <a class="button button-primary" href="<?php echo esc_url(add_query_arg(['order_id' => $order->get_id(), 'sendy_action' => 'download_label', 'sendy_download_label_nonce' => wp_create_nonce('sendy_download_label')], admin_url())); ?>">
+            <button class="button button-primary" id="sendy-metabox-print-labels-button" data-order-id="<?php echo esc_attr($order->get_id()); ?>">
                 <?php if (count($order->get_meta('_sendy_packages')) == 1) : ?>
                     <?php esc_html_e('Print label', 'sendy'); ?>
                 <?php else : ?>
                     <?php esc_html_e('Print labels', 'sendy'); ?>
                 <?php endif; ?>
-            </a>
+            </button>
         </p>
     <?php else : ?>
         <a href="<?php echo esc_url(sprintf("https://app.sendy.nl/shipment/%s/edit", $order->get_meta('_sendy_shipment_id'))); ?>" target="_blank">
