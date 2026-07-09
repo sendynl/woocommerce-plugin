@@ -156,7 +156,7 @@ class Plugin
             'sendy_import_products' => true,
             'sendy_mark_order_as_completed' => 'after-shipment-created',
             'sendy_processing_method' => 'woocommerce',
-            'sendy_processable_status' => 'processing',
+            'sendy_processable_order_status' => 'processing',
         ];
 
         // Use a sentinel to detect a missing option: get_option()'s false default is indistinguishable from a
