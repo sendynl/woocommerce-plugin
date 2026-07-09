@@ -2,8 +2,8 @@
 Plugin Name: Sendy
 Plugin URI: https://app.sendy.nl/
 Description: A WooCommerce plugin that connects your site to the Sendy platform
-Version: 3.4.6
-Stable tag: 3.4.6
+Version: 3.4.7
+Stable tag: 3.4.7
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
@@ -51,6 +51,10 @@ Hierbij worden de adres- en contactgegevens van de je klanten en (optioneel) de 
 Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) en [privacy statement](https://sendy.nl/privacy-statement/) van toepassing.
 
 == Changelog ==
+
+= 3.4.7 =
+* Allow saving Sendy settings with manage_woocommerce capability
+* Keep settings checkbox off when saved with a persistent object cache
 
 = 3.4.6 =
 * Fix incomplete shipments showing "Print labels" instead of "Edit shipment" link

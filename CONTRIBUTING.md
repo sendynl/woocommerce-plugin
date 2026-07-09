@@ -22,4 +22,24 @@ Before submitting a pull request:
 
 ## Requirements
 
-All code must pass the plugin check action. This is mandatory check before merging a pull request. 
+All code must pass the plugin check action. This is mandatory check before merging a pull request.
+
+## Running the tests
+
+The plugin has PHPUnit integration tests that run against a real WordPress test instance, following the [WP-CLI plugin unit test guide](https://make.wordpress.org/cli/handbook/how-to/plugin-unit-tests/).
+
+Install the dependencies and the WordPress test suite once:
+
+```sh
+composer install
+bin/install-wp-tests.sh <db-name> <db-user> <db-pass> [db-host] [wp-version]
+# e.g. against a local MySQL: bin/install-wp-tests.sh sendy_wp_tests root '' 127.0.0.1 latest
+```
+
+The `<db-name>` database is dropped and recreated by the test suite on every run, so use a dedicated throwaway database.
+
+Then run the tests:
+
+```sh
+composer test
+```

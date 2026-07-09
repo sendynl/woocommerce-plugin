@@ -4,6 +4,10 @@ on:
   release:
     types: [released]
 
+# Needed for `gh release upload` to attach the built zip to the release.
+permissions:
+  contents: write
+
 jobs:
   deploy_to_wordpress_repository:
     name: Deploy to WP.org

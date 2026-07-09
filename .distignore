@@ -1,7 +1,9 @@
 /.wordpress-org
 /.git
 /.github
+/bin
 /node_modules
+/tests
 /.idea
 
 .DS_Store
@@ -13,9 +15,9 @@ SECURITY.md
 output.log
 DOCKER_ENV
 docker_tag
-bump_version.sh
 webpack.config.js
+phpunit.xml.dist
 .php-cs-fixer.dist.php
 .php-cs-fixer.cache
+.phpunit.result.cache
 .prettierignore
-build_release.sh

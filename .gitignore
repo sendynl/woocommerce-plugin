@@ -2,4 +2,5 @@ vendor
 node_modules
 build
 .php-cs-fixer.cache
+.phpunit.result.cache
 /*.zip

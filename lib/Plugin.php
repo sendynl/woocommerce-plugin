@@ -18,7 +18,7 @@ use WC_Shipping_Method;
 
 class Plugin
 {
-    public const VERSION = '3.4.6';
+    public const VERSION = '3.4.7';
 
     public const SETTINGS_ID = 'sendy';
 
@@ -156,11 +156,15 @@ class Plugin
             'sendy_import_products' => true,
             'sendy_mark_order_as_completed' => 'after-shipment-created',
             'sendy_processing_method' => 'woocommerce',
-            'sendy_processable_status' => 'processing',
+            'sendy_processable_order_status' => 'processing',
         ];
 
+        // Use a sentinel to detect a missing option: get_option()'s false default is indistinguishable from a
+        // checkbox genuinely saved as false, which is what a persistent object cache returns.
+        $missing = '__sendy_missing';
+
         foreach ($defaultValues as $option => $defaultValue) {
-            if (get_option($option) === false) {
+            if (get_option($option, $missing) === $missing) {
                 update_option($option, $defaultValue);
             }
         }
