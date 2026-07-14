@@ -1,0 +1,89 @@
+services:
+  mysql:
+    image: mariadb:lts
+    environment:
+      MARIADB_ROOT_PASSWORD: wordpress
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+    ports:
+      - "127.0.0.1:${MYSQL_PORT:-0}:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+  wordpress:
+    image: wordpress:${WP_VERSION:-latest}
+    healthcheck:
+      # The image copies WordPress into the wp_data volume on first boot;
+      # without a healthcheck `up --wait` would return before that finishes.
+      test: ["CMD-SHELL", "test -f /var/www/html/wp-includes/version.php"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${WP_PORT:-0}:80"
+    environment: &wp-env
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    volumes: &wp-volumes
+      - wp_data:/var/www/html
+      - ./:/var/www/html/wp-content/plugins/sendy
+
+  cli:
+    image: wordpress:cli
+    profiles: [cli]
+    # wordpress:cli is Alpine-based (www-data uid 82); wordpress:latest is
+    # Debian-based (www-data uid 33). Both mount the same wp_data volume, so
+    # without pinning this to the Debian uid, wp-cli can't create new
+    # directories under wp-content (uploads, languages, upgrade, ...).
+    user: "33:33"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      <<: *wp-env
+      WP_CLI_PACKAGES_DIR: /var/www/html/.wp-cli/packages
+      WP_CLI_CACHE_DIR: /var/www/html/.wp-cli/cache
+    volumes: *wp-volumes
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    profiles: [tunnel]
+    depends_on:
+      - wordpress
+    ports:
+      - "127.0.0.1:0:2000"
+    command: tunnel --no-autoupdate --metrics 0.0.0.0:2000 --url http://wordpress:80
+
+  test:
+    build:
+      context: docker
+      dockerfile: test.Dockerfile
+    profiles: [test]
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      WP_VERSION: ${WP_VERSION:-latest}
+      WP_TESTS_DIR: /tests/wordpress-tests-lib
+      WP_CORE_DIR: /tests/wordpress
+      TMPDIR: /tests/tmp
+    volumes:
+      - wp_tests:/tests
+      - ./:/plugin
+    working_dir: /plugin
+
+volumes:
+  db_data:
+  wp_data:
+  wp_tests:
