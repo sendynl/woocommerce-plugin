@@ -24,6 +24,21 @@ Before submitting a pull request:
 
 All code must pass the plugin check action. This is mandatory check before merging a pull request.
 
+## Local development environment
+
+The repository ships a disposable Docker environment for reproducing issues: a WordPress + WooCommerce installation with this plugin activated.
+
+```sh
+./develop up      # start + provision; prints the URL, credentials and a magic login URL
+./develop down    # deactivate the plugin (cleans up the Sendy webhook!) and destroy everything
+```
+
+Always use `./develop down`, not plain `docker compose down` — it deactivates the plugin first, which deletes the webhook registered in Sendy, so Sendy doesn't keep retrying deliveries against a dead URL. The one manual step is connecting to your Sendy account via the plugin's settings page. Copy `.env.example` to `.env` to change any of the knobs it documents (versions, ports, locale, HPOS, ...).
+
+To receive real webhook deliveries from Sendy, use tunnel mode: `./develop up --tunnel`, which exposes the site via an account-less Cloudflare quick tunnel.
+
+Ad-hoc commands run through passthroughs, no local PHP required: `./develop wp option get siteurl` and `./develop composer install`.
+
 ## Running the tests
 
 The plugin has PHPUnit integration tests that run against a real WordPress test instance, following the [WP-CLI plugin unit test guide](https://make.wordpress.org/cli/handbook/how-to/plugin-unit-tests/).
@@ -43,3 +58,11 @@ Then run the tests:
 ```sh
 composer test
 ```
+
+Alternatively, run the suite in Docker without a local MySQL or PHP:
+
+```sh
+./develop test
+```
+
+This provisions the WordPress test suite in a cached volume on first run (and again whenever `WP_VERSION` changes) and then runs PHPUnit.

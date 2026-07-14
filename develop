@@ -1,0 +1,219 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+# Compose also reads .env natively; we source it for WP_LOCALE, WC_VERSION etc.
+if [ -f .env ]; then
+    set -a
+    # shellcheck source=/dev/null
+    . ./.env
+    set +a
+fi
+
+TUNNEL=0
+
+compose() {
+    docker compose "$@"
+}
+
+wp_cli() {
+    compose run --rm cli wp "$@"
+}
+
+host_port() {
+    compose port "$1" "$2" | awk -F: '{print $NF}'
+}
+
+site_port() {
+    host_port wordpress 80
+}
+
+# Quick tunnels get a random *.trycloudflare.com hostname per boot; cloudflared
+# serves it as JSON on its metrics endpoint once the tunnel is established.
+tunnel_url() {
+    local metrics_port hostname
+    metrics_port="$(host_port cloudflared 2000)"
+    for _ in $(seq 1 30); do
+        hostname="$(curl -sf "http://localhost:${metrics_port}/quicktunnel" 2>/dev/null | sed -n 's/.*"hostname":"\([^"]*\)".*/\1/p' || true)"
+        if [ -n "$hostname" ]; then
+            echo "https://${hostname}"
+            return 0
+        fi
+        sleep 1
+    done
+    echo "Error: timed out waiting for the Cloudflare tunnel URL" >&2
+    return 1
+}
+
+site_url() {
+    if [ "$TUNNEL" = 1 ]; then
+        tunnel_url
+    else
+        local port
+        port="$(site_port)"
+        if [ -z "$port" ]; then
+            echo "Error: could not determine the WordPress port — is the environment up?" >&2
+            return 1
+        fi
+        echo "http://localhost:${port}"
+    fi
+}
+
+cmd_composer() {
+    # Allocate a TTY only when we actually have one (e.g. cmd_up calls this
+    # from non-interactive shells where -t would fail).
+    local tty_flag=""
+    if [ -t 0 ]; then
+        tty_flag="-t"
+    fi
+    docker run --rm -i $tty_flag \
+        -v "$PWD":/app -w /app \
+        -v "$HOME/.composer/cache":/tmp/composer-cache \
+        -e COMPOSER_CACHE_DIR=/tmp/composer-cache \
+        composer:2 composer "$@"
+}
+
+ensure_vendor() {
+    if [ ! -f vendor/autoload.php ]; then
+        echo "==> vendor/autoload.php missing — running composer install in a container"
+        cmd_composer install
+    fi
+}
+
+generate_password() {
+    # Under `set -o pipefail`, tr is killed by SIGPIPE once head has read
+    # enough bytes and closes its end of the pipe; that 141 becomes the
+    # pipeline's exit status even though head itself succeeded. Ignore it.
+    LC_ALL=C tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c 20 || true
+}
+
+cmd_up() {
+    case "${1:-}" in
+        --tunnel)
+            TUNNEL=1
+            export COMPOSE_PROFILES=tunnel
+            ;;
+        "")
+            ;;
+        *)
+            echo "Error: unknown option for up: $1" >&2
+            exit 1
+            ;;
+    esac
+
+    ensure_vendor
+
+    echo "==> Starting containers"
+    compose up -d --wait
+
+    local url
+    url="$(site_url)"
+
+    if wp_cli core is-installed 2>/dev/null; then
+        echo "==> Already provisioned — updating site URL to $url"
+        # shellcheck disable=SC2016 # $SITE_URL expands inside the container
+        compose run --rm -e SITE_URL="$url" cli bash -c \
+            'wp option update home "$SITE_URL" && wp option update siteurl "$SITE_URL"' > /dev/null
+    else
+        provision "$url"
+    fi
+
+    print_access_details "$url"
+}
+
+provision() {
+    local url="$1"
+    local password
+    password="$(generate_password)"
+    if [ "${#password}" -ne 20 ]; then
+        echo "Error: failed to generate an admin password" >&2
+        exit 1
+    fi
+    (umask 077; printf '%s' "$password" > .htadmin-password)
+    chmod 600 .htadmin-password
+
+    # One container run for all provisioning steps (~20 wp commands); see
+    # docker/provision.sh. Spawning a container per command costs seconds each.
+    compose run --rm \
+        -e SITE_URL="$url" \
+        -e ADMIN_PASSWORD="$password" \
+        -e WP_VERSION="${WP_VERSION:-latest}" \
+        -e WP_LOCALE="${WP_LOCALE:-nl_NL}" \
+        -e WC_VERSION="${WC_VERSION:-}" \
+        -e WC_HPOS="${WC_HPOS:-on}" \
+        cli bash wp-content/plugins/sendy/docker/provision.sh
+}
+
+print_access_details() {
+    local url="$1"
+    echo
+    echo "Site:      $url"
+    echo "Admin:     $url/wp-admin/"
+    echo "Username:  admin"
+    echo "Password:  $(cat .htadmin-password 2>/dev/null || echo '(unknown — reset via: ./develop wp user update admin --user_pass=<new>)')"
+    cmd_login || true
+    echo
+    echo "Remaining manual step: connect the plugin to Sendy via wp-admin (Sendy settings page, OAuth against app.sendy.nl)."
+}
+
+cmd_login() {
+    wp_cli login create admin
+}
+
+cmd_test() {
+    ensure_vendor
+
+    compose up -d --wait mysql
+    compose build test
+
+    compose run --rm test bash docker/run-tests.sh
+}
+
+cmd_down() {
+    if compose ps --status=running --services 2>/dev/null | grep -qx wordpress; then
+        if wp_cli plugin deactivate sendy; then
+            echo "==> Sendy plugin deactivated (webhook removed in Sendy if one was registered)"
+        else
+            local webhook_id
+            webhook_id="$(wp_cli option get sendy_webhook_id 2>/dev/null || true)"
+            echo "WARNING: could not deactivate the Sendy plugin." >&2
+            if [ -n "$webhook_id" ]; then
+                echo "WARNING: webhook $webhook_id may still exist in Sendy — delete it manually in the Sendy portal (app.sendy.nl)." >&2
+            fi
+        fi
+    else
+        echo "WARNING: WordPress container is not running — cannot clean up the Sendy webhook." >&2
+        echo "WARNING: if this installation was connected to Sendy, delete its webhook manually in the Sendy portal (app.sendy.nl)." >&2
+    fi
+
+    echo "==> Destroying containers and volumes"
+    compose --profile '*' down -v --remove-orphans
+    rm -f .htadmin-password
+}
+
+usage() {
+    cat <<'EOF'
+Usage: ./develop <command> [args]
+
+Lifecycle:
+  up [--tunnel]   Start and provision the environment (--tunnel exposes it via a Cloudflare quick tunnel)
+  down            Deactivate the Sendy plugin (removes the webhook in Sendy!) and destroy everything
+  test            Run the PHPUnit suite in Docker
+  login           Print a fresh magic login URL
+
+Passthroughs:
+  wp <args>       Run WP-CLI in the environment      (e.g. ./develop wp option get siteurl)
+  composer <args> Run composer in a container        (e.g. ./develop composer install)
+EOF
+}
+
+case "${1:-}" in
+    up)       shift; cmd_up "$@" ;;
+    down)     cmd_down ;;
+    login)    cmd_login ;;
+    test)     cmd_test ;;
+    wp)       shift; wp_cli "$@" ;;
+    composer) shift; cmd_composer "$@" ;;
+    *)        usage; exit 1 ;;
+esac
