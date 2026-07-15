@@ -1,9 +1,6 @@
-import { ValidatedTextInput } from '@woocommerce/blocks-checkout';
 import { useBlockProps } from '@wordpress/block-editor';
 
-import { __ } from '@wordpress/i18n';
-
-export const Edit = ( { attributes, setAttributes } ) => {
+export const Edit = () => {
 	const blockProps = useBlockProps();
 	return (
 		<div { ...blockProps }>
