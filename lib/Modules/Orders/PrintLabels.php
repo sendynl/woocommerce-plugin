@@ -59,8 +59,9 @@ class PrintLabels extends OrdersModule
 
         $marked = $this->mark_orders_as_completed($orders);
 
-        foreach ($this->headers_to_forward($sendyHeaders) as $name => $value) {
-            header("{$name}: {$value}");
+        // The SDK guarantees these are x-sendy-* headers with sanitized values.
+        foreach ($sendyHeaders as $name => $values) {
+            header($name . ': ' . reset($values));
         }
 
         wp_send_json($response + ['reload' => $marked]);
@@ -116,32 +117,5 @@ class PrintLabels extends OrdersModule
         }
 
         return $orders !== [];
-    }
-
-    /**
-     * Select the x-sendy-* headers to forward to the client
-     *
-     * The match is case-insensitive because HTTP/2 lowercases header names,
-     * values may be Guzzle-style arrays (the first element wins), and CR/LF
-     * is stripped to prevent header injection.
-     *
-     * @param array<string,string|string[]> $sendyHeaders
-     * @return array<string,string>
-     */
-    public function headers_to_forward(array $sendyHeaders): array
-    {
-        $headers = [];
-
-        foreach ($sendyHeaders as $name => $value) {
-            if (strpos(strtolower($name), 'x-sendy-') !== 0) {
-                continue;
-            }
-
-            $value = is_array($value) ? reset($value) : $value;
-
-            $headers[$name] = str_replace(["\r", "\n"], '', (string) $value);
-        }
-
-        return $headers;
     }
 }

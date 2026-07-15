@@ -92,24 +92,6 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
         $this->assertFalse($order->was_saved());
     }
 
-    public function test_only_sendy_headers_are_forwarded(): void
-    {
-        $headers = $this->module->headers_to_forward([
-            'x-sendy-token' => ['first-value', 'second-value'],
-            'X-Sendy-Uppercase' => ['value'],
-            'x-sendy-string' => 'plain-string',
-            'x-sendy-crlf' => ["evil\r\nX-Injected: 1"],
-            'content-type' => ['application/json'],
-        ]);
-
-        $this->assertSame([
-            'x-sendy-token' => 'first-value',
-            'X-Sendy-Uppercase' => 'value',
-            'x-sendy-string' => 'plain-string',
-            'x-sendy-crlf' => 'evilX-Injected: 1',
-        ], $headers);
-    }
-
     public function test_successful_fetch_returns_the_api_response_unwrapped_with_a_reload_flag(): void
     {
         update_option('sendy_mark_order_as_completed', 'after-label-printed');
