@@ -39,6 +39,16 @@ To receive real webhook deliveries from Sendy, use tunnel mode: `./develop up --
 
 Ad-hoc commands run through passthroughs, no local PHP required: `./develop wp option get siteurl` and `./develop composer install`.
 
+## Translations
+
+After adding or changing translatable strings in the code, regenerate the translation files:
+
+```sh
+bin/update_translations.sh
+```
+
+This runs `wp i18n make-pot`, `update-po` and `make-mo` in a one-off Docker container (no local wp-cli needed) and reports any strings that still need a translation. Translate those in `languages/sendy-nl_NL.po` with your IDE or Poedit, then run the script again to recompile the MO file (Poedit compiles it itself when saving, making the second run optional).
+
 ## Running the tests
 
 The plugin has PHPUnit integration tests that run against a real WordPress test instance, following the [WP-CLI plugin unit test guide](https://make.wordpress.org/cli/handbook/how-to/plugin-unit-tests/).
