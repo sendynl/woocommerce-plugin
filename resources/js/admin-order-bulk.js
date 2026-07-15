@@ -52,7 +52,13 @@
 				})
 				.get();
 
-			window.sendyPrintLabels(orderIds);
+			// Block the form while printing to prevent repeated submissions.
+			form.block({
+				message: null,
+				overlayCSS: { background: '#fff', opacity: 0.6 },
+			});
+
+			window.sendyPrintLabels(orderIds).finally(() => form.unblock());
 		},
 
 		/**

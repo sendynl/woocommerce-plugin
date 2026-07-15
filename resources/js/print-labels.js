@@ -112,13 +112,7 @@
 		}
 	}
 
-	/**
-	 * Print the labels of the given orders, or download them as a PDF when
-	 * the print app is not available.
-	 *
-	 * @param {Array<string|number>} orderIds
-	 */
-	window.sendyPrintLabels = async (orderIds) => {
+	const printLabels = async (orderIds) => {
 		const printableDocumentPromise = fetchDocument(orderIds);
 		const printApiIsAvailable = await checkPrintApiAvailability();
 
@@ -152,4 +146,17 @@
 			window.location.reload();
 		}
 	};
+
+	/**
+	 * Print the labels of the given orders, or download them as a PDF when
+	 * the print app is not available. The returned promise never rejects, so
+	 * callers can chain finally() without handling errors themselves.
+	 *
+	 * @param {Array<string|number>} orderIds
+	 * @return {Promise<void>}
+	 */
+	window.sendyPrintLabels = (orderIds) =>
+		printLabels(orderIds).catch((error) => {
+			console.error('Sendy: printing labels failed', error);
+		});
 })();

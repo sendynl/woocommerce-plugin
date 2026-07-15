@@ -117,7 +117,7 @@ class BulkActions extends OrdersModule
             wp_enqueue_script(
                 'sendy-admin-order-bulk',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-order-bulk.js',
-                ['sendy-print-labels'],
+                ['jquery', 'jquery-blockui', 'sendy-print-labels'],
                 Plugin::VERSION,
                 true,
             );

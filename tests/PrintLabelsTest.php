@@ -46,9 +46,11 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
         new Sendy_Fake_Order(1, ['_sendy_shipment_id' => 'shipment-1']);
         new Sendy_Fake_Order(2);
         new Sendy_Fake_Order(4, ['_sendy_shipment_id' => 'shipment-4']);
+        new Sendy_Fake_Order(5, ['_sendy_shipment_id' => '']);
 
-        // Order 3 does not resolve at all, order 2 has no shipment.
-        $orders = $this->module->orders_with_shipment([1, 2, 3, 4]);
+        // Order 3 does not resolve at all, order 2 has no shipment and
+        // order 5 has an empty shipment id.
+        $orders = $this->module->orders_with_shipment([1, 2, 3, 4, 5]);
 
         $this->assertSame(
             ['shipment-1', 'shipment-4'],
@@ -154,6 +156,11 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
         $response = $this->dispatch(['order_ids' => [1], 'nonce' => 'invalid']);
 
         $this->assertSame('Nonce verification failed', $response['message']);
+        $this->assertSame(
+            [['type' => 'error', 'message' => 'Nonce verification failed']],
+            get_option('sendy_flash_admin_messages'),
+            'A flash notice must explain the failure after the reload'
+        );
     }
 
     public function test_a_user_without_the_required_capabilities_is_rejected(): void
@@ -165,6 +172,11 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
         $response = $this->dispatch(['order_ids' => [1]]);
 
         $this->assertSame('You do not have sufficient permissions to access this page.', $response['message']);
+        $this->assertSame(
+            [['type' => 'error', 'message' => 'You do not have sufficient permissions to access this page.']],
+            get_option('sendy_flash_admin_messages'),
+            'A flash notice must explain the failure after the reload'
+        );
     }
 
     /**
@@ -179,6 +191,7 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
             'action' => 'sendy_print_labels',
             'nonce' => wp_create_nonce('sendy_print_labels'),
         ], $post);
+
 
         try {
             $this->_handleAjax('sendy_print_labels');
