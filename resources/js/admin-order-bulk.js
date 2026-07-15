@@ -44,7 +44,9 @@
 			event.preventDefault();
 
 			let orderIds = form
-				.find('input[name="id[]"]:checked, input[name="post[]"]:checked')
+				.find(
+					'input[name="id[]"]:checked, input[name="post[]"]:checked'
+				)
 				.map(function () {
 					return this.value;
 				})
