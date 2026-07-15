@@ -48,7 +48,7 @@ class Webhooks
         register_rest_route('sendy/v1', '/webhook', [
             'methods' => 'POST',
             'callback' => [$this, 'webhook_callback'],
-            'permission_callback' => function () { return true; },
+            'permission_callback' => '__return_true',
         ]);
     }
 
