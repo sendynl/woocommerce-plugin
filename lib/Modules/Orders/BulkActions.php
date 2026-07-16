@@ -114,10 +114,23 @@ class BulkActions extends OrdersModule
                 true,
             );
 
+            wp_register_script(
+                'sendy-orders-list-print-flow',
+                SENDY_WC_PLUGIN_DIR_URL . '/resources/js/orders-list-print-flow.js',
+                ['jquery', 'thickbox', 'sendy-print-labels'],
+                Plugin::VERSION,
+                true,
+            );
+
+            wp_localize_script('sendy-orders-list-print-flow', 'sendyPrintFlowL10n', [
+                'modalTitle' => __('Sendy - Print labels', 'sendy'),
+                'modalButtonText' => __('Create shipments and print labels', 'sendy'),
+            ]);
+
             wp_enqueue_script(
                 'sendy-admin-order-bulk',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-order-bulk.js',
-                ['jquery', 'jquery-blockui', 'sendy-print-labels'],
+                ['jquery', 'jquery-blockui', 'sendy-orders-list-print-flow'],
                 Plugin::VERSION,
                 true,
             );

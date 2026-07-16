@@ -24,8 +24,9 @@
 		},
 
 		/**
-		 * Handle the print labels bulk action client-side so the labels can
-		 * be sent to the print app
+		 * Handle the print labels bulk action client-side so shipments can
+		 * be created for orders that have none and the labels can be sent
+		 * to the print app
 		 *
 		 * @param {Event} event
 		 */
@@ -58,7 +59,9 @@
 				overlayCSS: { background: '#fff', opacity: 0.6 },
 			} );
 
-			window.sendyPrintLabels( orderIds ).finally( () => form.unblock() );
+			window
+				.sendyOrdersListPrintFlow( orderIds )
+				.finally( () => form.unblock() );
 		},
 
 		/**
@@ -86,7 +89,8 @@
 
 				thickboxWindow
 					.find( '#sendy-create-shipments-button' )
-					.on( 'click', function ( event ) {
+					.off( 'click.sendyBulk click.sendyPrintFlow' )
+					.on( 'click.sendyBulk', function ( event ) {
 						event.preventDefault();
 
 						let sendyFieldsContainer = bulkActionsForm
