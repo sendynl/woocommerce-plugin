@@ -128,6 +128,13 @@ class BulkActions extends OrdersModule
                 [],
                 Plugin::VERSION,
             );
+
+            wp_enqueue_style(
+                'sendy-order-actions',
+                SENDY_WC_PLUGIN_DIR_URL . '/resources/css/order-actions.css',
+                [],
+                Plugin::VERSION,
+            );
         }
     }
 
