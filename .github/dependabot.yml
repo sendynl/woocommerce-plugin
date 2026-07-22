@@ -22,3 +22,10 @@ updates:
         update-types:
           - minor
           - patch
+      wordpress:
+        patterns:
+          - '@wordpress/*'
+      woocommerce:
+        patterns:
+          - '@woocommerce/*'
+
