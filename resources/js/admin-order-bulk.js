@@ -98,7 +98,11 @@
 							.find( ':selected' )
 							.val();
 						$( sendyFieldsContainer ).append(
-							`<input type="hidden" name="sendy_preference_id" value="${ preferenceId }">`
+							$( '<input>', {
+								type: 'hidden',
+								name: 'sendy_preference_id',
+								value: preferenceId,
+							} )
 						);
 
 						if ( thickboxWindow.find( '#sendy_shop_id' ) ) {
@@ -107,7 +111,11 @@
 								.find( ':selected' )
 								.val();
 							$( sendyFieldsContainer ).append(
-								`<input type="hidden" name="sendy_shop_id" value="${ shopId }">`
+								$( '<input>', {
+									type: 'hidden',
+									name: 'sendy_shop_id',
+									value: shopId,
+								} )
 							);
 						}
 
@@ -115,14 +123,22 @@
 							.find( '#sendy_bulk_modal_nonce' )
 							.val();
 						$( sendyFieldsContainer ).append(
-							`<input type="hidden" name="sendy_bulk_modal_nonce" value="${ nonce }">`
+							$( '<input>', {
+								type: 'hidden',
+								name: 'sendy_bulk_modal_nonce',
+								value: nonce,
+							} )
 						);
 
 						let amount = thickboxWindow
 							.find( '#sendy_amount' )
 							.val();
 						$( sendyFieldsContainer ).append(
-							`<input type="hidden" name="sendy_amount" value="${ amount }">`
+							$( '<input>', {
+								type: 'hidden',
+								name: 'sendy_amount',
+								value: amount,
+							} )
 						);
 
 						$( this ).prop( 'disabled', true );
