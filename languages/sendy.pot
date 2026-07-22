@@ -2,14 +2,14 @@
 # This file is distributed under the MIT.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sendy 3.4.1\n"
+"Project-Id-Version: Sendy 3.4.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sendy\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-09T13:29:45+00:00\n"
+"POT-Creation-Date: 2026-07-15T08:25:45+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: sendy\n"
@@ -19,7 +19,7 @@ msgstr ""
 #: sendy.php
 #: lib/Modules/Admin/Settings.php:47
 #: lib/Modules/Admin/Settings.php:48
-#: lib/Modules/Orders/Single.php:50
+#: lib/Modules/Orders/Single.php:48
 msgid "Sendy"
 msgstr ""
 
@@ -46,52 +46,62 @@ msgstr ""
 msgid "Process shipments in Sendy"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:141
+#: lib/Modules/Admin/Settings.php:144
 msgid "Processing method"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:151
+#: lib/Modules/Admin/Settings.php:154
 msgid "Send order to Sendy when status changed to"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:160
+#: lib/Modules/Admin/Settings.php:163
 msgid "Shop to use when orders are sent to Sendy"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:169
+#: lib/Modules/Admin/Settings.php:172
 msgid "Import weight"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:177
+#: lib/Modules/Admin/Settings.php:180
 msgid "Import products"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:185
+#: lib/Modules/Admin/Settings.php:188
 msgid "Mark order as completed"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:194
+#: lib/Modules/Admin/Settings.php:197
 msgid "Import weight when creating a shipment"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:199
+#: lib/Modules/Admin/Settings.php:202
 msgid "Send products to Sendy when creating a shipment"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:205
+#: lib/Modules/Admin/Settings.php:208
 msgid "Manually"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:206
+#: lib/Modules/Admin/Settings.php:209
 msgid "After the shipment is created"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:210
+#: lib/Modules/Admin/Settings.php:213
 msgid "After the label is printed"
 msgstr ""
 
-#: lib/Modules/Admin/Settings.php:214
+#: lib/Modules/Admin/Settings.php:217
 msgid "After the shipment is delivered"
+msgstr ""
+
+#: lib/Modules/Admin/Settings.php:257
+#: lib/Modules/Orders/PrintLabels.php:31
+#: lib/Modules/Orders/Single.php:119
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: lib/Modules/Admin/Settings.php:261
+msgid "Nonce verification failed."
 msgstr ""
 
 #: lib/Modules/BlocksCheckout.php:45
@@ -100,49 +110,44 @@ msgstr ""
 msgid "Please select a pick-up point."
 msgstr ""
 
-#: lib/Modules/OAuth.php:79
+#: lib/Modules/OAuth.php:93
 msgid "Authentication successful"
 msgstr ""
 
-#: lib/Modules/OAuth.php:83
+#: lib/Modules/OAuth.php:97
 msgid "Authentication failed. Please try again"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:37
+#: lib/Modules/Orders/BulkActions.php:38
 msgid "Sendy - Create shipments"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:38
+#: lib/Modules/Orders/BulkActions.php:39
 msgid "Sendy - Print labels"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:101
-#: lib/Modules/Orders/Single.php:187
-msgid "Sendy: Label printed"
+#: lib/Modules/Orders/BulkActions.php:95
+msgid "Printing labels requires JavaScript. Enable JavaScript in your browser and try again."
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:108
-msgid "Non of the selected orders have any labels"
-msgstr ""
-
-#: lib/Modules/Orders/BulkActions.php:181
+#: lib/Modules/Orders/BulkActions.php:186
 #: resources/views/admin/meta_box/single.php:18
 msgid "Shop"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:182
+#: lib/Modules/Orders/BulkActions.php:187
 msgid "The shipments will be created with the selected shop"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:191
+#: lib/Modules/Orders/BulkActions.php:196
 msgid "Select preference"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:192
+#: lib/Modules/Orders/BulkActions.php:197
 msgid "The shipments will be created with the preference you select here"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:200
+#: lib/Modules/Orders/BulkActions.php:205
 #: resources/views/admin/meta_box/single.php:38
 msgid "Amount of packages"
 msgstr ""
@@ -164,61 +169,59 @@ msgid "Order #%s already has a shipment created"
 msgstr ""
 
 #: lib/Modules/Orders/OrdersModule.php:84
-#: lib/Modules/Webhooks.php:167
+#: lib/Modules/Webhooks.php:216
 msgid "Sendy: Shipment created"
 msgstr ""
 
-#: lib/Modules/Orders/OrdersModule.php:165
-msgid "Something went wrong while downloading the labels"
-msgstr ""
-
 #. translators: %1$s should contain the ID of the order and %2$s the error
-#: lib/Modules/Orders/OrdersModule.php:255
-#: lib/Modules/Orders/OrdersModule.php:270
+#: lib/Modules/Orders/OrdersModule.php:223
+#: lib/Modules/Orders/OrdersModule.php:238
 #, php-format
 msgid "Error while creating shipment for order #%1$s: %2$s"
 msgstr ""
 
 #. translators: %s should contain the ID of the order
-#: lib/Modules/Orders/OrdersModule.php:261
+#: lib/Modules/Orders/OrdersModule.php:229
 #, php-format
 msgid "Error while creating shipment for order #%s: Authentication failed. Check the settings page to reconnect with Sendy."
 msgstr ""
 
 #. translators: %s should contain the ID of the order
-#: lib/Modules/Orders/OrdersModule.php:273
+#: lib/Modules/Orders/OrdersModule.php:241
 #, php-format
 msgid "Error while creating shipment for order #%s: Too many requests. Please try again later."
 msgstr ""
 
 #. translators: %s should contain the ID of the order
-#: lib/Modules/Orders/OrdersModule.php:276
+#: lib/Modules/Orders/OrdersModule.php:244
 #, php-format
 msgid "Error while creating shipment for order #%s: Unknown error."
 msgstr ""
 
-#: lib/Modules/Orders/Single.php:113
-#: lib/Modules/Orders/Single.php:168
+#: lib/Modules/Orders/PrintLabels.php:27
+#: lib/Modules/Orders/Single.php:123
 msgid "Nonce verification failed"
 msgstr ""
 
-#: lib/Modules/Orders/Single.php:175
-msgid "Order could not be found"
+#: lib/Modules/Orders/PrintLabels.php:38
+msgid "None of the selected orders have any labels"
 msgstr ""
 
-#: lib/Modules/Orders/Single.php:179
-msgid "You do not have sufficient permissions to access this page."
+#. translators: %s contains the error message
+#: lib/Modules/Orders/PrintLabels.php:54
+#, php-format
+msgid "Error while fetching labels: %s"
 msgstr ""
 
-#: lib/Modules/Orders/Single.php:183
-msgid "No shipment created for order"
+#: lib/Modules/Orders/PrintLabels.php:114
+msgid "Sendy: Label printed"
 msgstr ""
 
 #: lib/Modules/ShippingMethodsSynchronizer.php:65
 msgid "Rest of the world"
 msgstr ""
 
-#: lib/Modules/Webhooks.php:194
+#: lib/Modules/Webhooks.php:243
 msgid "Sendy: Shipment delivered"
 msgstr ""
 
@@ -264,11 +267,11 @@ msgstr ""
 msgid "Create shipment"
 msgstr ""
 
-#: resources/views/admin/meta_box/single.php:62
+#: resources/views/admin/meta_box/single.php:64
 msgid "Print label"
 msgstr ""
 
-#: resources/views/admin/meta_box/single.php:64
+#: resources/views/admin/meta_box/single.php:66
 msgid "Print labels"
 msgstr ""
 
@@ -352,6 +355,7 @@ msgstr ""
 msgid "Selected pickup point"
 msgstr ""
 
+#: build/block.json
 #: src/block.json
 msgctxt "block title"
 msgid "Sendy - Pick-up punten"

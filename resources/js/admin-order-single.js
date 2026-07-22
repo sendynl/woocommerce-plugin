@@ -6,6 +6,10 @@
 			);
 
 			$(createShipmentButton).on('click', this.createShipment);
+
+			let printLabelsButton = $('#sendy-metabox-print-labels-button');
+
+			$(printLabelsButton).on('click', this.printLabels);
 		},
 
 		/**
@@ -38,6 +42,21 @@
 				// Reload the page to display the error or success message to the user
 				window.location.reload();
 			});
+		},
+
+		/**
+		 * @param {Event} event
+		 */
+		printLabels: function (event) {
+			event.preventDefault();
+
+			let button = $(this);
+
+			button.prop('disabled', true);
+
+			window
+				.sendyPrintLabels([button.data('order-id')])
+				.finally(() => button.prop('disabled', false));
 		},
 	};
 

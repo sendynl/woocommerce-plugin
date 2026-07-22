@@ -90,7 +90,7 @@ abstract class OrdersModule
         }
     }
 
-    protected function create_shipment_with_smart_rules(\WC_Order $order, bool $executedInBackground = true, string $shopId = null): void
+    protected function create_shipment_with_smart_rules(\WC_Order $order, bool $executedInBackground = true, ?string $shopId = null): void
     {
         $firstShopId = array_keys((new Shops())->list())[0];
         $shippingMethod = array_values($order->get_shipping_methods())[0];
@@ -131,36 +131,6 @@ abstract class OrdersModule
             } else {
                 sendy_flash_admin_notice('error', $message);
             }
-        }
-    }
-
-    /**
-     * Fetch the labels from the Sendy API and offer them as download to the user
-     */
-    protected function offer_labels_as_download(array $shipment_ids): void
-    {
-        try {
-            $response = ApiClientFactory::buildConnectionUsingTokens()->label->get($shipment_ids);
-
-            if (ob_get_contents()) {
-                ob_clean();
-            }
-
-            $labels_safe = base64_decode($response['labels']);
-
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="labels.pdf"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . strlen($labels_safe));
-
-            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-            echo $labels_safe;
-            exit;
-        } catch (ApiException $exception) {
-            wp_die(esc_html__('Something went wrong while downloading the labels', 'sendy'));
         }
     }
 

@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "sendynl/php-sdk",
-            "version": "v3.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendynl/php-sdk.git",
-                "reference": "fb4dc8bdfeff7fa3d981eea0e28028e6fb923295"
+                "reference": "638f505e47e2ddeb2fcab31cb5e2326518d0d732"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendynl/php-sdk/zipball/fb4dc8bdfeff7fa3d981eea0e28028e6fb923295",
-                "reference": "fb4dc8bdfeff7fa3d981eea0e28028e6fb923295",
+                "url": "https://api.github.com/repos/sendynl/php-sdk/zipball/638f505e47e2ddeb2fcab31cb5e2326518d0d732",
+                "reference": "638f505e47e2ddeb2fcab31cb5e2326518d0d732",
                 "shasum": ""
             },
             "require": {
@@ -27,7 +27,7 @@
             "require-dev": {
                 "mockery/mockery": "^1.5",
                 "php-cs-fixer/shim": "^3.87",
-                "phpstan/phpstan": "^1",
+                "phpstan/phpstan": "^2.2",
                 "phpunit/phpunit": "^9.0",
                 "psr/http-client": "^1.0",
                 "psr/http-factory": "^1.1"
@@ -57,9 +57,9 @@
             ],
             "support": {
                 "issues": "https://github.com/sendynl/php-sdk/issues",
-                "source": "https://github.com/sendynl/php-sdk/tree/v3.0"
+                "source": "https://github.com/sendynl/php-sdk/tree/v3.0.1"
             },
-            "time": "2025-11-04T14:36:32+00:00"
+            "time": "2026-07-15T10:13:32+00:00"
         }
     ],
     "packages-dev": [
