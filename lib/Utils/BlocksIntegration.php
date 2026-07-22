@@ -38,7 +38,7 @@ class BlocksIntegration implements IntegrationInterface
     private function register_block_frontend_scripts()
     {
         $script_url = SENDY_WC_PLUGIN_DIR_URL . '/build/sendy-checkout-block-frontend.js';
-        $script_asset_path = SENDY_WC_PLUGIN_DIR_URL . '/build/sendy-checkout-block-frontend.asset.php';
+        $script_asset_path = dirname(SENDY_WC_PLUGIN_FILE) . '/build/sendy-checkout-block-frontend.asset.php';
 
         $script_asset = file_exists($script_asset_path)
             ? require $script_asset_path
@@ -65,9 +65,8 @@ class BlocksIntegration implements IntegrationInterface
 
     private function register_block_editor_scripts()
     {
-        $script_path = '/build/index.js';
-        $script_url = plugins_url('sendy' . $script_path);
-        $script_asset_path = plugins_url('sendy/build/index.asset.php');
+        $script_url = SENDY_WC_PLUGIN_DIR_URL . '/build/index.js';
+        $script_asset_path = dirname(SENDY_WC_PLUGIN_FILE) . '/build/index.asset.php';
         $script_asset = file_exists($script_asset_path)
             ? require $script_asset_path
             : [

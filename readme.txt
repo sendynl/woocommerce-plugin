@@ -7,11 +7,11 @@ Stable tag: 3.4.7
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: woocommerce
 WC requires at least: 8.2
-WC tested up to: 10.3.6
+WC tested up to: 10.9.1
 
 Een plugin van Sendy voor WooCommerce waarmee je op eenvoudige wijze labels aan kunt maken voor zendingen.
 

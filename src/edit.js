@@ -1,15 +1,12 @@
-import { ValidatedTextInput } from '@woocommerce/blocks-checkout';
 import { useBlockProps } from '@wordpress/block-editor';
 
-import { __ } from '@wordpress/i18n';
-
-export const Edit = ({ attributes, setAttributes }) => {
+export const Edit = () => {
 	const blockProps = useBlockProps();
 	return (
-		<div {...blockProps}>
+		<div { ...blockProps }>
 			<h3 className="wc-block-components-title">Pick-up punt</h3>
 
-			<button onClick={(e) => e.preventDefault()}>
+			<button onClick={ ( e ) => e.preventDefault() }>
 				Selecteer pick-up punt
 			</button>
 
