@@ -50,9 +50,11 @@
 
 		let request = wp.ajax.post( 'sendy_set_pickup_point', data );
 
-		request.done( () => {
-			$( 'body' ).trigger( 'update_checkout' );
-		} );
+		request
+			.done( () => {
+				$( 'body' ).trigger( 'update_checkout' );
+			} )
+			.fail( _handleErrors );
 	};
 
 	let _handleErrors = ( errors ) => {
