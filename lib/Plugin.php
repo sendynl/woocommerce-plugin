@@ -40,6 +40,25 @@ class Plugin
         return self::$instance ??= new self();
     }
 
+    /**
+     * Version string for cache-busting a local plugin asset
+     *
+     * Releases invalidate browser caches through the plugin version, but that
+     * version does not change between development edits; with SCRIPT_DEBUG
+     * enabled the file's modification time is used instead so the browser
+     * cannot serve a stale copy.
+     */
+    public static function asset_version(string $path): string
+    {
+        $file = dirname(SENDY_WC_PLUGIN_FILE) . $path;
+
+        if (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG && file_exists($file)) {
+            return (string) filemtime($file);
+        }
+
+        return self::VERSION;
+    }
+
     public function initialize_plugin(): void
     {
         $this->set_default_values_for_settings();

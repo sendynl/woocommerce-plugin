@@ -10,6 +10,10 @@
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+if (! defined('SENDY_WC_PLUGIN_FILE')) {
+    define('SENDY_WC_PLUGIN_FILE', dirname(__DIR__) . '/sendy.php');
+}
+
 $_tests_dir = getenv('WP_TESTS_DIR');
 
 if (! $_tests_dir) {

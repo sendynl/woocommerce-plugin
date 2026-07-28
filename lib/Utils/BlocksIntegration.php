@@ -51,7 +51,7 @@ class BlocksIntegration implements IntegrationInterface
             'sendy-checkout-block-frontend-styling',
             SENDY_WC_PLUGIN_DIR_URL . '/resources/css/frontend.css',
             [],
-            Plugin::VERSION,
+            Plugin::asset_version('/resources/css/frontend.css'),
         );
 
         wp_register_script(

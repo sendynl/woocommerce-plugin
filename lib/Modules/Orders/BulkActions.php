@@ -110,7 +110,7 @@ class BulkActions extends OrdersModule
                 'sendy-print-labels',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/print-labels.js',
                 [],
-                Plugin::VERSION,
+                Plugin::asset_version('/resources/js/print-labels.js'),
                 true,
             );
 
@@ -118,7 +118,7 @@ class BulkActions extends OrdersModule
                 'sendy-orders-list-print-flow',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/orders-list-print-flow.js',
                 ['jquery', 'thickbox', 'sendy-print-labels'],
-                Plugin::VERSION,
+                Plugin::asset_version('/resources/js/orders-list-print-flow.js'),
                 true,
             );
 
@@ -131,7 +131,7 @@ class BulkActions extends OrdersModule
                 'sendy-admin-order-bulk',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-order-bulk.js',
                 ['jquery', 'jquery-blockui', 'sendy-orders-list-print-flow'],
-                Plugin::VERSION,
+                Plugin::asset_version('/resources/js/admin-order-bulk.js'),
                 true,
             );
 
@@ -139,14 +139,14 @@ class BulkActions extends OrdersModule
                 'sendy-admin-order-bulk',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/css/modal.css',
                 [],
-                Plugin::VERSION,
+                Plugin::asset_version('/resources/css/modal.css'),
             );
 
             wp_enqueue_style(
                 'sendy-order-actions',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/css/order-actions.css',
                 [],
-                Plugin::VERSION,
+                Plugin::asset_version('/resources/css/order-actions.css'),
             );
         }
     }
