@@ -5,6 +5,7 @@ namespace Sendy\WooCommerce\Modules\Orders;
 use GuzzleHttp\Exception\GuzzleException;
 use Sendy\Api\ApiException;
 use Sendy\WooCommerce\ApiClientFactory;
+use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Repositories\Shops;
 
 abstract class OrdersModule
@@ -37,14 +38,35 @@ abstract class OrdersModule
     }
 
     /**
-     * Create the order in the Sendy API
+     * Create a shipment for the order through the configured processing method
      *
-     * @param string $preferenceId The UUID of the selected shipping preference
+     * The WooCommerce processing method creates the shipment from the given
+     * preference; the Sendy processing method leaves the choice of carrier to
+     * the smart rules configured in the portal.
+     *
      * @param string $shopId The UUID of the selected shop
+     * @param string $preferenceId The UUID of the selected shipping preference
      * @param int $amount The amount of packages the shipment should contain
      * @throws GuzzleException
      */
-    protected function create_shipment_from_order(\WC_Order $order, string $preferenceId, string $shopId, int $amount): void
+    protected function create_shipment(\WC_Order $order, string $shopId, string $preferenceId, int $amount): void
+    {
+        if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
+            $this->create_shipment_from_order($order, $shopId, $preferenceId, $amount);
+        } else {
+            $this->create_shipment_with_smart_rules($order, false, $shopId);
+        }
+    }
+
+    /**
+     * Create the order in the Sendy API
+     *
+     * @param string $shopId The UUID of the selected shop
+     * @param string $preferenceId The UUID of the selected shipping preference
+     * @param int $amount The amount of packages the shipment should contain
+     * @throws GuzzleException
+     */
+    protected function create_shipment_from_order(\WC_Order $order, string $shopId, string $preferenceId, int $amount): void
     {
         if ($order->meta_exists('_sendy_shipment_id')) {
             // translators: %s The ID of the order

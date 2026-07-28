@@ -27,13 +27,11 @@ class CreateShipments extends OrdersModule
      */
     public function handle_create_shipments(): void
     {
-        if (! check_ajax_referer('sendy_bulk_modal', 'nonce', false)) {
-            wp_send_json(['message' => __('Nonce verification failed', 'sendy')], 403);
-        }
+        $this->verify_ajax_request('sendy_bulk_modal');
 
-        if (! current_user_can('manage_woocommerce') || ! current_user_can('edit_shop_orders')) {
-            wp_send_json(['message' => __('You do not have sufficient permissions to access this page.', 'sendy')], 403);
-        }
+        $shopId = sanitize_key($_POST['shop_id'] ?? '');
+        $preferenceId = sanitize_key($_POST['preference_id'] ?? '');
+        $amount = sanitize_key($_POST['amount'] ?? '1');
 
         $created = [];
         $failed = [];
@@ -53,20 +51,7 @@ class CreateShipments extends OrdersModule
             }
 
             try {
-                if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
-                    $this->create_shipment_from_order(
-                        $order,
-                        sanitize_key($_POST['preference_id'] ?? ''),
-                        sanitize_key($_POST['shop_id'] ?? ''),
-                        (int) sanitize_key($_POST['amount'] ?? '1'),
-                    );
-                } else {
-                    $this->create_shipment_with_smart_rules(
-                        $order,
-                        false,
-                        sanitize_key($_POST['shop_id'] ?? ''),
-                    );
-                }
+                $this->create_shipment($order, $shopId, $preferenceId, (int) $amount);
             } catch (SendyException $exception) {
                 // The creation methods flash API validation errors themselves;
                 // this guards the calls they make outside their own try/catch,
@@ -87,11 +72,11 @@ class CreateShipments extends OrdersModule
         }
 
         if ($created !== []) {
-            update_option('sendy_previously_used_shop_id', sanitize_key($_POST['shop_id'] ?? ''));
+            update_option('sendy_previously_used_shop_id', $shopId);
 
             if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
-                update_option('sendy_previously_used_preference_id', sanitize_key($_POST['preference_id'] ?? ''));
-                update_option('sendy_previously_used_amount', sanitize_key($_POST['amount'] ?? ''));
+                update_option('sendy_previously_used_preference_id', $preferenceId);
+                update_option('sendy_previously_used_amount', $amount);
             }
         }
 
@@ -110,13 +95,7 @@ class CreateShipments extends OrdersModule
      */
     public function handle_shipments_status(): void
     {
-        if (! check_ajax_referer('sendy_print_labels', 'nonce', false)) {
-            wp_send_json(['message' => __('Nonce verification failed', 'sendy')], 403);
-        }
-
-        if (! current_user_can('manage_woocommerce') || ! current_user_can('edit_shop_orders')) {
-            wp_send_json(['message' => __('You do not have sufficient permissions to access this page.', 'sendy')], 403);
-        }
+        $this->verify_ajax_request('sendy_print_labels');
 
         $statuses = [];
 
@@ -137,6 +116,20 @@ class CreateShipments extends OrdersModule
         }
 
         wp_send_json(['statuses' => $statuses]);
+    }
+
+    /**
+     * Send a 403 JSON response when the nonce or the capabilities do not check out
+     */
+    private function verify_ajax_request(string $nonceAction): void
+    {
+        if (! check_ajax_referer($nonceAction, 'nonce', false)) {
+            wp_send_json(['message' => __('Nonce verification failed', 'sendy')], 403);
+        }
+
+        if (! current_user_can('manage_woocommerce') || ! current_user_can('edit_shop_orders')) {
+            wp_send_json(['message' => __('You do not have sufficient permissions to access this page.', 'sendy')], 403);
+        }
     }
 
     /**

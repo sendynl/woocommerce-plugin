@@ -16,6 +16,8 @@ use Sendy\WooCommerce\Modules\Orders\CreateShipments;
  */
 class CreateShipmentsTest extends WP_Ajax_UnitTestCase
 {
+    use Sendy_Fakes_Api_Connection;
+
     private CreateShipments $module;
 
     public function setUp(): void
@@ -64,6 +66,13 @@ class CreateShipmentsTest extends WP_Ajax_UnitTestCase
 
         $this->assertCount(1, $transport->requests, 'Orders that already have a shipment must not trigger an API call');
         $this->assertStringContainsString('/shipments/preference', $transport->lastRequest->getUrl());
+
+        // The shop and the preference are both UUID strings, so swapping them
+        // anywhere along the call chain would still type check.
+        $payload = json_decode($transport->lastRequest->getBody(), true);
+        $this->assertSame('shop-1', $payload['shop_id']);
+        $this->assertSame('pref-1', $payload['preference_id']);
+        $this->assertSame(2, $payload['amount']);
 
         $this->assertSame('shop-1', get_option('sendy_previously_used_shop_id'));
         $this->assertSame('pref-1', get_option('sendy_previously_used_preference_id'));
@@ -149,34 +158,5 @@ class CreateShipmentsTest extends WP_Ajax_UnitTestCase
         }
 
         return json_decode($this->_last_response, true);
-    }
-
-    /**
-     * Point ApiClientFactory's memoized connection at canned HTTP responses.
-     */
-    private function fake_transport(Response ...$responses): Sendy_Fake_Transport
-    {
-        $transport = new Sendy_Fake_Transport(...$responses);
-
-        update_option('sendy_access_token', 'access-token', false);
-        update_option('sendy_refresh_token', 'refresh-token', false);
-        update_option('sendy_token_expires', time() + 3600, false);
-
-        $this->set_api_connection(
-            (new Connection())
-                ->setTransport($transport)
-                ->setAccessToken('access-token')
-                ->setRefreshToken('refresh-token')
-                ->setTokenExpires(time() + 3600)
-        );
-
-        return $transport;
-    }
-
-    private function set_api_connection(?Connection $connection): void
-    {
-        $property = new ReflectionProperty(ApiClientFactory::class, 'connection');
-        $property->setAccessible(true);
-        $property->setValue(null, $connection);
     }
 }

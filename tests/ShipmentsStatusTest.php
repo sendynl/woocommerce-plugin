@@ -15,6 +15,8 @@ use Sendy\WooCommerce\Modules\Orders\CreateShipments;
  */
 class ShipmentsStatusTest extends WP_Ajax_UnitTestCase
 {
+    use Sendy_Fakes_Api_Connection;
+
     private CreateShipments $module;
 
     public function setUp(): void
@@ -215,34 +217,5 @@ class ShipmentsStatusTest extends WP_Ajax_UnitTestCase
         }
 
         return $result;
-    }
-
-    /**
-     * Point ApiClientFactory's memoized connection at canned HTTP responses.
-     */
-    private function fake_transport(Response ...$responses): Sendy_Fake_Transport
-    {
-        $transport = new Sendy_Fake_Transport(...$responses);
-
-        update_option('sendy_access_token', 'access-token', false);
-        update_option('sendy_refresh_token', 'refresh-token', false);
-        update_option('sendy_token_expires', time() + 3600, false);
-
-        $this->set_api_connection(
-            (new Connection())
-                ->setTransport($transport)
-                ->setAccessToken('access-token')
-                ->setRefreshToken('refresh-token')
-                ->setTokenExpires(time() + 3600)
-        );
-
-        return $transport;
-    }
-
-    private function set_api_connection(?Connection $connection): void
-    {
-        $property = new ReflectionProperty(ApiClientFactory::class, 'connection');
-        $property->setAccessible(true);
-        $property->setValue(null, $connection);
     }
 }

@@ -7,9 +7,11 @@
  * minimal wc_get_order() backed by a registry of fake orders stands in for it.
  */
 
+use Sendy\Api\Connection;
 use Sendy\Api\Http\Request;
 use Sendy\Api\Http\Response;
 use Sendy\Api\Http\Transport\TransportInterface;
+use Sendy\WooCommerce\ApiClientFactory;
 
 if (! function_exists('wc_get_order')) {
     function wc_get_order($order_id)
@@ -217,5 +219,40 @@ class Sendy_Fake_Transport implements TransportInterface
     public function getUserAgent(): string
     {
         return 'PHPUnit';
+    }
+}
+
+/**
+ * Points ApiClientFactory's memoized connection at canned HTTP responses.
+ *
+ * Call set_api_connection(null) in tearDown() so the connection cannot leak
+ * into other tests.
+ */
+trait Sendy_Fakes_Api_Connection
+{
+    private function fake_transport(Response ...$responses): Sendy_Fake_Transport
+    {
+        $transport = new Sendy_Fake_Transport(...$responses);
+
+        update_option('sendy_access_token', 'access-token', false);
+        update_option('sendy_refresh_token', 'refresh-token', false);
+        update_option('sendy_token_expires', time() + 3600, false);
+
+        $this->set_api_connection(
+            (new Connection())
+                ->setTransport($transport)
+                ->setAccessToken('access-token')
+                ->setRefreshToken('refresh-token')
+                ->setTokenExpires(time() + 3600)
+        );
+
+        return $transport;
+    }
+
+    private function set_api_connection(?Connection $connection): void
+    {
+        $property = new ReflectionProperty(ApiClientFactory::class, 'connection');
+        $property->setAccessible(true);
+        $property->setValue(null, $connection);
     }
 }

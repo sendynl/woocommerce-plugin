@@ -55,26 +55,20 @@ class BulkActions extends OrdersModule
         }
 
         foreach ($objectIds as $id) {
-            if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
-                $this->create_shipment_from_order(
-                    wc_get_order($id),
-                    sanitize_key($_REQUEST['sendy_preference_id'] ?? ''),
-                    sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
-                    sanitize_key($_REQUEST['sendy_amount'] ?? ''),
-                );
-
-                update_option('sendy_previously_used_preference_id', sanitize_key($_REQUEST['sendy_preference_id'] ?? ''));
-                update_option('sendy_previously_used_amount', sanitize_key($_REQUEST['sendy_amount'] ?? ''));
-            } else {
-                $this->create_shipment_with_smart_rules(
-                    wc_get_order($id),
-                    false,
-                    sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
-                );
-            }
+            $this->create_shipment(
+                wc_get_order($id),
+                sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
+                sanitize_key($_REQUEST['sendy_preference_id'] ?? ''),
+                (int) sanitize_key($_REQUEST['sendy_amount'] ?? ''),
+            );
         }
 
         update_option('sendy_previously_used_shop_id', sanitize_key($_REQUEST['sendy_shop_id'] ?? ''));
+
+        if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
+            update_option('sendy_previously_used_preference_id', sanitize_key($_REQUEST['sendy_preference_id'] ?? ''));
+            update_option('sendy_previously_used_amount', sanitize_key($_REQUEST['sendy_amount'] ?? ''));
+        }
 
         return $redirect;
     }

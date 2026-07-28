@@ -4,7 +4,6 @@ namespace Sendy\WooCommerce\Modules\Orders;
 
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Sendy\Api\Exceptions\SendyException;
-use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Plugin;
 use Sendy\WooCommerce\Repositories\Preferences;
 use Sendy\WooCommerce\Repositories\Shops;
@@ -126,20 +125,12 @@ class Single extends OrdersModule
             if (! empty($_REQUEST['order_id'])) {
                 $order = wc_get_order(sanitize_key($_REQUEST['order_id']));
 
-                if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
-                    $this->create_shipment_from_order(
-                        $order,
-                        sanitize_key($_REQUEST['preference_id'] ?? ''),
-                        sanitize_key($_REQUEST['shop_id'] ?? ''),
-                        sanitize_key($_REQUEST['amount'] ?? ''),
-                    );
-                } else {
-                    $this->create_shipment_with_smart_rules(
-                        $order,
-                        false,
-                        sanitize_key($_REQUEST['shop_id'] ?? ''),
-                    );
-                }
+                $this->create_shipment(
+                    $order,
+                    sanitize_key($_REQUEST['shop_id'] ?? ''),
+                    sanitize_key($_REQUEST['preference_id'] ?? ''),
+                    (int) sanitize_key($_REQUEST['amount'] ?? '1'),
+                );
 
                 wp_send_json_success();
             }

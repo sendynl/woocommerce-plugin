@@ -18,6 +18,27 @@
 		new Promise( ( resolve ) => setTimeout( resolve, milliseconds ) );
 
 	/**
+	 * POST to admin-ajax for the given orders and decode the JSON response.
+	 *
+	 * @param {Object<string,string>} params Form fields, including action.
+	 * @param {Array<string|number>}  orderIds
+	 * @return {Promise<any>}
+	 */
+	const ajaxPost = async ( params, orderIds ) => {
+		const body = new URLSearchParams( params );
+		for ( const orderId of orderIds ) {
+			body.append( 'order_ids[]', orderId );
+		}
+
+		const response = await fetch( ajaxurl, { method: 'POST', body } );
+		if ( ! response.ok ) {
+			throw new Error( `The ${ params.action } request failed` );
+		}
+
+		return response.json();
+	};
+
+	/**
 	 * Fetch the shipment status per order: none|pending|ready|failed.
 	 *
 	 * @param {Array<string|number>} orderIds
@@ -27,25 +48,16 @@
 	 * @return {Promise<Object<string,string>>}
 	 */
 	const fetchStatuses = async ( orderIds, flagPending = false ) => {
-		const body = new URLSearchParams();
-		body.append( 'action', 'sendy_shipments_status' );
-		body.append(
-			'nonce',
-			document.getElementById( 'sendy-print-labels-nonce' ).value
-		);
+		const params = {
+			action: 'sendy_shipments_status',
+			nonce: document.getElementById( 'sendy-print-labels-nonce' )
+				.value,
+		};
 		if ( flagPending ) {
-			body.append( 'flash_pending', '1' );
-		}
-		for ( const orderId of orderIds ) {
-			body.append( 'order_ids[]', orderId );
+			params.flash_pending = '1';
 		}
 
-		const response = await fetch( ajaxurl, { method: 'POST', body } );
-		if ( ! response.ok ) {
-			throw new Error( 'Failed to fetch the shipment statuses' );
-		}
-
-		return ( await response.json() ).statuses;
+		return ( await ajaxPost( params, orderIds ) ).statuses;
 	};
 
 	/**
@@ -55,24 +67,17 @@
 	 * @param {Object} fields The values collected from the modal
 	 * @return {Promise<{created: number[], failed: number[]}>}
 	 */
-	const createShipments = async ( orderIds, fields ) => {
-		const body = new URLSearchParams();
-		body.append( 'action', 'sendy_create_shipments' );
-		body.append( 'nonce', fields.nonce );
-		body.append( 'shop_id', fields.shopId );
-		body.append( 'preference_id', fields.preferenceId );
-		body.append( 'amount', fields.amount );
-		for ( const orderId of orderIds ) {
-			body.append( 'order_ids[]', orderId );
-		}
-
-		const response = await fetch( ajaxurl, { method: 'POST', body } );
-		if ( ! response.ok ) {
-			throw new Error( 'Failed to create the shipments' );
-		}
-
-		return response.json();
-	};
+	const createShipments = ( orderIds, fields ) =>
+		ajaxPost(
+			{
+				action: 'sendy_create_shipments',
+				nonce: fields.nonce,
+				shop_id: fields.shopId,
+				preference_id: fields.preferenceId,
+				amount: fields.amount,
+			},
+			orderIds
+		);
 
 	/**
 	 * Ask for the shop/preference/amount through the same thickbox modal as
@@ -159,7 +164,10 @@
 		const ready = [];
 
 		while ( pending.length ) {
-			const statuses = await fetchStatuses( pending );
+			// On the last poll before the deadline, have the server flash a
+			// notice for the orders that are still pending afterwards.
+			const isLastPoll = Date.now() + POLL_INTERVAL > deadline;
+			const statuses = await fetchStatuses( pending, isLastPoll );
 
 			pending = [];
 
@@ -171,15 +179,11 @@
 				}
 			}
 
-			if ( ! pending.length || Date.now() >= deadline ) {
+			if ( ! pending.length || isLastPoll ) {
 				break;
 			}
 
 			await sleep( POLL_INTERVAL );
-		}
-
-		if ( pending.length ) {
-			await fetchStatuses( pending, true ).catch( () => {} );
 		}
 
 		return ready;
@@ -192,15 +196,19 @@
 	 * @param {Array<string|number>} orderIds
 	 */
 	const runPrintFlow = async ( orderIds ) => {
-		const statuses = await fetchStatuses( orderIds );
-		const withoutShipment = orderIds.filter(
-			( orderId ) => statuses[ orderId ] === 'none'
-		);
-		// Orders that are already in a terminal failed state have flashed a
-		// notice; drop them instead of re-checking (and re-flashing) later.
-		const printable = orderIds.filter(
-			( orderId ) => statuses[ orderId ] !== 'failed'
-		);
+		const statuses = await fetchStatuses( orderIds.map( String ) );
+		const byStatus = ( wanted ) =>
+			Object.keys( statuses ).filter(
+				( orderId ) => statuses[ orderId ] === wanted
+			);
+
+		const withoutShipment = byStatus( 'none' );
+		const ready = byStatus( 'ready' );
+		// Orders whose labels still need waiting on: the ones already being
+		// generated plus the shipments created below. Orders in a terminal
+		// failed state have flashed a notice; drop them instead of
+		// re-checking (and re-flashing) later.
+		const pending = byStatus( 'pending' );
 
 		let createdShipments = false;
 
@@ -223,9 +231,13 @@
 				window.location.reload();
 				return;
 			}
+
+			pending.push( ...result.created.map( String ) );
 		}
 
-		const ready = await waitUntilReady( printable );
+		if ( pending.length ) {
+			ready.push( ...( await waitUntilReady( pending ) ) );
+		}
 
 		if ( ready.length ) {
 			await window.sendyPrintLabels( ready );
