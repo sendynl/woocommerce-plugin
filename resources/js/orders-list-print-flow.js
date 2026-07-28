@@ -271,11 +271,15 @@
 				.find( 'input[name="id[]"], input[name="post[]"]' )
 				.val();
 
-			button.addClass( 'disabled' );
+			button.addClass( 'disabled' ).attr( 'aria-disabled', 'true' );
 
 			window
 				.sendyOrdersListPrintFlow( [ orderId ] )
-				.finally( () => button.removeClass( 'disabled' ) );
+				.finally( () =>
+					button
+						.removeClass( 'disabled' )
+						.removeAttr( 'aria-disabled' )
+				);
 		}
 	);
 } )();
