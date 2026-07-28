@@ -1,5 +1,6 @@
 <?php
 
+use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Modules\Orders\RowActions;
 
 /**
@@ -12,6 +13,8 @@ class RowActionsTest extends WP_UnitTestCase
         parent::setUp();
 
         Sendy_Fake_Order::reset();
+
+        update_option('sendy_processing_method', ProcessingMethod::WooCommerce);
     }
 
     public function test_orders_with_a_shipment_get_a_print_label_action(): void
@@ -41,6 +44,18 @@ class RowActionsTest extends WP_UnitTestCase
             'action' => 'sendy_create_shipment_print_label',
         ], $actions['sendy_create_shipment_print_label']);
         $this->assertArrayNotHasKey('sendy_print_label', $actions);
+    }
+
+    public function test_the_sendy_processing_method_only_offers_to_print(): void
+    {
+        // The portal creates and processes the shipments for this method, so
+        // the button must not promise a create-and-print it will not do.
+        update_option('sendy_processing_method', ProcessingMethod::Sendy);
+
+        $actions = (new RowActions())->add_print_label_action([], new Sendy_Fake_Order(1));
+
+        $this->assertSame('sendy_print_label', $actions['sendy_print_label']['action']);
+        $this->assertArrayNotHasKey('sendy_create_shipment_print_label', $actions);
     }
 
     public function test_the_filter_is_registered(): void

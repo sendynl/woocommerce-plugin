@@ -7,6 +7,11 @@
  * has generated the labels, and then prints them through sendyPrintLabels()
  * from print-labels.js. Used by both the per-order button in the actions
  * column and the "Sendy - Print labels" bulk action.
+ *
+ * The Sendy processing method has the portal generate the labels for the
+ * shipments the plugin creates in the background, so there is nothing to
+ * create or wait for here: that mode prints the labels that already exist and
+ * leaves a notice for the orders that have none.
  */
 ( function () {
 	'use strict';
@@ -42,19 +47,18 @@
 	 * Fetch the shipment status per order: none|pending|ready|failed.
 	 *
 	 * @param {Array<string|number>} orderIds
-	 * @param {boolean}              flagPending When true, asks the server to
-	 *                                           flash a notice for orders
-	 *                                           that come back pending.
+	 * @param {boolean}              flagUnprintable When true, asks the server
+	 *                                               to flash a notice for the
+	 *                                               orders it cannot print.
 	 * @return {Promise<Object<string,string>>}
 	 */
-	const fetchStatuses = async ( orderIds, flagPending = false ) => {
+	const fetchStatuses = async ( orderIds, flagUnprintable = false ) => {
 		const params = {
 			action: 'sendy_shipments_status',
-			nonce: document.getElementById( 'sendy-print-labels-nonce' )
-				.value,
+			nonce: document.getElementById( 'sendy-print-labels-nonce' ).value,
 		};
-		if ( flagPending ) {
-			params.flash_pending = '1';
+		if ( flagUnprintable ) {
+			params.flash_unprintable = '1';
 		}
 
 		return ( await ajaxPost( params, orderIds ) ).statuses;
@@ -190,25 +194,72 @@
 	};
 
 	/**
+	 * The ids from a status map that have the wanted status.
+	 *
+	 * @param {Object<string,string>} statuses
+	 * @param {string}               wanted
+	 * @return {string[]}
+	 */
+	const idsWithStatus = ( statuses, wanted ) =>
+		Object.keys( statuses ).filter(
+			( orderId ) => statuses[ orderId ] === wanted
+		);
+
+	/**
+	 * Print the labels of the orders that have one, if any. Asking for the
+	 * labels of nothing fails the request and flashes a notice.
+	 *
+	 * @param {string[]} ready
+	 */
+	const printReady = async ( ready ) => {
+		if ( ready.length ) {
+			await window.sendyPrintLabels( ready );
+		}
+	};
+
+	/**
+	 * Print the labels that already exist and explain the orders that have
+	 * none, without creating shipments or waiting for labels.
+	 *
+	 * Used for the Sendy processing method, where the portal generates the
+	 * labels for the shipments the plugin creates in the background.
+	 *
+	 * @param {Array<string|number>} orderIds
+	 */
+	const printExistingLabels = async ( orderIds ) => {
+		const statuses = await fetchStatuses( orderIds.map( String ), true );
+		const ready = idsWithStatus( statuses, 'ready' );
+
+		await printReady( ready );
+
+		if ( ready.length !== orderIds.length ) {
+			// Show the notices for the orders without a label.
+			window.location.reload();
+		}
+	};
+
+	/**
 	 * Print the labels of the given orders, creating shipments first for the
-	 * orders that have none.
+	 * orders that have none — unless the processing method leaves creating and
+	 * generating to the Sendy portal, in which case only the labels that
+	 * already exist are printed.
 	 *
 	 * @param {Array<string|number>} orderIds
 	 */
 	const runPrintFlow = async ( orderIds ) => {
-		const statuses = await fetchStatuses( orderIds.map( String ) );
-		const byStatus = ( wanted ) =>
-			Object.keys( statuses ).filter(
-				( orderId ) => statuses[ orderId ] === wanted
-			);
+		if ( sendyPrintFlowConfig.printExistingOnly ) {
+			return printExistingLabels( orderIds );
+		}
 
-		const withoutShipment = byStatus( 'none' );
-		const ready = byStatus( 'ready' );
+		const statuses = await fetchStatuses( orderIds.map( String ) );
+
+		const withoutShipment = idsWithStatus( statuses, 'none' );
+		const ready = idsWithStatus( statuses, 'ready' );
 		// Orders whose labels still need waiting on: the ones already being
 		// generated plus the shipments created below. Orders in a terminal
 		// failed state have flashed a notice; drop them instead of
 		// re-checking (and re-flashing) later.
-		const pending = byStatus( 'pending' );
+		const pending = idsWithStatus( statuses, 'pending' );
 
 		let createdShipments = false;
 
@@ -239,21 +290,20 @@
 			ready.push( ...( await waitUntilReady( pending ) ) );
 		}
 
-		if ( ready.length ) {
-			await window.sendyPrintLabels( ready );
-		}
+		await printReady( ready );
 
 		if ( createdShipments || ready.length !== orderIds.length ) {
-			// Show the new shipment data and any flash notices for the
-			// orders that could not be printed.
+			// Show the new shipment data and any notices for the orders that
+			// could not be printed.
 			window.location.reload();
 		}
 	};
 
 	/**
 	 * Print the labels of the given orders, creating shipments first for the
-	 * orders that have none. The returned promise never rejects, so callers
-	 * can chain finally() without handling errors themselves.
+	 * orders that have none where the processing method allows it. The returned
+	 * promise never rejects, so callers can chain finally() without handling
+	 * errors themselves.
 	 *
 	 * @param {Array<string|number>} orderIds
 	 * @return {Promise<void>}

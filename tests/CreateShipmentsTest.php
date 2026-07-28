@@ -79,8 +79,12 @@ class CreateShipmentsTest extends WP_Ajax_UnitTestCase
         $this->assertSame('2', get_option('sendy_previously_used_amount'));
     }
 
-    public function test_shipments_are_created_with_smart_rules_for_the_sendy_processing_method(): void
+    public function test_the_sendy_processing_method_is_refused(): void
     {
+        // The portal creates and processes the shipments for this method, so
+        // the print flow never asks this endpoint to create one. Refusing
+        // rather than trusting the client keeps a browser running a cached
+        // older copy of the script from adding shipments anyway.
         update_option('sendy_processing_method', ProcessingMethod::Sendy);
         set_transient('sendy_shops', ['shop-1' => 'Shop']);
 
@@ -92,9 +96,10 @@ class CreateShipmentsTest extends WP_Ajax_UnitTestCase
 
         $response = $this->dispatch(['order_ids' => [1]]);
 
-        $this->assertSame([1], $response['created']);
-        $this->assertSame('smart-shipment', $order->get_meta('_sendy_shipment_id'));
-        $this->assertStringContainsString('/shipments/smart-rule', $transport->lastRequest->getUrl());
+        $this->assertArrayNotHasKey('created', $response);
+        $this->assertStringContainsString('created in Sendy', $response['message']);
+        $this->assertSame([], $transport->requests, 'No shipment may be created');
+        $this->assertFalse($order->meta_exists('_sendy_shipment_id'));
     }
 
     public function test_orders_whose_creation_fails_are_reported_as_failed(): void

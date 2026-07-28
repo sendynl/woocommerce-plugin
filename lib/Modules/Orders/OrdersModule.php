@@ -38,6 +38,19 @@ abstract class OrdersModule
     }
 
     /**
+     * Whether the orders list can only print labels that already exist
+     *
+     * The Sendy processing method has the portal generate the labels, through
+     * smart rules, for the shipments the plugin creates in the background. A
+     * shipment created from the orders list would therefore not yield a label
+     * to wait for, so the print flow prints what is already there instead.
+     */
+    protected function print_existing_labels_only(): bool
+    {
+        return get_option('sendy_processing_method') !== ProcessingMethod::WooCommerce;
+    }
+
+    /**
      * Create a shipment for the order through the configured processing method
      *
      * The WooCommerce processing method creates the shipment from the given

@@ -3,7 +3,6 @@
 namespace Sendy\WooCommerce\Modules\Orders;
 
 use Sendy\Api\Exceptions\SendyException;
-use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Repositories\Shipments;
 
 class CreateShipments extends OrdersModule
@@ -28,6 +27,14 @@ class CreateShipments extends OrdersModule
     public function handle_create_shipments(): void
     {
         $this->verify_ajax_request('sendy_bulk_modal');
+
+        if ($this->print_existing_labels_only()) {
+            // The print flow does not offer to create shipments for this
+            // processing method; refuse rather than trust the client, so a
+            // browser running a cached older copy of the script cannot add
+            // shipments the portal would have created itself.
+            wp_send_json(['message' => __('Shipments for this processing method are created in Sendy', 'sendy')], 400);
+        }
 
         $shopId = sanitize_key($_POST['shop_id'] ?? '');
         $preferenceId = sanitize_key($_POST['preference_id'] ?? '');
@@ -72,12 +79,11 @@ class CreateShipments extends OrdersModule
         }
 
         if ($created !== []) {
+            // Only the WooCommerce processing method reaches this point, so
+            // the preference and the amount were used to create the shipments.
             update_option('sendy_previously_used_shop_id', $shopId);
-
-            if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
-                update_option('sendy_previously_used_preference_id', $preferenceId);
-                update_option('sendy_previously_used_amount', $amount);
-            }
+            update_option('sendy_previously_used_preference_id', $preferenceId);
+            update_option('sendy_previously_used_amount', $amount);
         }
 
         wp_send_json(['created' => $created, 'failed' => $failed]);
@@ -92,6 +98,9 @@ class CreateShipments extends OrdersModule
      * shipment was cancelled). The orders list print flow uses this to decide
      * between printing directly, creating a shipment first, or polling until
      * the Sendy portal has generated the label.
+     *
+     * With `flash_unprintable` set, the orders that have no label to print are
+     * explained in a single admin notice: the flow is done waiting for them.
      */
     public function handle_shipments_status(): void
     {
@@ -100,22 +109,74 @@ class CreateShipments extends OrdersModule
         $statuses = [];
 
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- boolean flag, nothing to sanitize
-        $flashPending = ! empty($_POST['flash_pending']);
+        $flashUnprintable = ! empty($_POST['flash_unprintable']);
 
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- intval() sanitizes each id
         foreach (array_map('intval', (array) ($_POST['order_ids'] ?? [])) as $orderId) {
             $statuses[$orderId] = $this->shipment_status(wc_get_order($orderId));
+        }
 
-            if ($flashPending && $statuses[$orderId] === 'pending') {
-                // translators: %s contains the ID of the order
-                sendy_flash_admin_notice('warning', sprintf(
-                    __('The labels for order #%s are still being generated. Please try again in a moment.', 'sendy'),
-                    $orderId,
-                ));
-            }
+        if ($flashUnprintable) {
+            $this->flash_unprintable_notice($this->unprintable_orders($statuses));
         }
 
         wp_send_json(['statuses' => $statuses]);
+    }
+
+    /**
+     * The orders that have no label to print
+     *
+     * Orders with a failed shipment have flashed their own explanation
+     * already, and an order without a shipment is only worth mentioning when
+     * this flow is not the one that creates it.
+     *
+     * @param array<int,string> $statuses
+     * @return int[]
+     */
+    private function unprintable_orders(array $statuses): array
+    {
+        $unprintable = $this->print_existing_labels_only() ? ['none', 'pending'] : ['pending'];
+
+        return array_keys(array_filter($statuses, function (string $status) use ($unprintable): bool {
+            return in_array($status, $unprintable, true);
+        }));
+    }
+
+    /**
+     * Explain in one notice which orders have no label to print
+     *
+     * The Sendy processing method generates the labels in the portal, so there
+     * is nothing for the shop to wait for; the WooCommerce processing method
+     * generates them while the flow polls, so a shipment that is still pending
+     * when the flow gives up may well be ready shortly after. Printing a whole
+     * page of orders can leave many of them unprintable, so they are counted
+     * rather than named.
+     *
+     * @param int[] $orderIds
+     */
+    private function flash_unprintable_notice(array $orderIds): void
+    {
+        if ($orderIds === []) {
+            return;
+        }
+
+        $count = count($orderIds);
+
+        if ($this->print_existing_labels_only()) {
+            $message = $count > 1
+                // translators: %s contains the number of orders
+                ? __('There is no label to print for %s orders yet. Process the shipments in Sendy first.', 'sendy')
+                // translators: %s contains the ID of the order
+                : __('There is no label to print for order #%s yet. Process the shipment in Sendy first.', 'sendy');
+        } else {
+            $message = $count > 1
+                // translators: %s contains the number of orders
+                ? __('The labels for %s orders are still being generated. Please try again in a moment.', 'sendy')
+                // translators: %s contains the ID of the order
+                : __('The labels for order #%s are still being generated. Please try again in a moment.', 'sendy');
+        }
+
+        sendy_flash_admin_notice('warning', sprintf($message, $count > 1 ? $count : reset($orderIds)));
     }
 
     /**

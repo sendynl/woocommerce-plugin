@@ -15,7 +15,9 @@ class RowActions extends OrdersModule
      * Add a print label button to the actions column
      *
      * The URL is a no-op; orders-list-print-flow.js intercepts the click and,
-     * for orders without a shipment, creates one first before printing.
+     * for orders without a shipment, creates one first before printing. The
+     * Sendy processing method never creates from here, so the button always
+     * offers to print in that mode.
      *
      * @param array<string,array<string,string>> $actions
      * @param \WC_Order $order
@@ -23,7 +25,7 @@ class RowActions extends OrdersModule
      */
     public function add_print_label_action(array $actions, $order): array
     {
-        if ($order->meta_exists('_sendy_shipment_id')) {
+        if ($order->meta_exists('_sendy_shipment_id') || $this->print_existing_labels_only()) {
             $actions['sendy_print_label'] = [
                 'url' => '#',
                 'name' => __('Sendy - Print label', 'sendy'),
