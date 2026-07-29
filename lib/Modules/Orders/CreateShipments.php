@@ -217,8 +217,8 @@ class CreateShipments extends OrdersModule
         try {
             $shipment = (new Shipments())->get($order->get_meta('_sendy_shipment_id'));
         } catch (SendyException $exception) {
-            // translators: %1$s contains the ID of the order, %2$s the error message
             sendy_flash_admin_notice('error', sprintf(
+                // translators: %1$s contains the ID of the order, %2$s the error message
                 __('Error while checking the shipment for order #%1$s: %2$s', 'sendy'),
                 $order->get_id(),
                 $exception->getMessage(),
@@ -240,8 +240,8 @@ class CreateShipments extends OrdersModule
             return 'pending';
         }
 
-        // translators: %1$s contains the ID of the order, %2$s the status of the shipment
         sendy_flash_admin_notice('error', sprintf(
+            // translators: %1$s contains the ID of the order, %2$s the status of the shipment
             __('The labels for order #%1$s cannot be printed (shipment status: %2$s)', 'sendy'),
             $order->get_id(),
             $status !== '' ? $status : 'unknown',
