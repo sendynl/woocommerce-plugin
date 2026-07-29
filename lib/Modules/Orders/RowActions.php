@@ -14,10 +14,11 @@ class RowActions extends OrdersModule
     /**
      * Add a print label button to the actions column
      *
-     * The URL is a no-op; orders-list-print-flow.js intercepts the click and,
-     * for orders without a shipment, creates one first before printing. The
-     * Sendy processing method never creates from here, so the button always
-     * offers to print in that mode.
+     * The URL carries the order id for orders-list-print-flow.js, which
+     * intercepts the click and, for orders without a shipment, creates one
+     * first before printing. The tooltip promises the creation only when the
+     * flow would perform it: the Sendy processing method never creates from
+     * here, so the button only offers to print in that mode.
      *
      * @param array<string,array<string,string>> $actions
      * @param \WC_Order $order
@@ -25,19 +26,15 @@ class RowActions extends OrdersModule
      */
     public function add_print_label_action(array $actions, $order): array
     {
-        if ($order->meta_exists('_sendy_shipment_id') || $this->print_existing_labels_only()) {
-            $actions['sendy_print_label'] = [
-                'url' => '#',
-                'name' => __('Sendy - Print label', 'sendy'),
-                'action' => 'sendy_print_label',
-            ];
-        } else {
-            $actions['sendy_create_shipment_print_label'] = [
-                'url' => '#',
-                'name' => __('Sendy - Create shipment and print label', 'sendy'),
-                'action' => 'sendy_create_shipment_print_label',
-            ];
-        }
+        $createsShipmentFirst = ! $order->meta_exists('_sendy_shipment_id') && ! $this->print_existing_labels_only();
+
+        $actions['sendy_print_label'] = [
+            'url' => '#sendy-print-label-' . $order->get_id(),
+            'name' => $createsShipmentFirst
+                ? __('Sendy - Create shipment and print label', 'sendy')
+                : __('Sendy - Print label', 'sendy'),
+            'action' => 'sendy_print_label',
+        ];
 
         return $actions;
     }

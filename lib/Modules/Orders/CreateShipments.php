@@ -20,9 +20,9 @@ class CreateShipments extends OrdersModule
      * preference and amount (the same fields as the "Create shipments" bulk
      * action) and this endpoint performs the creation over AJAX so the flow
      * can wait for the labels and print them afterwards. Orders that already
-     * have a shipment are skipped and appear in neither result list. Errors
-     * per order are flashed as admin notices by the inherited creation
-     * methods; the response only reports which orders now have a shipment.
+     * have a shipment are skipped. Errors per order are flashed as admin
+     * notices by the inherited creation methods; the response only reports
+     * which orders now have a shipment.
      */
     public function handle_create_shipments(): void
     {
@@ -41,19 +41,12 @@ class CreateShipments extends OrdersModule
         $amount = sanitize_key($_POST['amount'] ?? '1');
 
         $created = [];
-        $failed = [];
 
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- intval() sanitizes each id
         foreach (array_map('intval', (array) ($_POST['order_ids'] ?? [])) as $orderId) {
             $order = wc_get_order($orderId);
 
-            if (! $order) {
-                $failed[] = $orderId;
-
-                continue;
-            }
-
-            if ($order->meta_exists('_sendy_shipment_id')) {
+            if (! $order || $order->meta_exists('_sendy_shipment_id')) {
                 continue;
             }
 
@@ -73,20 +66,14 @@ class CreateShipments extends OrdersModule
 
             if ($order->meta_exists('_sendy_shipment_id')) {
                 $created[] = $orderId;
-            } else {
-                $failed[] = $orderId;
             }
         }
 
         if ($created !== []) {
-            // Only the WooCommerce processing method reaches this point, so
-            // the preference and the amount were used to create the shipments.
-            update_option('sendy_previously_used_shop_id', $shopId);
-            update_option('sendy_previously_used_preference_id', $preferenceId);
-            update_option('sendy_previously_used_amount', $amount);
+            $this->remember_previously_used($shopId, $preferenceId, $amount);
         }
 
-        wp_send_json(['created' => $created, 'failed' => $failed]);
+        wp_send_json(['created' => $created]);
     }
 
     /**
@@ -180,20 +167,6 @@ class CreateShipments extends OrdersModule
     }
 
     /**
-     * Send a 403 JSON response when the nonce or the capabilities do not check out
-     */
-    private function verify_ajax_request(string $nonceAction): void
-    {
-        if (! check_ajax_referer($nonceAction, 'nonce', false)) {
-            wp_send_json(['message' => __('Nonce verification failed', 'sendy')], 403);
-        }
-
-        if (! current_user_can('manage_woocommerce') || ! current_user_can('edit_shop_orders')) {
-            wp_send_json(['message' => __('You do not have sufficient permissions to access this page.', 'sendy')], 403);
-        }
-    }
-
-    /**
      * Determine the print status of a single order's shipment
      *
      * Orders whose packages are already stored do not hit the API. When the
@@ -202,7 +175,7 @@ class CreateShipments extends OrdersModule
      *
      * @param \WC_Order|false $order
      */
-    public function shipment_status($order): string
+    private function shipment_status($order): string
     {
         if (! $order || ! $order->meta_exists('_sendy_shipment_id')) {
             return 'none';

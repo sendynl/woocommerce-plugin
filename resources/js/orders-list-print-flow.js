@@ -69,7 +69,7 @@
 	 *
 	 * @param {Array<string|number>} orderIds
 	 * @param {Object} fields The values collected from the modal
-	 * @return {Promise<{created: number[], failed: number[]}>}
+	 * @return {Promise<{created: number[]}>}
 	 */
 	const createShipments = ( orderIds, fields ) =>
 		ajaxPost(
@@ -84,13 +84,18 @@
 		);
 
 	/**
-	 * Ask for the shop/preference/amount through the same thickbox modal as
-	 * the "Create shipments" bulk action. Resolves with the chosen values,
-	 * or null when the modal is dismissed.
+	 * Ask for the shop/preference/amount through the create-shipments
+	 * thickbox modal. Resolves with the chosen values, or null when the
+	 * modal is dismissed. This is the modal's only owner: admin-order-bulk.js
+	 * calls it too for the "Create shipments" bulk action.
 	 *
+	 * @param {Object} options
+	 * @param {string} options.title        The thickbox window title.
+	 * @param {string} [options.buttonText] Replaces the confirm button text
+	 *                                      until the modal closes.
 	 * @return {Promise<Object|null>}
 	 */
-	const openCreateShipmentsModal = () =>
+	window.sendyOpenCreateShipmentsModal = ( { title, buttonText } ) =>
 		new Promise( ( resolve ) => {
 			if ( ! document.getElementById( 'sendy-create-shipments-modal' ) ) {
 				// The modal is replaced by a connection error notice when
@@ -110,34 +115,36 @@
 			);
 			const originalButtonText = button.text();
 
-			thickboxWindow
-				.find( '#TB_ajaxWindowTitle' )
-				.text( sendyPrintFlowL10n.modalTitle );
-			button.text( sendyPrintFlowL10n.modalButtonText );
+			thickboxWindow.find( '#TB_ajaxWindowTitle' ).text( title );
+
+			if ( buttonText ) {
+				button.text( buttonText );
+			}
 
 			// Thickbox moves the inline content back into the page when the
-			// modal closes; undo our changes so the "Create shipments" bulk
-			// action shows its own button text, and treat a dismissal as a
-			// cancel (a no-op when the confirm handler already resolved).
+			// modal closes; undo our changes for the next opening, and treat
+			// a dismissal as a cancel (a no-op when the confirm handler
+			// already resolved).
 			jQuery( 'body' ).one( 'thickbox:removed', function () {
 				button
 					.text( originalButtonText )
 					.prop( 'disabled', false )
-					.off( 'click.sendyPrintFlow' );
+					.off( 'click.sendyModal' );
 				resolve( null );
 			} );
 
 			button
-				.off( 'click.sendyPrintFlow click.sendyBulk' )
-				.on( 'click.sendyPrintFlow', function ( event ) {
+				.off( 'click.sendyModal' )
+				.on( 'click.sendyModal', function ( event ) {
 					event.preventDefault();
 
 					jQuery( this ).prop( 'disabled', true );
 
 					resolve( {
-						shopId: thickboxWindow
-							.find( '#sendy_shop_id :selected' )
-							.val(),
+						shopId:
+							thickboxWindow
+								.find( '#sendy_shop_id :selected' )
+								.val() ?? '',
 						preferenceId:
 							thickboxWindow
 								.find( '#sendy_preference_id :selected' )
@@ -164,7 +171,7 @@
 	 */
 	const waitUntilReady = async ( orderIds ) => {
 		const deadline = Date.now() + POLL_TIMEOUT;
-		let pending = orderIds.map( String );
+		let pending = orderIds;
 		const ready = [];
 
 		while ( pending.length ) {
@@ -227,7 +234,7 @@
 	 * @param {Array<string|number>} orderIds
 	 */
 	const printExistingLabels = async ( orderIds ) => {
-		const statuses = await fetchStatuses( orderIds.map( String ), true );
+		const statuses = await fetchStatuses( orderIds, true );
 		const ready = idsWithStatus( statuses, 'ready' );
 
 		await printReady( ready );
@@ -247,11 +254,11 @@
 	 * @param {Array<string|number>} orderIds
 	 */
 	const runPrintFlow = async ( orderIds ) => {
-		if ( sendyPrintFlowConfig.printExistingOnly ) {
+		if ( sendyPrintFlow.printExistingOnly ) {
 			return printExistingLabels( orderIds );
 		}
 
-		const statuses = await fetchStatuses( orderIds.map( String ) );
+		const statuses = await fetchStatuses( orderIds );
 
 		const withoutShipment = idsWithStatus( statuses, 'none' );
 		const ready = idsWithStatus( statuses, 'ready' );
@@ -264,7 +271,10 @@
 		let createdShipments = false;
 
 		if ( withoutShipment.length ) {
-			const fields = await openCreateShipmentsModal();
+			const fields = await window.sendyOpenCreateShipmentsModal( {
+				title: sendyPrintFlow.modalTitle,
+				buttonText: sendyPrintFlow.modalButtonText,
+			} );
 
 			if ( ! fields ) {
 				return;
@@ -309,16 +319,15 @@
 	 * @return {Promise<void>}
 	 */
 	window.sendyOrdersListPrintFlow = ( orderIds ) =>
-		runPrintFlow( orderIds ).catch( ( error ) => {
+		runPrintFlow( orderIds.map( String ) ).catch( ( error ) => {
 			console.error( 'Sendy: printing labels failed', error );
 		} );
 
-	// The per-order print buttons in the actions column. The order id comes
-	// from the row's bulk-selection checkbox (id[] on the HPOS table, post[]
-	// on the legacy table).
+	// The per-order print buttons in the actions column. The href carries
+	// the id of the order the button was rendered for.
 	jQuery( document ).on(
 		'click',
-		'.wc-action-button-sendy_print_label, .wc-action-button-sendy_create_shipment_print_label',
+		'.wc-action-button-sendy_print_label',
 		function ( event ) {
 			event.preventDefault();
 
@@ -329,9 +338,8 @@
 			}
 
 			const orderId = button
-				.closest( 'tr' )
-				.find( 'input[name="id[]"], input[name="post[]"]' )
-				.val();
+				.attr( 'href' )
+				.replace( '#sendy-print-label-', '' );
 
 			button.addClass( 'disabled' ).attr( 'aria-disabled', 'true' );
 

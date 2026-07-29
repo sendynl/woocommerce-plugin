@@ -43,3 +43,4 @@ require $_tests_dir . '/includes/bootstrap.php';
 // in its procedural helpers and the test doubles the tests rely on.
 require_once dirname(__DIR__) . '/lib/helpers.php';
 require_once __DIR__ . '/doubles.php';
+require_once __DIR__ . '/Sendy_Ajax_TestCase.php';

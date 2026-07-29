@@ -11,31 +11,13 @@ use Sendy\WooCommerce\Modules\Orders\Single;
  * single order, through a preference (WooCommerce processing method) or smart
  * rules (Sendy processing method).
  */
-class SingleCreateShipmentTest extends WP_Ajax_UnitTestCase
+class SingleCreateShipmentTest extends Sendy_Ajax_TestCase
 {
-    use Sendy_Fakes_Api_Connection;
-
     public function setUp(): void
     {
         parent::setUp();
 
-        Sendy_Fake_Order::reset();
-
         new Single();
-
-        $user = self::factory()->user->create(['role' => 'administrator']);
-        wp_set_current_user($user);
-        wp_get_current_user()->add_cap('manage_woocommerce');
-
-        update_option('sendy_processing_method', ProcessingMethod::WooCommerce);
-        delete_option('sendy_flash_admin_messages');
-    }
-
-    public function tearDown(): void
-    {
-        $this->set_api_connection(null);
-
-        parent::tearDown();
     }
 
     public function test_the_shipment_is_created_from_the_chosen_preference(): void

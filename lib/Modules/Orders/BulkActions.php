@@ -54,21 +54,15 @@ class BulkActions extends OrdersModule
             wp_die('Nonce verification failed');
         }
 
+        $shopId = sanitize_key($_REQUEST['sendy_shop_id'] ?? '');
+        $preferenceId = sanitize_key($_REQUEST['sendy_preference_id'] ?? '');
+        $amount = sanitize_key($_REQUEST['sendy_amount'] ?? '');
+
         foreach ($objectIds as $id) {
-            $this->create_shipment(
-                wc_get_order($id),
-                sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
-                sanitize_key($_REQUEST['sendy_preference_id'] ?? ''),
-                (int) sanitize_key($_REQUEST['sendy_amount'] ?? ''),
-            );
+            $this->create_shipment(wc_get_order($id), $shopId, $preferenceId, (int) $amount);
         }
 
-        update_option('sendy_previously_used_shop_id', sanitize_key($_REQUEST['sendy_shop_id'] ?? ''));
-
-        if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
-            update_option('sendy_previously_used_preference_id', sanitize_key($_REQUEST['sendy_preference_id'] ?? ''));
-            update_option('sendy_previously_used_amount', sanitize_key($_REQUEST['sendy_amount'] ?? ''));
-        }
+        $this->remember_previously_used($shopId, $preferenceId, $amount);
 
         return $redirect;
     }
@@ -116,12 +110,9 @@ class BulkActions extends OrdersModule
                 true,
             );
 
-            wp_localize_script('sendy-orders-list-print-flow', 'sendyPrintFlowL10n', [
+            wp_localize_script('sendy-orders-list-print-flow', 'sendyPrintFlow', [
                 'modalTitle' => __('Sendy - Print labels', 'sendy'),
                 'modalButtonText' => __('Create shipments and print labels', 'sendy'),
-            ]);
-
-            wp_localize_script('sendy-orders-list-print-flow', 'sendyPrintFlowConfig', [
                 'printExistingOnly' => $this->print_existing_labels_only(),
             ]);
 

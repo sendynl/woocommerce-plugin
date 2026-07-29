@@ -230,7 +230,7 @@ class Sendy_Fake_Transport implements TransportInterface
  */
 trait Sendy_Fakes_Api_Connection
 {
-    private function fake_transport(Response ...$responses): Sendy_Fake_Transport
+    protected function fake_transport(Response ...$responses): Sendy_Fake_Transport
     {
         $transport = new Sendy_Fake_Transport(...$responses);
 
@@ -249,7 +249,7 @@ trait Sendy_Fakes_Api_Connection
         return $transport;
     }
 
-    private function set_api_connection(?Connection $connection): void
+    protected function set_api_connection(?Connection $connection): void
     {
         $property = new ReflectionProperty(ApiClientFactory::class, 'connection');
         $property->setAccessible(true);

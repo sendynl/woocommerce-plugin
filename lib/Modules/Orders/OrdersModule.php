@@ -64,11 +64,50 @@ abstract class OrdersModule
      */
     protected function create_shipment(\WC_Order $order, string $shopId, string $preferenceId, int $amount): void
     {
-        if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
-            $this->create_shipment_from_order($order, $shopId, $preferenceId, $amount);
-        } else {
+        if ($this->print_existing_labels_only()) {
             $this->create_shipment_with_smart_rules($order, false, $shopId);
+        } else {
+            $this->create_shipment_from_order($order, $shopId, $preferenceId, $amount);
         }
+    }
+
+    /**
+     * Remember the create-shipments modal values as the defaults for next time
+     *
+     * Only the WooCommerce processing method uses the preference and the
+     * amount, so only that method remembers them.
+     */
+    protected function remember_previously_used(string $shopId, string $preferenceId, string $amount): void
+    {
+        update_option('sendy_previously_used_shop_id', $shopId);
+
+        if (! $this->print_existing_labels_only()) {
+            update_option('sendy_previously_used_preference_id', $preferenceId);
+            update_option('sendy_previously_used_amount', $amount);
+        }
+    }
+
+    /**
+     * Send a 403 JSON response when the nonce or the capabilities do not check out
+     *
+     * @param bool $flashErrors Also flash the failure as an admin notice, for
+     *                          callers whose JS reloads the page on an error
+     */
+    protected function verify_ajax_request(string $nonceAction, bool $flashErrors = false): void
+    {
+        if (! check_ajax_referer($nonceAction, 'nonce', false)) {
+            $message = __('Nonce verification failed', 'sendy');
+        } elseif (! current_user_can('manage_woocommerce') || ! current_user_can('edit_shop_orders')) {
+            $message = __('You do not have sufficient permissions to access this page.', 'sendy');
+        } else {
+            return;
+        }
+
+        if ($flashErrors) {
+            sendy_flash_admin_notice('error', $message);
+        }
+
+        wp_send_json(['message' => $message], 403);
     }
 
     /**

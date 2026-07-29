@@ -14,7 +14,7 @@ use Sendy\WooCommerce\Modules\Orders\PrintLabels;
  * print app needs, and marks orders as completed server-side after a
  * successful fetch when the setting asks for it.
  */
-class PrintLabelsTest extends WP_Ajax_UnitTestCase
+class PrintLabelsTest extends Sendy_Ajax_TestCase
 {
     private PrintLabels $module;
 
@@ -22,23 +22,7 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
     {
         parent::setUp();
 
-        Sendy_Fake_Order::reset();
-
         $this->module = new PrintLabels();
-
-        $user = self::factory()->user->create(['role' => 'administrator']);
-        wp_set_current_user($user);
-        wp_get_current_user()->add_cap('manage_woocommerce');
-        wp_get_current_user()->add_cap('edit_shop_orders');
-
-        delete_option('sendy_flash_admin_messages');
-    }
-
-    public function tearDown(): void
-    {
-        $this->set_api_connection(null);
-
-        parent::tearDown();
     }
 
     public function test_only_orders_with_a_shipment_contribute_their_shipment_id(): void
@@ -101,7 +85,11 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
         $orderWithShipment = new Sendy_Fake_Order(1, ['_sendy_shipment_id' => 'shipment-1']);
         $orderWithoutShipment = new Sendy_Fake_Order(2);
 
-        $transport = $this->fake_transport(200, ['x-sendy-token' => ['print-app-token']], ['labels' => 'BASE64PDF']);
+        $transport = $this->fake_transport(new Response(
+            200,
+            ['x-sendy-token' => ['print-app-token']],
+            json_encode(['labels' => 'BASE64PDF']),
+        ));
 
         $response = $this->dispatch(['order_ids' => [1, 2]]);
 
@@ -122,7 +110,7 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
 
         $order = new Sendy_Fake_Order(1, ['_sendy_shipment_id' => 'shipment-1']);
 
-        $this->fake_transport(200, [], ['labels' => 'BASE64PDF']);
+        $this->fake_transport(new Response(200, [], json_encode(['labels' => 'BASE64PDF'])));
 
         $response = $this->dispatch(['order_ids' => [1]]);
 
@@ -136,7 +124,7 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
 
         $order = new Sendy_Fake_Order(1, ['_sendy_shipment_id' => 'shipment-1']);
 
-        $this->fake_transport(500, [], ['message' => 'Whoops']);
+        $this->fake_transport(new Response(500, [], json_encode(['message' => 'Whoops'])));
 
         $response = $this->dispatch(['order_ids' => [1]]);
 
@@ -187,50 +175,8 @@ class PrintLabelsTest extends WP_Ajax_UnitTestCase
      */
     private function dispatch(array $post): array
     {
-        $_POST = array_merge([
-            'action' => 'sendy_print_labels',
+        return $this->dispatch_ajax('sendy_print_labels', array_merge([
             'nonce' => wp_create_nonce('sendy_print_labels'),
-        ], $post);
-
-
-        try {
-            $this->_handleAjax('sendy_print_labels');
-            $this->fail('The AJAX handler was expected to send a JSON response and die');
-        } catch (WPAjaxDieContinueException $exception) {
-            // wp_send_json() ends in an empty wp_die(), which the AJAX test
-            // case converts into this exception after buffering the output.
-        }
-
-        return json_decode($this->_last_response, true);
-    }
-
-    /**
-     * Point ApiClientFactory's memoized connection at a canned HTTP response.
-     */
-    private function fake_transport(int $statusCode, array $headers, array $body): Sendy_Fake_Transport
-    {
-        $transport = new Sendy_Fake_Transport(new Response($statusCode, $headers, json_encode($body)));
-
-        // buildConnectionUsingTokens() refuses to run with empty token options.
-        update_option('sendy_access_token', 'access-token', false);
-        update_option('sendy_refresh_token', 'refresh-token', false);
-        update_option('sendy_token_expires', time() + 3600, false);
-
-        $this->set_api_connection(
-            (new Connection())
-                ->setTransport($transport)
-                ->setAccessToken('access-token')
-                ->setRefreshToken('refresh-token')
-                ->setTokenExpires(time() + 3600)
-        );
-
-        return $transport;
-    }
-
-    private function set_api_connection(?Connection $connection): void
-    {
-        $property = new ReflectionProperty(ApiClientFactory::class, 'connection');
-        $property->setAccessible(true);
-        $property->setValue(null, $connection);
+        ], $post));
     }
 }

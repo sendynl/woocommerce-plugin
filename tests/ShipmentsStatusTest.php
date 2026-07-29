@@ -14,34 +14,13 @@ use Sendy\WooCommerce\Modules\Orders\CreateShipments;
  * shipment first, or polling until the portal has generated the label), and
  * persists the packages meta once a shipment reaches the generated status.
  */
-class ShipmentsStatusTest extends WP_Ajax_UnitTestCase
+class ShipmentsStatusTest extends Sendy_Ajax_TestCase
 {
-    use Sendy_Fakes_Api_Connection;
-
-    private CreateShipments $module;
-
     public function setUp(): void
     {
         parent::setUp();
 
-        Sendy_Fake_Order::reset();
-
-        $this->module = new CreateShipments();
-
-        $user = self::factory()->user->create(['role' => 'administrator']);
-        wp_set_current_user($user);
-        wp_get_current_user()->add_cap('manage_woocommerce');
-        wp_get_current_user()->add_cap('edit_shop_orders');
-
-        update_option('sendy_processing_method', ProcessingMethod::WooCommerce);
-        delete_option('sendy_flash_admin_messages');
-    }
-
-    public function tearDown(): void
-    {
-        $this->set_api_connection(null);
-
-        parent::tearDown();
+        new CreateShipments();
     }
 
     public function test_orders_without_a_shipment_or_that_do_not_resolve_are_reported_as_none(): void
@@ -254,19 +233,9 @@ class ShipmentsStatusTest extends WP_Ajax_UnitTestCase
      */
     private function dispatch(array $post): array
     {
-        $_POST = array_merge([
-            'action' => 'sendy_shipments_status',
+        return $this->dispatch_ajax('sendy_shipments_status', array_merge([
             'nonce' => wp_create_nonce('sendy_print_labels'),
-        ], $post);
-
-        try {
-            $this->_handleAjax('sendy_shipments_status');
-            $this->fail('The AJAX handler was expected to send a JSON response and die');
-        } catch (WPAjaxDieContinueException $exception) {
-            // wp_send_json() ends in an empty wp_die().
-        }
-
-        return json_decode($this->_last_response, true);
+        ], $post));
     }
 
     /**

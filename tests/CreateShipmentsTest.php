@@ -14,34 +14,13 @@ use Sendy\WooCommerce\Modules\Orders\CreateShipments;
  * rules (Sendy processing method) — and reports which orders now have a
  * shipment so the orders list print flow knows what it can print.
  */
-class CreateShipmentsTest extends WP_Ajax_UnitTestCase
+class CreateShipmentsTest extends Sendy_Ajax_TestCase
 {
-    use Sendy_Fakes_Api_Connection;
-
-    private CreateShipments $module;
-
     public function setUp(): void
     {
         parent::setUp();
 
-        Sendy_Fake_Order::reset();
-
-        $this->module = new CreateShipments();
-
-        $user = self::factory()->user->create(['role' => 'administrator']);
-        wp_set_current_user($user);
-        wp_get_current_user()->add_cap('manage_woocommerce');
-        wp_get_current_user()->add_cap('edit_shop_orders');
-
-        update_option('sendy_processing_method', ProcessingMethod::WooCommerce);
-        delete_option('sendy_flash_admin_messages');
-    }
-
-    public function tearDown(): void
-    {
-        $this->set_api_connection(null);
-
-        parent::tearDown();
+        new CreateShipments();
     }
 
     public function test_shipments_are_created_through_the_preference_for_orders_without_one(): void
@@ -57,8 +36,7 @@ class CreateShipmentsTest extends WP_Ajax_UnitTestCase
 
         $response = $this->dispatch(['order_ids' => [1, 2]]);
 
-        $this->assertSame([1], $response['created']);
-        $this->assertSame([], $response['failed']);
+        $this->assertSame(['created' => [1]], $response, 'Only the order without a shipment is reported as created');
 
         $this->assertSame('new-shipment', $orderWithoutShipment->get_meta('_sendy_shipment_id'));
         $this->assertSame($packages, $orderWithoutShipment->get_meta('_sendy_packages'));
@@ -102,7 +80,7 @@ class CreateShipmentsTest extends WP_Ajax_UnitTestCase
         $this->assertFalse($order->meta_exists('_sendy_shipment_id'));
     }
 
-    public function test_orders_whose_creation_fails_are_reported_as_failed(): void
+    public function test_orders_whose_creation_fails_are_not_reported_as_created(): void
     {
         $order = new Sendy_Fake_Order(1);
 
@@ -113,8 +91,7 @@ class CreateShipmentsTest extends WP_Ajax_UnitTestCase
 
         $response = $this->dispatch(['order_ids' => [1, 99]]);
 
-        $this->assertSame([], $response['created']);
-        $this->assertSame([1, 99], $response['failed'], 'Unresolvable orders count as failed');
+        $this->assertSame([], $response['created'], 'Neither the failed nor the unresolvable order was created');
 
         $this->assertFalse($order->meta_exists('_sendy_shipment_id'));
 
@@ -147,21 +124,11 @@ class CreateShipmentsTest extends WP_Ajax_UnitTestCase
      */
     private function dispatch(array $post): array
     {
-        $_POST = array_merge([
-            'action' => 'sendy_create_shipments',
+        return $this->dispatch_ajax('sendy_create_shipments', array_merge([
             'nonce' => wp_create_nonce('sendy_bulk_modal'),
             'shop_id' => 'shop-1',
             'preference_id' => 'pref-1',
             'amount' => '2',
-        ], $post);
-
-        try {
-            $this->_handleAjax('sendy_create_shipments');
-            $this->fail('The AJAX handler was expected to send a JSON response and die');
-        } catch (WPAjaxDieContinueException $exception) {
-            // wp_send_json() ends in an empty wp_die().
-        }
-
-        return json_decode($this->_last_response, true);
+        ], $post));
     }
 }

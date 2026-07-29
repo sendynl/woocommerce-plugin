@@ -25,11 +25,10 @@ class RowActionsTest extends WP_UnitTestCase
 
         $this->assertArrayHasKey('complete', $actions, 'Existing actions must be preserved');
         $this->assertSame([
-            'url' => '#',
+            'url' => '#sendy-print-label-1',
             'name' => 'Sendy - Print label',
             'action' => 'sendy_print_label',
         ], $actions['sendy_print_label']);
-        $this->assertArrayNotHasKey('sendy_create_shipment_print_label', $actions);
     }
 
     public function test_orders_without_a_shipment_get_a_create_and_print_action(): void
@@ -39,11 +38,10 @@ class RowActionsTest extends WP_UnitTestCase
         $actions = (new RowActions())->add_print_label_action([], $order);
 
         $this->assertSame([
-            'url' => '#',
+            'url' => '#sendy-print-label-1',
             'name' => 'Sendy - Create shipment and print label',
-            'action' => 'sendy_create_shipment_print_label',
-        ], $actions['sendy_create_shipment_print_label']);
-        $this->assertArrayNotHasKey('sendy_print_label', $actions);
+            'action' => 'sendy_print_label',
+        ], $actions['sendy_print_label']);
     }
 
     public function test_the_sendy_processing_method_only_offers_to_print(): void
@@ -54,8 +52,7 @@ class RowActionsTest extends WP_UnitTestCase
 
         $actions = (new RowActions())->add_print_label_action([], new Sendy_Fake_Order(1));
 
-        $this->assertSame('sendy_print_label', $actions['sendy_print_label']['action']);
-        $this->assertArrayNotHasKey('sendy_create_shipment_print_label', $actions);
+        $this->assertSame('Sendy - Print label', $actions['sendy_print_label']['name']);
     }
 
     public function test_the_filter_is_registered(): void

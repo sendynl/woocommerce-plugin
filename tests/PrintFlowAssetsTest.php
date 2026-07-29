@@ -23,10 +23,10 @@ class PrintFlowAssetsTest extends WP_UnitTestCase
     {
         update_option('sendy_processing_method', ProcessingMethod::WooCommerce);
 
-        $this->assertStringContainsString(
-            'var sendyPrintFlowConfig = {"printExistingOnly":""}',
-            $this->localizedData(),
-        );
+        $data = $this->localizedData();
+
+        $this->assertStringContainsString('var sendyPrintFlow = ', $data);
+        $this->assertStringContainsString('"printExistingOnly":""', $data);
     }
 
     public function test_the_sendy_processing_method_only_prints_existing_labels(): void
@@ -34,7 +34,7 @@ class PrintFlowAssetsTest extends WP_UnitTestCase
         update_option('sendy_processing_method', ProcessingMethod::Sendy);
 
         $this->assertStringContainsString(
-            'var sendyPrintFlowConfig = {"printExistingOnly":"1"}',
+            '"printExistingOnly":"1"',
             $this->localizedData(),
         );
     }
