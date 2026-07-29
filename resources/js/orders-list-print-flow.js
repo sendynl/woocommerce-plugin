@@ -271,9 +271,14 @@
 		let createdShipments = false;
 
 		if ( withoutShipment.length ) {
+			const single = orderIds.length === 1;
 			const fields = await window.sendyOpenCreateShipmentsModal( {
-				title: sendyPrintFlow.modalTitle,
-				buttonText: sendyPrintFlow.modalButtonText,
+				title: single
+					? sendyPrintFlow.modalTitleSingular
+					: sendyPrintFlow.modalTitle,
+				buttonText: single
+					? sendyPrintFlow.modalButtonTextSingular
+					: sendyPrintFlow.modalButtonText,
 			} );
 
 			if ( ! fields ) {

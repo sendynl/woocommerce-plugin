@@ -112,7 +112,9 @@ class BulkActions extends OrdersModule
 
             wp_localize_script('sendy-orders-list-print-flow', 'sendyPrintFlow', [
                 'modalTitle' => __('Sendy - Print labels', 'sendy'),
+                'modalTitleSingular' => __('Sendy - Print label', 'sendy'),
                 'modalButtonText' => __('Create shipments and print labels', 'sendy'),
+                'modalButtonTextSingular' => __('Create shipment and print label', 'sendy'),
                 'printExistingOnly' => $this->print_existing_labels_only(),
             ]);
 
