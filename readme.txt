@@ -52,6 +52,9 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 == Changelog ==
 
+= Unreleased =
+* Clean up plugin options on uninstall, so a reinstall starts with fresh credentials
+
 = 3.4.7 =
 * Allow saving Sendy settings with manage_woocommerce capability
 * Keep settings checkbox off when saved with a persistent object cache
