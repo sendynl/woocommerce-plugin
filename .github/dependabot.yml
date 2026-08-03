@@ -18,14 +18,13 @@ updates:
     schedule:
       interval: weekly
     groups:
-      npm-minor:
-        update-types:
-          - minor
-          - patch
       wordpress:
         patterns:
           - '@wordpress/*'
       woocommerce:
         patterns:
           - '@woocommerce/*'
-
+      npm-minor:
+        update-types:
+          - minor
+          - patch
