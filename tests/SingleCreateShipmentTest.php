@@ -28,7 +28,7 @@ class SingleCreateShipmentTest extends Sendy_Ajax_TestCase
             'data' => ['uuid' => 'new-shipment', 'packages' => []],
         ])));
 
-        $this->assertStringStartsWith('{"success":true}', $this->dispatch(['order_id' => '1']));
+        $this->assertSame(['success' => true], $this->dispatch(['order_id' => '1']));
 
         $this->assertSame('new-shipment', $order->get_meta('_sendy_shipment_id'));
         $this->assertStringContainsString('/shipments/preference', $transport->lastRequest->getUrl());
@@ -52,7 +52,7 @@ class SingleCreateShipmentTest extends Sendy_Ajax_TestCase
             'data' => ['uuid' => 'smart-shipment'],
         ])));
 
-        $this->assertStringStartsWith('{"success":true}', $this->dispatch(['order_id' => '1']));
+        $this->assertSame(['success' => true], $this->dispatch(['order_id' => '1']));
 
         $this->assertSame('smart-shipment', $order->get_meta('_sendy_shipment_id'));
         $this->assertStringContainsString('/shipments/smart-rule', $transport->lastRequest->getUrl());
@@ -78,38 +78,18 @@ class SingleCreateShipmentTest extends Sendy_Ajax_TestCase
     }
 
     /**
-     * Dispatch the AJAX action and return the response the handler sent first.
+     * Fire the AJAX endpoint and return the decoded JSON response.
      *
-     * The handler wraps its work in catch (\Exception), which in the test
-     * environment also catches the exception the wp_die() inside
-     * wp_send_json_success() throws — so a second, spurious error envelope is
-     * appended to the output. In production wp_die() exits instead.
+     * @param array<string,mixed> $request
+     * @return array<string,mixed>
      */
-    private function dispatch(array $request): string
+    private function dispatch(array $request): array
     {
-        $_POST = array_merge([
-            'action' => 'sendy_order_single_save_form',
+        return $this->dispatch_ajax('sendy_order_single_save_form', array_merge([
             'nonce' => wp_create_nonce('sendy_create_shipment'),
             'shop_id' => 'shop-1',
             'preference_id' => 'pref-1',
             'amount' => '3',
-        ], $request);
-
-        $outputBufferLevel = ob_get_level();
-
-        try {
-            $this->_handleAjax('sendy_order_single_save_form');
-            $this->fail('The AJAX handler was expected to send a JSON response and die');
-        } catch (WPAjaxDieContinueException $exception) {
-            // wp_send_json() ends in an empty wp_die().
-        }
-
-        // Responding twice also closes one output buffer more than
-        // _handleAjax() opened; restore the level PHPUnit expects.
-        while (ob_get_level() < $outputBufferLevel) {
-            ob_start();
-        }
-
-        return $this->_last_response;
+        ], $request));
     }
 }

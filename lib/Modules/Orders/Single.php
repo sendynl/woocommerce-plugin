@@ -122,21 +122,25 @@ class Single extends OrdersModule
                 throw new \Exception(esc_html__('Nonce verification failed', 'sendy'));
             }
 
-            if (! empty($_REQUEST['order_id'])) {
-                $order = wc_get_order(sanitize_key($_REQUEST['order_id']));
-
-                $this->create_shipment(
-                    $order,
-                    sanitize_key($_REQUEST['shop_id'] ?? ''),
-                    sanitize_key($_REQUEST['preference_id'] ?? ''),
-                    (int) sanitize_key($_REQUEST['amount'] ?? '1'),
-                );
-
-                wp_send_json_success();
+            if (empty($_REQUEST['order_id'])) {
+                return;
             }
+
+            $order = wc_get_order(sanitize_key($_REQUEST['order_id']));
+
+            $this->create_shipment(
+                $order,
+                sanitize_key($_REQUEST['shop_id'] ?? ''),
+                sanitize_key($_REQUEST['preference_id'] ?? ''),
+                (int) sanitize_key($_REQUEST['amount'] ?? '1'),
+            );
         } catch (\Exception $e) {
             wp_send_json_error(['message' => $e->getMessage()]);
         }
+
+        // Outside the try: wp_send_json_success() ends in wp_die(), which
+        // throws in tests and would be caught above as a failure.
+        wp_send_json_success();
     }
 
     /**
