@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-29T16:06:46+00:00\n"
+"POT-Creation-Date: 2026-08-07T15:00:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: sendy\n"
@@ -95,7 +95,7 @@ msgid "After the shipment is delivered"
 msgstr ""
 
 #: lib/Modules/Admin/Settings.php:257
-#: lib/Modules/Orders/OrdersModule.php:101
+#: lib/Modules/Orders/OrdersModule.php:124
 #: lib/Modules/Orders/Single.php:118
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
@@ -123,93 +123,89 @@ msgid "Sendy - Create shipments"
 msgstr ""
 
 #: lib/Modules/Orders/BulkActions.php:39
-#: lib/Modules/Orders/BulkActions.php:114
+#: lib/Modules/Orders/BulkActions.php:118
 msgid "Sendy - Print labels"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:83
+#: lib/Modules/Orders/BulkActions.php:87
 msgid "Printing labels requires JavaScript. Enable JavaScript in your browser and try again."
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:115
+#: lib/Modules/Orders/BulkActions.php:119
 #: lib/Modules/Orders/RowActions.php:35
 msgid "Sendy - Print label"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:116
+#: lib/Modules/Orders/BulkActions.php:120
 msgid "Create shipments and print labels"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:117
+#: lib/Modules/Orders/BulkActions.php:121
 msgid "Create shipment and print label"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:197
+#: lib/Modules/Orders/BulkActions.php:201
 #: resources/views/admin/meta_box/single.php:18
 msgid "Shop"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:198
+#: lib/Modules/Orders/BulkActions.php:202
 msgid "The shipments will be created with the selected shop"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:207
+#: lib/Modules/Orders/BulkActions.php:211
 msgid "Select preference"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:208
+#: lib/Modules/Orders/BulkActions.php:212
 msgid "The shipments will be created with the preference you select here"
 msgstr ""
 
-#: lib/Modules/Orders/BulkActions.php:216
+#: lib/Modules/Orders/BulkActions.php:220
 #: resources/views/admin/meta_box/single.php:38
 msgid "Amount of packages"
 msgstr ""
 
-#: lib/Modules/Orders/CreateShipments.php:36
+#: lib/Modules/Orders/CreateShipments.php:30
 msgid "Shipments for this processing method are created in Sendy"
 msgstr ""
 
-#. translators: %1$s should contain the ID of the order and %2$s the error
-#: lib/Modules/Orders/CreateShipments.php:61
-#: lib/Modules/Orders/OrdersModule.php:297
-#: lib/Modules/Orders/OrdersModule.php:312
-#, php-format
-msgid "Error while creating shipment for order #%1$s: %2$s"
+#: lib/Modules/Orders/CreateShipments.php:118
+msgid "The plugin is not connected to Sendy. Check the settings page to reconnect."
 msgstr ""
 
 #. translators: %s contains the number of orders
-#: lib/Modules/Orders/CreateShipments.php:155
+#: lib/Modules/Orders/CreateShipments.php:165
 #, php-format
 msgid "There is no label to print for %s orders yet. Process the shipments in Sendy first."
 msgstr ""
 
 #. translators: %s contains the ID of the order
-#: lib/Modules/Orders/CreateShipments.php:157
+#: lib/Modules/Orders/CreateShipments.php:167
 #, php-format
 msgid "There is no label to print for order #%s yet. Process the shipment in Sendy first."
 msgstr ""
 
 #. translators: %s contains the number of orders
-#: lib/Modules/Orders/CreateShipments.php:161
+#: lib/Modules/Orders/CreateShipments.php:171
 #, php-format
 msgid "The labels for %s orders are still being generated. Please try again in a moment."
 msgstr ""
 
 #. translators: %s contains the ID of the order
-#: lib/Modules/Orders/CreateShipments.php:163
+#: lib/Modules/Orders/CreateShipments.php:173
 #, php-format
 msgid "The labels for order #%s are still being generated. Please try again in a moment."
 msgstr ""
 
 #. translators: %1$s contains the ID of the order, %2$s the error message
-#: lib/Modules/Orders/CreateShipments.php:195
+#: lib/Modules/Orders/CreateShipments.php:205
 #, php-format
 msgid "Error while checking the shipment for order #%1$s: %2$s"
 msgstr ""
 
 #. translators: %1$s contains the ID of the order, %2$s the status of the shipment
-#: lib/Modules/Orders/CreateShipments.php:218
+#: lib/Modules/Orders/CreateShipments.php:228
 #, php-format
 msgid "The labels for order #%1$s cannot be printed (shipment status: %2$s)"
 msgstr ""
@@ -224,36 +220,44 @@ msgstr ""
 msgid "Track and trace"
 msgstr ""
 
-#: lib/Modules/Orders/OrdersModule.php:99
+#. translators: %1$s should contain the ID of the order and %2$s the error
+#: lib/Modules/Orders/OrdersModule.php:90
+#: lib/Modules/Orders/OrdersModule.php:320
+#: lib/Modules/Orders/OrdersModule.php:335
+#, php-format
+msgid "Error while creating shipment for order #%1$s: %2$s"
+msgstr ""
+
+#: lib/Modules/Orders/OrdersModule.php:122
 #: lib/Modules/Orders/Single.php:122
 msgid "Nonce verification failed"
 msgstr ""
 
 #. translators: %s The ID of the order
-#: lib/Modules/Orders/OrdersModule.php:125
+#: lib/Modules/Orders/OrdersModule.php:148
 #, php-format
 msgid "Order #%s already has a shipment created"
 msgstr ""
 
-#: lib/Modules/Orders/OrdersModule.php:158
+#: lib/Modules/Orders/OrdersModule.php:181
 #: lib/Modules/Webhooks.php:216
 msgid "Sendy: Shipment created"
 msgstr ""
 
 #. translators: %s should contain the ID of the order
-#: lib/Modules/Orders/OrdersModule.php:303
+#: lib/Modules/Orders/OrdersModule.php:326
 #, php-format
 msgid "Error while creating shipment for order #%s: Authentication failed. Check the settings page to reconnect with Sendy."
 msgstr ""
 
 #. translators: %s should contain the ID of the order
-#: lib/Modules/Orders/OrdersModule.php:315
+#: lib/Modules/Orders/OrdersModule.php:338
 #, php-format
 msgid "Error while creating shipment for order #%s: Too many requests. Please try again later."
 msgstr ""
 
 #. translators: %s should contain the ID of the order
-#: lib/Modules/Orders/OrdersModule.php:318
+#: lib/Modules/Orders/OrdersModule.php:341
 #, php-format
 msgid "Error while creating shipment for order #%s: Unknown error."
 msgstr ""
