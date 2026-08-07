@@ -43,10 +43,9 @@ class Plugin
     /**
      * Version string for cache-busting a local plugin asset
      *
-     * Releases invalidate browser caches through the plugin version, but that
-     * version does not change between development edits; with SCRIPT_DEBUG
-     * enabled the file's modification time is used instead so the browser
-     * cannot serve a stale copy.
+     * Releases invalidate browser caches through the plugin version; with
+     * SCRIPT_DEBUG enabled the file's modification time is used instead, so
+     * development edits are never served stale.
      */
     public static function asset_version(string $path): string
     {

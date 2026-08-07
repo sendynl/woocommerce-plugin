@@ -14,11 +14,8 @@ class RowActions extends OrdersModule
     /**
      * Add a print label button to the actions column
      *
-     * The URL carries the order id for orders-list-print-flow.js, which
-     * intercepts the click and, for orders without a shipment, creates one
-     * first before printing. The tooltip promises the creation only when the
-     * flow would perform it: the Sendy processing method never creates from
-     * here, so the button only offers to print in that mode.
+     * The URL fragment carries the order id for orders-list-print-flow.js; the
+     * tooltip only promises to create a shipment when the flow actually will.
      *
      * @param array<string,array<string,string>> $actions
      * @param \WC_Order $order
