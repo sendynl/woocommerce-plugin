@@ -4,7 +4,9 @@ namespace Sendy\WooCommerce\Modules\Orders;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Sendy\Api\ApiException;
+use Sendy\Api\Exceptions\SendyException;
 use Sendy\WooCommerce\ApiClientFactory;
+use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Repositories\Shops;
 
 abstract class OrdersModule
@@ -37,14 +39,99 @@ abstract class OrdersModule
     }
 
     /**
-     * Create the order in the Sendy API
+     * Whether the orders list can only print labels that already exist
      *
-     * @param string $preferenceId The UUID of the selected shipping preference
+     * With the Sendy processing method the portal creates and generates the
+     * shipments itself, so the orders list never has a new label to wait for.
+     */
+    protected function print_existing_labels_only(): bool
+    {
+        return get_option('sendy_processing_method') !== ProcessingMethod::WooCommerce;
+    }
+
+    /**
+     * Create a shipment for the order through the configured processing method
+     *
      * @param string $shopId The UUID of the selected shop
+     * @param string $preferenceId The UUID of the selected shipping preference
      * @param int $amount The amount of packages the shipment should contain
      * @throws GuzzleException
      */
-    protected function create_shipment_from_order(\WC_Order $order, string $preferenceId, string $shopId, int $amount): void
+    protected function create_shipment(\WC_Order $order, string $shopId, string $preferenceId, int $amount): void
+    {
+        if ($this->print_existing_labels_only()) {
+            $this->create_shipment_with_smart_rules($order, false, $shopId);
+        } else {
+            $this->create_shipment_from_order($order, $shopId, $preferenceId, $amount);
+        }
+    }
+
+    /**
+     * Create a shipment and flash any failure as an admin notice
+     *
+     * The creation methods flash API errors themselves; this also catches what
+     * they throw outside that, so one failing order does not abort the batch.
+     */
+    protected function create_shipment_flashing_errors(\WC_Order $order, string $shopId, string $preferenceId, int $amount): void
+    {
+        try {
+            $this->create_shipment($order, $shopId, $preferenceId, $amount);
+        } catch (SendyException $exception) {
+            // translators: %1$s contains the ID of the order, %2$s the error message
+            sendy_flash_admin_notice('error', sprintf(
+                __('Error while creating shipment for order #%1$s: %2$s', 'sendy'),
+                $order->get_id(),
+                $exception->getMessage(),
+            ));
+        }
+    }
+
+    /**
+     * Remember the create-shipments modal values as the defaults for next time
+     */
+    protected function remember_previously_used(string $shopId, string $preferenceId, string $amount): void
+    {
+        update_option('sendy_previously_used_shop_id', $shopId);
+
+        // Only the WooCommerce processing method uses a preference and amount.
+        if (! $this->print_existing_labels_only()) {
+            update_option('sendy_previously_used_preference_id', $preferenceId);
+            update_option('sendy_previously_used_amount', $amount);
+        }
+    }
+
+    /**
+     * Send a 403 JSON response when the nonce or the capabilities do not check out
+     *
+     * @param bool $flashErrors Also flash the failure as an admin notice, for
+     *                          callers whose JS reloads the page on an error
+     */
+    protected function verify_ajax_request(string $nonceAction, bool $flashErrors = false): void
+    {
+        if (! check_ajax_referer($nonceAction, 'nonce', false)) {
+            $message = __('Nonce verification failed', 'sendy');
+        } elseif (! current_user_can('manage_woocommerce') || ! current_user_can('edit_shop_orders')) {
+            $message = __('You do not have sufficient permissions to access this page.', 'sendy');
+        } else {
+            return;
+        }
+
+        if ($flashErrors) {
+            sendy_flash_admin_notice('error', $message);
+        }
+
+        wp_send_json(['message' => $message], 403);
+    }
+
+    /**
+     * Create the order in the Sendy API
+     *
+     * @param string $shopId The UUID of the selected shop
+     * @param string $preferenceId The UUID of the selected shipping preference
+     * @param int $amount The amount of packages the shipment should contain
+     * @throws GuzzleException
+     */
+    protected function create_shipment_from_order(\WC_Order $order, string $shopId, string $preferenceId, int $amount): void
     {
         if ($order->meta_exists('_sendy_shipment_id')) {
             // translators: %s The ID of the order

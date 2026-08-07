@@ -23,19 +23,7 @@ class PrintLabels extends OrdersModule
      */
     public function handle_print_labels(): void
     {
-        if (! check_ajax_referer('sendy_print_labels', 'nonce', false)) {
-            $message = __('Nonce verification failed', 'sendy');
-
-            sendy_flash_admin_notice('error', $message);
-            wp_send_json(['message' => $message], 403);
-        }
-
-        if (! current_user_can('manage_woocommerce') || ! current_user_can('edit_shop_orders')) {
-            $message = __('You do not have sufficient permissions to access this page.', 'sendy');
-
-            sendy_flash_admin_notice('error', $message);
-            wp_send_json(['message' => $message], 403);
-        }
+        $this->verify_ajax_request('sendy_print_labels', true);
 
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- intval() sanitizes each id
         $orders = $this->orders_with_shipment(array_map('intval', (array) ($_POST['order_ids'] ?? [])));

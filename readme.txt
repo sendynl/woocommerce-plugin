@@ -2,8 +2,8 @@
 Plugin Name: Sendy
 Plugin URI: https://app.sendy.nl/
 Description: A WooCommerce plugin that connects your site to the Sendy platform
-Version: 3.4.7
-Stable tag: 3.4.7
+Version: 3.5.0
+Stable tag: 3.5.0
 License: MIT
 Author: Sendy
 Author URI: https://sendy.nl/
@@ -52,7 +52,10 @@ Hierop zijn onze [algemene voorwaarden](https://sendy.nl/algemene-voorwaarden/) 
 
 == Changelog ==
 
-= Unreleased =
+= 3.5.0 =
+* Add print buttons to the orders list to create shipments and print labels in one click
+* Print labels directly using the Sendy print app
+* Set the minimum required WordPress version to 6.2
 * Clean up plugin options on uninstall, so a reinstall starts with fresh credentials
 
 = 3.4.7 =

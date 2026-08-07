@@ -27,6 +27,11 @@ if [ "${WP_VERSION:-latest}" = "latest" ]; then
     wp core update-db
 fi
 
+echo "==> Enabling SCRIPT_DEBUG"
+# Version local plugin assets by file mtime (see Plugin::asset_version) so the
+# browser never serves stale JS/CSS while developing on an unchanged version.
+wp config set SCRIPT_DEBUG true --raw
+
 echo "==> Installing locale $locale"
 wp language core install "$locale" --activate \
     || echo "Warning: could not install core locale $locale" >&2

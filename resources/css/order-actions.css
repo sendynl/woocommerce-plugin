@@ -1,0 +1,26 @@
+.column-wc_actions a.sendy_print_label::after {
+	font-family: Dashicons;
+	content: "\f193";
+}
+
+/* Busy state while the create-and-print flow runs (up to a minute). */
+.column-wc_actions a.sendy_print_label.disabled::after {
+	content: "\f463";
+	opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.column-wc_actions a.sendy_print_label.disabled::after {
+		animation: sendy-action-busy 1.5s linear infinite;
+	}
+}
+
+@keyframes sendy-action-busy {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}

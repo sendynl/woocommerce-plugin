@@ -24,8 +24,9 @@
 		},
 
 		/**
-		 * Handle the print labels bulk action client-side so the labels can
-		 * be sent to the print app
+		 * Handle the print labels bulk action client-side so shipments can
+		 * be created for orders that have none and the labels can be sent
+		 * to the print app
 		 *
 		 * @param {Event} event
 		 */
@@ -58,94 +59,57 @@
 				overlayCSS: { background: '#fff', opacity: 0.6 },
 			} );
 
-			window.sendyPrintLabels( orderIds ).finally( () => form.unblock() );
+			window
+				.sendyOrdersListPrintFlow( orderIds )
+				.finally( () => form.unblock() );
 		},
 
 		/**
+		 * Ask for the shop/preference/amount through the shared
+		 * create-shipments modal and submit the bulk action form with the
+		 * chosen values.
 		 *
 		 * @param {Event} event
 		 */
 		toggleCreateShipmentsModal: function ( event ) {
 			event.preventDefault();
 
-			let value = $( this ).val(),
-				bulkActionsForm = $( this ).parents(
-					'#wc-orders-filter, #posts-filter'
-				),
-				title = $( ':selected', this ).text();
+			if ( $( this ).val() !== 'sendy_create_shipments' ) {
+				return;
+			}
 
-			if ( value === 'sendy_create_shipments' ) {
-				tb_show(
-					'',
-					'/?TB_inline=true&width=420&height=320&inlineId=sendy-create-shipments-modal'
-				);
+			const bulkActionsForm = $( this ).parents(
+				'#wc-orders-filter, #posts-filter'
+			);
+			const title = $( ':selected', this ).text();
 
-				let thickboxWindow = $( '#TB_window' );
+			window
+				.sendyOpenCreateShipmentsModal( { title } )
+				.then( function ( fields ) {
+					if ( ! fields ) {
+						return;
+					}
 
-				thickboxWindow.find( '#TB_ajaxWindowTitle' ).text( title );
+					const container = $( '<div></div>' )
+						.hide()
+						.appendTo( bulkActionsForm );
 
-				thickboxWindow
-					.find( '#sendy-create-shipments-button' )
-					.on( 'click', function ( event ) {
-						event.preventDefault();
-
-						let sendyFieldsContainer = bulkActionsForm
-							.append( '<div></div>' )
-							.hide();
-
-						let preferenceId = thickboxWindow
-							.find( '#sendy_preference_id' )
-							.find( ':selected' )
-							.val();
-						$( sendyFieldsContainer ).append(
-							$( '<input>', {
-								type: 'hidden',
-								name: 'sendy_preference_id',
-								value: preferenceId,
-							} )
-						);
-
-						if ( thickboxWindow.find( '#sendy_shop_id' ) ) {
-							let shopId = thickboxWindow
-								.find( '#sendy_shop_id' )
-								.find( ':selected' )
-								.val();
-							$( sendyFieldsContainer ).append(
-								$( '<input>', {
-									type: 'hidden',
-									name: 'sendy_shop_id',
-									value: shopId,
-								} )
+					$.each(
+						{
+							sendy_shop_id: fields.shopId,
+							sendy_preference_id: fields.preferenceId,
+							sendy_amount: fields.amount,
+							sendy_bulk_modal_nonce: fields.nonce,
+						},
+						function ( name, value ) {
+							container.append(
+								$( '<input>', { type: 'hidden', name, value } )
 							);
 						}
+					);
 
-						let nonce = thickboxWindow
-							.find( '#sendy_bulk_modal_nonce' )
-							.val();
-						$( sendyFieldsContainer ).append(
-							$( '<input>', {
-								type: 'hidden',
-								name: 'sendy_bulk_modal_nonce',
-								value: nonce,
-							} )
-						);
-
-						let amount = thickboxWindow
-							.find( '#sendy_amount' )
-							.val();
-						$( sendyFieldsContainer ).append(
-							$( '<input>', {
-								type: 'hidden',
-								name: 'sendy_amount',
-								value: amount,
-							} )
-						);
-
-						$( this ).prop( 'disabled', true );
-
-						bulkActionsForm.submit();
-					} );
-			}
+					bulkActionsForm.submit();
+				} );
 		},
 
 		disableSubmitButton: function () {

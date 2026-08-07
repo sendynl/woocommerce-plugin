@@ -10,6 +10,16 @@
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+// The plugin is not loaded as a WordPress plugin here, so Plugin::define_constants()
+// never runs; define the ones the tested code reads.
+if (! defined('SENDY_WC_PLUGIN_FILE')) {
+    define('SENDY_WC_PLUGIN_FILE', dirname(__DIR__) . '/sendy.php');
+}
+
+if (! defined('SENDY_WC_PLUGIN_DIR_URL')) {
+    define('SENDY_WC_PLUGIN_DIR_URL', 'https://example.com/wp-content/plugins/sendy');
+}
+
 $_tests_dir = getenv('WP_TESTS_DIR');
 
 if (! $_tests_dir) {
@@ -33,3 +43,4 @@ require $_tests_dir . '/includes/bootstrap.php';
 // in its procedural helpers and the test doubles the tests rely on.
 require_once dirname(__DIR__) . '/lib/helpers.php';
 require_once __DIR__ . '/doubles.php';
+require_once __DIR__ . '/Sendy_Ajax_TestCase.php';

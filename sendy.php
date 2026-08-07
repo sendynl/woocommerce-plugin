@@ -4,13 +4,13 @@
  * Plugin Name: Sendy
  * Plugin URI: https://app.sendy.nl/
  * Description: A WooCommerce plugin that connects your site to the Sendy platform
- * Version: 3.4.7
+ * Version: 3.5.0
  * Author: Sendy
  * Author URI: https://sendy.nl/
  * License: MIT
  * Text Domain: sendy
  * Domain Path: /languages
- * Requires at least: 5.2
+ * Requires at least: 6.2
  * Tested up to: 7.0
  * Requires PHP: 7.4
  * Requires Plugins: woocommerce

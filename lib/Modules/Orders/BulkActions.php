@@ -54,27 +54,19 @@ class BulkActions extends OrdersModule
             wp_die('Nonce verification failed');
         }
 
-        foreach ($objectIds as $id) {
-            if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
-                $this->create_shipment_from_order(
-                    wc_get_order($id),
-                    sanitize_key($_REQUEST['sendy_preference_id'] ?? ''),
-                    sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
-                    sanitize_key($_REQUEST['sendy_amount'] ?? ''),
-                );
+        $shopId = sanitize_key($_REQUEST['sendy_shop_id'] ?? '');
+        $preferenceId = sanitize_key($_REQUEST['sendy_preference_id'] ?? '');
+        $amount = sanitize_key($_REQUEST['sendy_amount'] ?? '1');
 
-                update_option('sendy_previously_used_preference_id', sanitize_key($_REQUEST['sendy_preference_id'] ?? ''));
-                update_option('sendy_previously_used_amount', sanitize_key($_REQUEST['sendy_amount'] ?? ''));
-            } else {
-                $this->create_shipment_with_smart_rules(
-                    wc_get_order($id),
-                    false,
-                    sanitize_key($_REQUEST['sendy_shop_id'] ?? ''),
-                );
+        foreach ($objectIds as $id) {
+            $order = wc_get_order($id);
+
+            if ($order) {
+                $this->create_shipment_flashing_errors($order, $shopId, $preferenceId, (int) $amount);
             }
         }
 
-        update_option('sendy_previously_used_shop_id', sanitize_key($_REQUEST['sendy_shop_id'] ?? ''));
+        $this->remember_previously_used($shopId, $preferenceId, $amount);
 
         return $redirect;
     }
@@ -82,8 +74,7 @@ class BulkActions extends OrdersModule
     /**
      * Handle the print labels bulk action
      *
-     * The real work happens through the sendy_print_labels AJAX endpoint;
-     * print-labels.js intercepts the form submission. Reaching this handler
+     * print-labels.js intercepts the form submission; reaching this handler
      * means JavaScript was disabled or bypassed.
      */
     public function handle_bulk_action_print_labels(string $redirect, string $action, array $objectIds): string
@@ -110,15 +101,31 @@ class BulkActions extends OrdersModule
                 'sendy-print-labels',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/print-labels.js',
                 [],
-                Plugin::VERSION,
+                Plugin::asset_version('/resources/js/print-labels.js'),
                 true,
             );
+
+            wp_register_script(
+                'sendy-orders-list-print-flow',
+                SENDY_WC_PLUGIN_DIR_URL . '/resources/js/orders-list-print-flow.js',
+                ['jquery', 'thickbox', 'sendy-print-labels'],
+                Plugin::asset_version('/resources/js/orders-list-print-flow.js'),
+                true,
+            );
+
+            wp_localize_script('sendy-orders-list-print-flow', 'sendyPrintFlow', [
+                'modalTitle' => __('Sendy - Print labels', 'sendy'),
+                'modalTitleSingular' => __('Sendy - Print label', 'sendy'),
+                'modalButtonText' => __('Create shipments and print labels', 'sendy'),
+                'modalButtonTextSingular' => __('Create shipment and print label', 'sendy'),
+                'printExistingOnly' => $this->print_existing_labels_only(),
+            ]);
 
             wp_enqueue_script(
                 'sendy-admin-order-bulk',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-order-bulk.js',
-                ['jquery', 'jquery-blockui', 'sendy-print-labels'],
-                Plugin::VERSION,
+                ['jquery', 'jquery-blockui', 'sendy-orders-list-print-flow'],
+                Plugin::asset_version('/resources/js/admin-order-bulk.js'),
                 true,
             );
 
@@ -126,7 +133,14 @@ class BulkActions extends OrdersModule
                 'sendy-admin-order-bulk',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/css/modal.css',
                 [],
-                Plugin::VERSION,
+                Plugin::asset_version('/resources/css/modal.css'),
+            );
+
+            wp_enqueue_style(
+                'sendy-order-actions',
+                SENDY_WC_PLUGIN_DIR_URL . '/resources/css/order-actions.css',
+                [],
+                Plugin::asset_version('/resources/css/order-actions.css'),
             );
         }
     }

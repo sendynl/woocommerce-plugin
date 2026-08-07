@@ -7,9 +7,11 @@
  * minimal wc_get_order() backed by a registry of fake orders stands in for it.
  */
 
+use Sendy\Api\Connection;
 use Sendy\Api\Http\Request;
 use Sendy\Api\Http\Response;
 use Sendy\Api\Http\Transport\TransportInterface;
+use Sendy\WooCommerce\ApiClientFactory;
 
 if (! function_exists('wc_get_order')) {
     function wc_get_order($order_id)
@@ -18,7 +20,18 @@ if (! function_exists('wc_get_order')) {
     }
 }
 
-class Sendy_Fake_Order
+if (! class_exists('WC_Order')) {
+    /**
+     * Minimal WC_Order stub for type hinting in the test environment.
+     * WooCommerce is not loaded in the test environment, so we provide
+     * a base class that the fake order can extend to satisfy type hints.
+     */
+    class WC_Order
+    {
+    }
+}
+
+class Sendy_Fake_Order extends WC_Order
 {
     /** @var array<int,self> */
     private static array $orders = [];
@@ -68,6 +81,81 @@ class Sendy_Fake_Order
         return $this->meta[$key] ?? '';
     }
 
+    public function update_meta_data(string $key, $value): void
+    {
+        $this->meta[$key] = $value;
+    }
+
+    public function get_order_number(): string
+    {
+        return (string) $this->id;
+    }
+
+    public function get_date_created(): DateTimeImmutable
+    {
+        return new DateTimeImmutable('2026-01-01T10:00:00+00:00');
+    }
+
+    public function get_shipping_first_name(): string
+    {
+        return 'John';
+    }
+
+    public function get_shipping_last_name(): string
+    {
+        return 'Doe';
+    }
+
+    public function get_shipping_company(): string
+    {
+        return '';
+    }
+
+    public function get_shipping_country(): string
+    {
+        return 'NL';
+    }
+
+    public function get_shipping_address_1(): string
+    {
+        return 'Teststraat 12';
+    }
+
+    public function get_shipping_address_2(): string
+    {
+        return '';
+    }
+
+    public function get_shipping_postcode(): string
+    {
+        return '1234 AB';
+    }
+
+    public function get_shipping_city(): string
+    {
+        return 'Amsterdam';
+    }
+
+    public function get_shipping_phone(): string
+    {
+        return '';
+    }
+
+    public function get_billing_email(): string
+    {
+        return 'john@example.com';
+    }
+
+    public function get_items(): array
+    {
+        return [];
+    }
+
+    public function get_shipping_methods(): array
+    {
+        return [new Sendy_Fake_Shipping_Method()];
+    }
+
     public function set_status(string $status, string $note = ''): void
     {
         $this->status = $status;
@@ -95,26 +183,80 @@ class Sendy_Fake_Order
     }
 }
 
+class Sendy_Fake_Shipping_Method
+{
+    public function get_instance_id(): int
+    {
+        return 1;
+    }
+}
+
 class Sendy_Fake_Transport implements TransportInterface
 {
-    private Response $response;
+    /** @var Response[] */
+    private array $responses;
 
     public ?Request $lastRequest = null;
 
-    public function __construct(Response $response)
+    /** @var Request[] */
+    public array $requests = [];
+
+    public function __construct(Response ...$responses)
     {
-        $this->response = $response;
+        $this->responses = $responses;
     }
 
     public function send(Request $request): Response
     {
         $this->lastRequest = $request;
+        $this->requests[] = $request;
 
-        return $this->response;
+        if ($this->responses === []) {
+            throw new LogicException('The fake transport received a request but no response was queued.');
+        }
+
+        // The last queued response repeats, so polling tests do not need to
+        // queue one response per call.
+        return count($this->responses) > 1 ? array_shift($this->responses) : $this->responses[0];
     }
 
     public function getUserAgent(): string
     {
         return 'PHPUnit';
+    }
+}
+
+/**
+ * Points ApiClientFactory's memoized connection at canned HTTP responses.
+ *
+ * Call set_api_connection(null) in tearDown() so the connection cannot leak
+ * into other tests.
+ */
+trait Sendy_Fakes_Api_Connection
+{
+    protected function fake_transport(Response ...$responses): Sendy_Fake_Transport
+    {
+        $transport = new Sendy_Fake_Transport(...$responses);
+
+        update_option('sendy_access_token', 'access-token', false);
+        update_option('sendy_refresh_token', 'refresh-token', false);
+        update_option('sendy_token_expires', time() + 3600, false);
+
+        $this->set_api_connection(
+            (new Connection())
+                ->setTransport($transport)
+                ->setAccessToken('access-token')
+                ->setRefreshToken('refresh-token')
+                ->setTokenExpires(time() + 3600)
+        );
+
+        return $transport;
+    }
+
+    protected function set_api_connection(?Connection $connection): void
+    {
+        $property = new ReflectionProperty(ApiClientFactory::class, 'connection');
+        $property->setAccessible(true);
+        $property->setValue(null, $connection);
     }
 }

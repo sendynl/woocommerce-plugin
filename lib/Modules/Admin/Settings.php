@@ -32,7 +32,7 @@ class Settings
             'sendy-admin-settings',
             SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-settings.js',
             [],
-            Plugin::VERSION,
+            Plugin::asset_version('/resources/js/admin-settings.js'),
             true,
         );
     }

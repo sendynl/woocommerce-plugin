@@ -4,7 +4,6 @@ namespace Sendy\WooCommerce\Modules\Orders;
 
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 use Sendy\Api\Exceptions\SendyException;
-use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Plugin;
 use Sendy\WooCommerce\Repositories\Preferences;
 use Sendy\WooCommerce\Repositories\Shops;
@@ -93,7 +92,7 @@ class Single extends OrdersModule
                 'sendy-print-labels',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/print-labels.js',
                 [],
-                Plugin::VERSION,
+                Plugin::asset_version('/resources/js/print-labels.js'),
                 true,
             );
 
@@ -101,7 +100,7 @@ class Single extends OrdersModule
                 'sendy-admin-order-single',
                 SENDY_WC_PLUGIN_DIR_URL . '/resources/js/admin-order-single.js',
                 ['sendy-print-labels'],
-                Plugin::VERSION,
+                Plugin::asset_version('/resources/js/admin-order-single.js'),
                 true,
             );
         }
@@ -123,29 +122,25 @@ class Single extends OrdersModule
                 throw new \Exception(esc_html__('Nonce verification failed', 'sendy'));
             }
 
-            if (! empty($_REQUEST['order_id'])) {
-                $order = wc_get_order(sanitize_key($_REQUEST['order_id']));
-
-                if (get_option('sendy_processing_method') === ProcessingMethod::WooCommerce) {
-                    $this->create_shipment_from_order(
-                        $order,
-                        sanitize_key($_REQUEST['preference_id'] ?? ''),
-                        sanitize_key($_REQUEST['shop_id'] ?? ''),
-                        sanitize_key($_REQUEST['amount'] ?? ''),
-                    );
-                } else {
-                    $this->create_shipment_with_smart_rules(
-                        $order,
-                        false,
-                        sanitize_key($_REQUEST['shop_id'] ?? ''),
-                    );
-                }
-
-                wp_send_json_success();
+            if (empty($_REQUEST['order_id'])) {
+                return;
             }
+
+            $order = wc_get_order(sanitize_key($_REQUEST['order_id']));
+
+            $this->create_shipment(
+                $order,
+                sanitize_key($_REQUEST['shop_id'] ?? ''),
+                sanitize_key($_REQUEST['preference_id'] ?? ''),
+                (int) sanitize_key($_REQUEST['amount'] ?? '1'),
+            );
         } catch (\Exception $e) {
             wp_send_json_error(['message' => $e->getMessage()]);
         }
+
+        // Outside the try: wp_send_json_success() ends in wp_die(), which
+        // throws in tests and would be caught above as a failure.
+        wp_send_json_success();
     }
 
     /**

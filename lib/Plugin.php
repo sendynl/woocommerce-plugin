@@ -7,7 +7,9 @@ use Sendy\WooCommerce\Modules\Admin\Settings;
 use Sendy\WooCommerce\Modules\Checkout;
 use Sendy\WooCommerce\Modules\OAuth;
 use Sendy\WooCommerce\Modules\Orders\BulkActions;
+use Sendy\WooCommerce\Modules\Orders\CreateShipments;
 use Sendy\WooCommerce\Modules\Orders\PrintLabels;
+use Sendy\WooCommerce\Modules\Orders\RowActions;
 use Sendy\WooCommerce\Modules\Orders\ProcessInBackground;
 use Sendy\WooCommerce\Modules\Orders\OrderList;
 use Sendy\WooCommerce\Modules\Orders\Single;
@@ -19,7 +21,7 @@ use WC_Shipping_Method;
 
 class Plugin
 {
-    public const VERSION = '3.4.7';
+    public const VERSION = '3.5.0';
 
     public const SETTINGS_ID = 'sendy';
 
@@ -36,6 +38,24 @@ class Plugin
     public static function instance(): Plugin
     {
         return self::$instance ??= new self();
+    }
+
+    /**
+     * Version string for cache-busting a local plugin asset
+     *
+     * Releases invalidate browser caches through the plugin version; with
+     * SCRIPT_DEBUG enabled the file's modification time is used instead, so
+     * development edits are never served stale.
+     */
+    public static function asset_version(string $path): string
+    {
+        $file = dirname(SENDY_WC_PLUGIN_FILE) . $path;
+
+        if (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG && file_exists($file)) {
+            return (string) filemtime($file);
+        }
+
+        return self::VERSION;
     }
 
     public function initialize_plugin(): void
@@ -119,6 +139,8 @@ class Plugin
             $this->modules['orders_list'] = new OrderList();
             $this->modules['orders_single'] = new Single();
             $this->modules['orders_print_labels'] = new PrintLabels();
+            $this->modules['orders_create_shipments'] = new CreateShipments();
+            $this->modules['orders_row_actions'] = new RowActions();
             $this->modules['checkout'] = new Checkout();
             $this->modules['webhooks'] = new Webhooks();
             $this->modules['orders_sendy'] = new ProcessInBackground();
