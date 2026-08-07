@@ -4,6 +4,7 @@ namespace Sendy\WooCommerce\Modules\Orders;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Sendy\Api\ApiException;
+use Sendy\Api\Exceptions\SendyException;
 use Sendy\WooCommerce\ApiClientFactory;
 use Sendy\WooCommerce\Enums\ProcessingMethod;
 use Sendy\WooCommerce\Repositories\Shops;
@@ -40,10 +41,8 @@ abstract class OrdersModule
     /**
      * Whether the orders list can only print labels that already exist
      *
-     * The Sendy processing method has the portal generate the labels, through
-     * smart rules, for the shipments the plugin creates in the background. A
-     * shipment created from the orders list would therefore not yield a label
-     * to wait for, so the print flow prints what is already there instead.
+     * With the Sendy processing method the portal creates and generates the
+     * shipments itself, so the orders list never has a new label to wait for.
      */
     protected function print_existing_labels_only(): bool
     {
@@ -52,10 +51,6 @@ abstract class OrdersModule
 
     /**
      * Create a shipment for the order through the configured processing method
-     *
-     * The WooCommerce processing method creates the shipment from the given
-     * preference; the Sendy processing method leaves the choice of carrier to
-     * the smart rules configured in the portal.
      *
      * @param string $shopId The UUID of the selected shop
      * @param string $preferenceId The UUID of the selected shipping preference
@@ -72,15 +67,33 @@ abstract class OrdersModule
     }
 
     /**
-     * Remember the create-shipments modal values as the defaults for next time
+     * Create a shipment and flash any failure as an admin notice
      *
-     * Only the WooCommerce processing method uses the preference and the
-     * amount, so only that method remembers them.
+     * The creation methods flash API errors themselves; this also catches what
+     * they throw outside that, so one failing order does not abort the batch.
+     */
+    protected function create_shipment_flashing_errors(\WC_Order $order, string $shopId, string $preferenceId, int $amount): void
+    {
+        try {
+            $this->create_shipment($order, $shopId, $preferenceId, $amount);
+        } catch (SendyException $exception) {
+            // translators: %1$s contains the ID of the order, %2$s the error message
+            sendy_flash_admin_notice('error', sprintf(
+                __('Error while creating shipment for order #%1$s: %2$s', 'sendy'),
+                $order->get_id(),
+                $exception->getMessage(),
+            ));
+        }
+    }
+
+    /**
+     * Remember the create-shipments modal values as the defaults for next time
      */
     protected function remember_previously_used(string $shopId, string $preferenceId, string $amount): void
     {
         update_option('sendy_previously_used_shop_id', $shopId);
 
+        // Only the WooCommerce processing method uses a preference and amount.
         if (! $this->print_existing_labels_only()) {
             update_option('sendy_previously_used_preference_id', $preferenceId);
             update_option('sendy_previously_used_amount', $amount);

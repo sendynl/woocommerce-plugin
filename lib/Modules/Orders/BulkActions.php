@@ -56,10 +56,14 @@ class BulkActions extends OrdersModule
 
         $shopId = sanitize_key($_REQUEST['sendy_shop_id'] ?? '');
         $preferenceId = sanitize_key($_REQUEST['sendy_preference_id'] ?? '');
-        $amount = sanitize_key($_REQUEST['sendy_amount'] ?? '');
+        $amount = sanitize_key($_REQUEST['sendy_amount'] ?? '1');
 
         foreach ($objectIds as $id) {
-            $this->create_shipment(wc_get_order($id), $shopId, $preferenceId, (int) $amount);
+            $order = wc_get_order($id);
+
+            if ($order) {
+                $this->create_shipment_flashing_errors($order, $shopId, $preferenceId, (int) $amount);
+            }
         }
 
         $this->remember_previously_used($shopId, $preferenceId, $amount);
@@ -70,8 +74,7 @@ class BulkActions extends OrdersModule
     /**
      * Handle the print labels bulk action
      *
-     * The real work happens through the sendy_print_labels AJAX endpoint;
-     * print-labels.js intercepts the form submission. Reaching this handler
+     * print-labels.js intercepts the form submission; reaching this handler
      * means JavaScript was disabled or bypassed.
      */
     public function handle_bulk_action_print_labels(string $redirect, string $action, array $objectIds): string
