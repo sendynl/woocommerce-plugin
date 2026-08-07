@@ -20,13 +20,15 @@ if (! function_exists('wc_get_order')) {
     }
 }
 
-/**
- * Minimal WC_Order stub for type hinting in the test environment.
- * WooCommerce is not loaded in the test environment, so we provide
- * a base class that the fake order can extend to satisfy type hints.
- */
-class WC_Order
-{
+if (! class_exists('WC_Order')) {
+    /**
+     * Minimal WC_Order stub for type hinting in the test environment.
+     * WooCommerce is not loaded in the test environment, so we provide
+     * a base class that the fake order can extend to satisfy type hints.
+     */
+    class WC_Order
+    {
+    }
 }
 
 class Sendy_Fake_Order extends WC_Order
@@ -209,11 +211,13 @@ class Sendy_Fake_Transport implements TransportInterface
         $this->lastRequest = $request;
         $this->requests[] = $request;
 
-        if (count($this->responses) > 1) {
-            return array_shift($this->responses);
+        if ($this->responses === []) {
+            throw new LogicException('The fake transport received a request but no response was queued.');
         }
 
-        return $this->responses[0];
+        // The last queued response repeats, so polling tests do not need to
+        // queue one response per call.
+        return count($this->responses) > 1 ? array_shift($this->responses) : $this->responses[0];
     }
 
     public function getUserAgent(): string
