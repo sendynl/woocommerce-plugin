@@ -78,6 +78,28 @@ class CreateShipmentsTest extends Sendy_Ajax_TestCase
         $this->assertStringContainsString('created in Sendy', $response['message']);
         $this->assertSame([], $transport->requests, 'No shipment may be created');
         $this->assertFalse($order->meta_exists('_sendy_shipment_id'));
+
+        // The print flow reloads on an error response, so the refusal must
+        // also be flashed to be seen.
+        $messages = get_option('sendy_flash_admin_messages');
+        $this->assertSame('error', $messages[0]['type']);
+        $this->assertStringContainsString('created in Sendy', $messages[0]['message']);
+    }
+
+    public function test_a_broken_connection_is_reported_as_an_error_response(): void
+    {
+        $order = new Sendy_Fake_Order(1);
+
+        // The endpoint only exists when an access token is stored, but the
+        // other token options can be missing after a failed authentication.
+        update_option('sendy_access_token', 'access-token', false);
+        delete_option('sendy_refresh_token');
+
+        $response = $this->dispatch(['order_ids' => [1]]);
+
+        $this->assertSame('The plugin is not connected to Sendy. Check the settings page to reconnect.', $response['message']);
+        $this->assertArrayNotHasKey('created', $response);
+        $this->assertFalse($order->meta_exists('_sendy_shipment_id'));
     }
 
     public function test_orders_whose_creation_fails_are_not_reported_as_created(): void

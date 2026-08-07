@@ -209,6 +209,23 @@ class ShipmentsStatusTest extends Sendy_Ajax_TestCase
         $this->assertSame('error', $messages[0]['type']);
     }
 
+    public function test_a_broken_connection_is_reported_as_an_error_response(): void
+    {
+        new Sendy_Fake_Order(1, ['_sendy_shipment_id' => 'shipment-1']);
+
+        // The endpoint only exists when an access token is stored, but the
+        // other token options can be missing after a failed authentication.
+        update_option('sendy_access_token', 'access-token', false);
+        delete_option('sendy_refresh_token');
+
+        $response = $this->dispatch(['order_ids' => [1]]);
+
+        $this->assertSame('The plugin is not connected to Sendy. Check the settings page to reconnect.', $response['message']);
+
+        $messages = get_option('sendy_flash_admin_messages');
+        $this->assertSame('error', $messages[0]['type']);
+    }
+
     public function test_an_invalid_nonce_is_rejected(): void
     {
         $response = $this->dispatch(['order_ids' => [1], 'nonce' => 'invalid']);

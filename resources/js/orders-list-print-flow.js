@@ -7,11 +7,6 @@
  * has generated the labels, and then prints them through sendyPrintLabels()
  * from print-labels.js. Used by both the per-order button in the actions
  * column and the "Sendy - Print labels" bulk action.
- *
- * The Sendy processing method has the portal generate the labels for the
- * shipments the plugin creates in the background, so there is nothing to
- * create or wait for here: that mode prints the labels that already exist and
- * leaves a notice for the orders that have none.
  */
 ( function () {
 	'use strict';
@@ -22,12 +17,17 @@
 	const sleep = ( milliseconds ) =>
 		new Promise( ( resolve ) => setTimeout( resolve, milliseconds ) );
 
+	// The server flashes a notice explaining a failed request; the flow
+	// reloads to show it.
+	class AjaxError extends Error {}
+
 	/**
 	 * POST to admin-ajax for the given orders and decode the JSON response.
 	 *
 	 * @param {Object<string,string>} params Form fields, including action.
 	 * @param {Array<string|number>}  orderIds
 	 * @return {Promise<any>}
+	 * @throws {AjaxError}
 	 */
 	const ajaxPost = async ( params, orderIds ) => {
 		const body = new URLSearchParams( params );
@@ -36,11 +36,15 @@
 		}
 
 		const response = await fetch( ajaxurl, { method: 'POST', body } );
+		const data = await response.json().catch( () => null );
+
 		if ( ! response.ok ) {
-			throw new Error( `The ${ params.action } request failed` );
+			throw new AjaxError(
+				data?.message ?? `The ${ params.action } request failed`
+			);
 		}
 
-		return response.json();
+		return data;
 	};
 
 	/**
@@ -226,10 +230,8 @@
 
 	/**
 	 * Print the labels that already exist and explain the orders that have
-	 * none, without creating shipments or waiting for labels.
-	 *
-	 * Used for the Sendy processing method, where the portal generates the
-	 * labels for the shipments the plugin creates in the background.
+	 * none, without creating shipments or waiting for labels. Used for the
+	 * Sendy processing method, where the portal generates the labels itself.
 	 *
 	 * @param {Array<string|number>} orderIds
 	 */
@@ -247,9 +249,7 @@
 
 	/**
 	 * Print the labels of the given orders, creating shipments first for the
-	 * orders that have none — unless the processing method leaves creating and
-	 * generating to the Sendy portal, in which case only the labels that
-	 * already exist are printed.
+	 * orders that have none where the processing method allows it.
 	 *
 	 * @param {Array<string|number>} orderIds
 	 */
@@ -262,10 +262,7 @@
 
 		const withoutShipment = idsWithStatus( statuses, 'none' );
 		const ready = idsWithStatus( statuses, 'ready' );
-		// Orders whose labels still need waiting on: the ones already being
-		// generated plus the shipments created below. Orders in a terminal
-		// failed state have flashed a notice; drop them instead of
-		// re-checking (and re-flashing) later.
+		// Failed orders have flashed a notice; re-checking would re-flash it.
 		const pending = idsWithStatus( statuses, 'pending' );
 
 		let createdShipments = false;
@@ -292,8 +289,7 @@
 				! result.created.length &&
 				withoutShipment.length === orderIds.length
 			) {
-				// Nothing can be printed; reload to show the flash notices
-				// explaining what went wrong.
+				// Nothing printable; reload to show the flash notices.
 				window.location.reload();
 				return;
 			}
@@ -315,10 +311,9 @@
 	};
 
 	/**
-	 * Print the labels of the given orders, creating shipments first for the
-	 * orders that have none where the processing method allows it. The returned
-	 * promise never rejects, so callers can chain finally() without handling
-	 * errors themselves.
+	 * Print the labels of the given orders, creating shipments first where
+	 * the processing method allows it. The returned promise never rejects,
+	 * so callers can chain finally() without handling errors themselves.
 	 *
 	 * @param {Array<string|number>} orderIds
 	 * @return {Promise<void>}
@@ -326,6 +321,10 @@
 	window.sendyOrdersListPrintFlow = ( orderIds ) =>
 		runPrintFlow( orderIds.map( String ) ).catch( ( error ) => {
 			console.error( 'Sendy: printing labels failed', error );
+
+			if ( error instanceof AjaxError ) {
+				window.location.reload();
+			}
 		} );
 
 	// The per-order print buttons in the actions column. The href carries

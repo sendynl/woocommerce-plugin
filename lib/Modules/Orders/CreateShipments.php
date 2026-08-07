@@ -15,25 +15,18 @@ class CreateShipments extends OrdersModule
 
     /**
      * Create shipments for the selected orders that do not have one yet
-     *
-     * Used by the orders list print flow: the modal collects the shop,
-     * preference and amount (the same fields as the "Create shipments" bulk
-     * action) and this endpoint performs the creation over AJAX so the flow
-     * can wait for the labels and print them afterwards. Orders that already
-     * have a shipment are skipped. Errors per order are flashed as admin
-     * notices by the inherited creation methods; the response only reports
-     * which orders now have a shipment.
      */
     public function handle_create_shipments(): void
     {
-        $this->verify_ajax_request('sendy_bulk_modal');
+        $this->verify_ajax_request('sendy_bulk_modal', true);
 
         if ($this->print_existing_labels_only()) {
-            // The print flow does not offer to create shipments for this
-            // processing method; refuse rather than trust the client, so a
-            // browser running a cached older copy of the script cannot add
-            // shipments the portal would have created itself.
-            wp_send_json(['message' => __('Shipments for this processing method are created in Sendy', 'sendy')], 400);
+            // Refuse rather than trust the client: a cached older copy of the
+            // script could otherwise create shipments the portal creates itself.
+            $message = __('Shipments for this processing method are created in Sendy', 'sendy');
+
+            sendy_flash_admin_notice('error', $message);
+            wp_send_json(['message' => $message], 400);
         }
 
         $shopId = sanitize_key($_POST['shop_id'] ?? '');
@@ -42,31 +35,22 @@ class CreateShipments extends OrdersModule
 
         $created = [];
 
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- intval() sanitizes each id
-        foreach (array_map('intval', (array) ($_POST['order_ids'] ?? [])) as $orderId) {
-            $order = wc_get_order($orderId);
+        try {
+            foreach ($this->requested_order_ids() as $orderId) {
+                $order = wc_get_order($orderId);
 
-            if (! $order || $order->meta_exists('_sendy_shipment_id')) {
-                continue;
-            }
+                if (! $order || $order->meta_exists('_sendy_shipment_id')) {
+                    continue;
+                }
 
-            try {
-                $this->create_shipment($order, $shopId, $preferenceId, (int) $amount);
-            } catch (SendyException $exception) {
-                // The creation methods flash API validation errors themselves;
-                // this guards the calls they make outside their own try/catch,
-                // such as fetching the shop list for smart rules.
-                // translators: %1$s contains the ID of the order, %2$s the error message
-                sendy_flash_admin_notice('error', sprintf(
-                    __('Error while creating shipment for order #%1$s: %2$s', 'sendy'),
-                    $order->get_id(),
-                    $exception->getMessage(),
-                ));
-            }
+                $this->create_shipment_flashing_errors($order, $shopId, $preferenceId, (int) $amount);
 
-            if ($order->meta_exists('_sendy_shipment_id')) {
-                $created[] = $orderId;
+                if ($order->meta_exists('_sendy_shipment_id')) {
+                    $created[] = $orderId;
+                }
             }
+        } catch (\RuntimeException $exception) {
+            $this->send_not_connected_error();
         }
 
         if ($created !== []) {
@@ -77,30 +61,24 @@ class CreateShipments extends OrdersModule
     }
 
     /**
-     * Report per order whether its labels can be printed
-     *
-     * Returns a map of order id to one of: `none` (no shipment yet),
-     * `pending` (shipment exists but the label is still being generated),
-     * `ready` (labels can be printed), or `failed` (generation failed or the
-     * shipment was cancelled). The orders list print flow uses this to decide
-     * between printing directly, creating a shipment first, or polling until
-     * the Sendy portal has generated the label.
-     *
-     * With `flash_unprintable` set, the orders that have no label to print are
-     * explained in a single admin notice: the flow is done waiting for them.
+     * Report per order whether its labels can be printed: none, pending,
+     * ready or failed
      */
     public function handle_shipments_status(): void
     {
-        $this->verify_ajax_request('sendy_print_labels');
+        $this->verify_ajax_request('sendy_print_labels', true);
 
         $statuses = [];
 
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- boolean flag, nothing to sanitize
         $flashUnprintable = ! empty($_POST['flash_unprintable']);
 
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- intval() sanitizes each id
-        foreach (array_map('intval', (array) ($_POST['order_ids'] ?? [])) as $orderId) {
-            $statuses[$orderId] = $this->shipment_status(wc_get_order($orderId));
+        try {
+            foreach ($this->requested_order_ids() as $orderId) {
+                $statuses[$orderId] = $this->shipment_status(wc_get_order($orderId));
+            }
+        } catch (\RuntimeException $exception) {
+            $this->send_not_connected_error();
         }
 
         if ($flashUnprintable) {
@@ -111,11 +89,33 @@ class CreateShipments extends OrdersModule
     }
 
     /**
+     * @return int[]
+     */
+    private function requested_order_ids(): array
+    {
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- intval() sanitizes each id
+        return array_map('intval', (array) ($_POST['order_ids'] ?? []));
+    }
+
+    /**
+     * Report a broken connection as JSON
+     *
+     * An access token registers these endpoints, but the other token options
+     * can still be missing; building the API connection then throws.
+     */
+    private function send_not_connected_error(): void
+    {
+        $message = __('The plugin is not connected to Sendy. Check the settings page to reconnect.', 'sendy');
+
+        sendy_flash_admin_notice('error', $message);
+        wp_send_json(['message' => $message], 403);
+    }
+
+    /**
      * The orders that have no label to print
      *
-     * Orders with a failed shipment have flashed their own explanation
-     * already, and an order without a shipment is only worth mentioning when
-     * this flow is not the one that creates it.
+     * Failed shipments have flashed their own explanation, and orders without
+     * a shipment only matter when this flow is not the one creating them.
      *
      * @param array<int,string> $statuses
      * @return int[]
@@ -132,12 +132,8 @@ class CreateShipments extends OrdersModule
     /**
      * Explain in one notice which orders have no label to print
      *
-     * The Sendy processing method generates the labels in the portal, so there
-     * is nothing for the shop to wait for; the WooCommerce processing method
-     * generates them while the flow polls, so a shipment that is still pending
-     * when the flow gives up may well be ready shortly after. Printing a whole
-     * page of orders can leave many of them unprintable, so they are counted
-     * rather than named.
+     * Printing a whole page of orders can leave many of them unprintable, so
+     * they are counted rather than named.
      *
      * @param int[] $orderIds
      */
@@ -169,9 +165,8 @@ class CreateShipments extends OrdersModule
     /**
      * Determine the print status of a single order's shipment
      *
-     * Orders whose packages are already stored do not hit the API. When the
-     * API reports the shipment as generated, the packages are persisted so
-     * the track and trace column and the order meta box pick them up.
+     * Persists the packages once the shipment is generated, so later checks
+     * skip the API.
      *
      * @param \WC_Order|false $order
      */
