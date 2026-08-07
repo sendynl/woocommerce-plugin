@@ -4,10 +4,19 @@ use Sendy\WooCommerce\Plugin;
 
 /**
  * Uninstalling must wipe all plugin options, so a shop that changes hands can
- * reconnect with fresh credentials. Deactivating must leave them alone.
+ * reconnect with fresh credentials. Deactivating must leave the credentials
+ * and settings alone.
  */
 class UninstallTest extends WP_UnitTestCase
 {
+    // Bookkeeping that the modules clean up on deactivation; deactivating must
+    // not touch any other option.
+    private const MODULE_STATE_OPTIONS = [
+        'sendy_webhook_id',
+        'sendy_webhook_last_checked',
+        'sendy_shipping_methods_last_sync',
+    ];
+
     private const OPTIONS = [
         'sendy_client_id',
         'sendy_client_secret',
@@ -58,13 +67,15 @@ class UninstallTest extends WP_UnitTestCase
 
     public function test_deactivation_does_not_delete_the_options(): void
     {
-        foreach (self::OPTIONS as $option) {
+        $options = array_diff(self::OPTIONS, self::MODULE_STATE_OPTIONS);
+
+        foreach ($options as $option) {
             update_option($option, 'some-value');
         }
 
         Plugin::instance()->deactivate();
 
-        foreach (self::OPTIONS as $option) {
+        foreach ($options as $option) {
             $this->assertSame(
                 'some-value',
                 get_option($option),

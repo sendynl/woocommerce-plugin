@@ -1,8 +1,9 @@
 <?php
 
 /**
- * Removes all plugin data when the plugin is uninstalled, so a reinstall
- * starts with fresh credentials and the portal creates a new OauthClient.
+ * Removes the plugin's options and transients when the plugin is uninstalled,
+ * so a reinstall starts with fresh credentials and the portal creates a new
+ * OAuth client. Shipment metadata on orders is left in place.
  */
 
 if (! defined('WP_UNINSTALL_PLUGIN')) {
